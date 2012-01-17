@@ -32,7 +32,7 @@ import org.apache.smscserver.smsclet.User;
 /**
  * <strong>Internal class, do not use directly.</strong>
  * 
- * FTP session
+ * SMSC session
  * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */

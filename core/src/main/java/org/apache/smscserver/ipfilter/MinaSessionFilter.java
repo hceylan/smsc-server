@@ -23,8 +23,7 @@ import org.apache.mina.core.filterchain.IoFilterAdapter;
 import org.apache.mina.core.session.IoSession;
 
 /**
- * A wrapper for <code>SessionFilter</code> so it can be added to the MINA
- * filter chain.
+ * A wrapper for <code>SessionFilter</code> so it can be added to the MINA filter chain.
  * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  * 
@@ -49,7 +48,7 @@ public class MinaSessionFilter extends IoFilterAdapter {
 
     @Override
     public void sessionCreated(NextFilter nextFilter, IoSession session) {
-        if (!filter.accept(session)) {
+        if (!this.filter.accept(session)) {
             session.close(true);
         } else {
             nextFilter.sessionCreated(session);

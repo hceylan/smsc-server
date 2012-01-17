@@ -33,20 +33,18 @@ import org.apache.smscserver.smsclet.SmscReply;
  * <strong>Internal class, do not use directly.</strong>
  * 
  * A {@link MessageEncoder} that encodes {@link SmscReply}.
- *
+ * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public class SmscResponseEncoder extends ProtocolEncoderAdapter {
-    private static final CharsetEncoder ENCODER = Charset.forName("UTF-8")
-            .newEncoder();
+    private static final CharsetEncoder ENCODER = Charset.forName("UTF-8").newEncoder();
 
-    public void encode(IoSession session, Object message,
-            ProtocolEncoderOutput out) throws Exception {
+    public void encode(IoSession session, Object message, ProtocolEncoderOutput out) throws Exception {
         String value = message.toString();
 
         IoBuffer buf = IoBuffer.allocate(value.length()).setAutoExpand(true);
 
-        buf.putString(value, ENCODER);
+        buf.putString(value, SmscResponseEncoder.ENCODER);
 
         buf.flip();
         out.write(buf);

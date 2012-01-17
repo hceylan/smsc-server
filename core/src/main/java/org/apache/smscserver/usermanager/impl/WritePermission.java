@@ -26,12 +26,12 @@ import org.apache.smscserver.smsclet.AuthorizationRequest;
  * <strong>Internal class, do not use directly.</strong>
  * 
  * Class representing a write permission
- *
+ * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public class WritePermission implements Authority {
 
-    private String permissionRoot;
+    private final String permissionRoot;
 
     /**
      * Construct a write permission for the user home directory (/)
@@ -41,8 +41,7 @@ public class WritePermission implements Authority {
     }
 
     /**
-     * Construct a write permission for a file or directory relative to the user
-     * home directory
+     * Construct a write permission for a file or directory relative to the user home directory
      * 
      * @param permissionRoot
      *            The file or directory
@@ -60,7 +59,7 @@ public class WritePermission implements Authority {
 
             String requestFile = writeRequest.getFile();
 
-            if (requestFile.startsWith(permissionRoot)) {
+            if (requestFile.startsWith(this.permissionRoot)) {
                 return writeRequest;
             } else {
                 return null;

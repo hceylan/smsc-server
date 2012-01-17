@@ -26,7 +26,7 @@ import org.apache.smscserver.smsclet.AuthorizationRequest;
  * <strong>Internal class, do not use directly.</strong>
  * 
  * The max upload rate permission
- *
+ * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public class ConcurrentLoginPermission implements Authority {
@@ -35,8 +35,7 @@ public class ConcurrentLoginPermission implements Authority {
 
     private final int maxConcurrentLoginsPerIP;
 
-    public ConcurrentLoginPermission(int maxConcurrentLogins,
-            int maxConcurrentLoginsPerIP) {
+    public ConcurrentLoginPermission(int maxConcurrentLogins, int maxConcurrentLoginsPerIP) {
         this.maxConcurrentLogins = maxConcurrentLogins;
         this.maxConcurrentLoginsPerIP = maxConcurrentLoginsPerIP;
     }
@@ -48,19 +47,15 @@ public class ConcurrentLoginPermission implements Authority {
         if (request instanceof ConcurrentLoginRequest) {
             ConcurrentLoginRequest concurrentLoginRequest = (ConcurrentLoginRequest) request;
 
-            if (maxConcurrentLogins != 0
-                    && maxConcurrentLogins < concurrentLoginRequest
-                            .getConcurrentLogins()) {
+            if ((this.maxConcurrentLogins != 0)
+                    && (this.maxConcurrentLogins < concurrentLoginRequest.getConcurrentLogins())) {
                 return null;
-            } else if (maxConcurrentLoginsPerIP != 0
-                    && maxConcurrentLoginsPerIP < concurrentLoginRequest
-                            .getConcurrentLoginsFromThisIP()) {
+            } else if ((this.maxConcurrentLoginsPerIP != 0)
+                    && (this.maxConcurrentLoginsPerIP < concurrentLoginRequest.getConcurrentLoginsFromThisIP())) {
                 return null;
             } else {
-                concurrentLoginRequest
-                        .setMaxConcurrentLogins(maxConcurrentLogins);
-                concurrentLoginRequest
-                        .setMaxConcurrentLoginsPerIP(maxConcurrentLoginsPerIP);
+                concurrentLoginRequest.setMaxConcurrentLogins(this.maxConcurrentLogins);
+                concurrentLoginRequest.setMaxConcurrentLoginsPerIP(this.maxConcurrentLoginsPerIP);
 
                 return concurrentLoginRequest;
             }

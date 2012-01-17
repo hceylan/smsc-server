@@ -25,7 +25,7 @@ import org.apache.smscserver.smsclet.AuthorizationRequest;
  * <strong>Internal class, do not use directly.</strong>
  * 
  * Request for getting the maximum allowed transfer rates for a user
- *
+ * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public class TransferRateRequest implements AuthorizationRequest {
@@ -38,7 +38,14 @@ public class TransferRateRequest implements AuthorizationRequest {
      * @return the maxDownloadRate
      */
     public int getMaxDownloadRate() {
-        return maxDownloadRate;
+        return this.maxDownloadRate;
+    }
+
+    /**
+     * @return the maxUploadRate
+     */
+    public int getMaxUploadRate() {
+        return this.maxUploadRate;
     }
 
     /**
@@ -47,13 +54,6 @@ public class TransferRateRequest implements AuthorizationRequest {
      */
     public void setMaxDownloadRate(int maxDownloadRate) {
         this.maxDownloadRate = maxDownloadRate;
-    }
-
-    /**
-     * @return the maxUploadRate
-     */
-    public int getMaxUploadRate() {
-        return maxUploadRate;
     }
 
     /**

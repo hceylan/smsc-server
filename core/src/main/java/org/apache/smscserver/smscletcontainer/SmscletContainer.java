@@ -24,22 +24,20 @@ import java.util.Map;
 import org.apache.smscserver.smsclet.Smsclet;
 
 /**
- * Interface describing an Smsclet container. Smsclet containers extend the
- * {@link Smsclet} interface and forward any events to the Smsclets hosted by the
- * container.
- *
+ * Interface describing an Smsclet container. Smsclet containers extend the {@link Smsclet} interface and forward any
+ * events to the Smsclets hosted by the container.
+ * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public interface SmscletContainer extends Smsclet {
 
     /**
-     * Retrieve the {@link Smsclet} identified by the name (as provided in the
-     * {@link #addSmsclet(String, Smsclet)} method.
+     * Retrieve the {@link Smsclet} identified by the name (as provided in the {@link #addSmsclet(String, Smsclet)}
+     * method.
      * 
      * @param name
      *            The name of the Smsclet to retrive
-     * @return The Smsclet if found, or null if the name is unknown to the
-     *         container.
+     * @return The Smsclet if found, or null if the name is unknown to the container.
      */
     Smsclet getSmsclet(String name);
 

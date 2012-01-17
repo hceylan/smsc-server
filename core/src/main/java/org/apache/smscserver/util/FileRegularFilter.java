@@ -26,7 +26,7 @@ import java.io.FilenameFilter;
  * <strong>Internal class, do not use directly.</strong>
  * 
  * This is regular expression filename filter.
- *
+ * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public class FileRegularFilter implements FilenameFilter {
@@ -41,9 +41,9 @@ public class FileRegularFilter implements FilenameFilter {
      */
     public FileRegularFilter(String pattern) {
         if ((pattern == null) || pattern.equals("") || pattern.equals("*")) {
-            regularExpr = null;
+            this.regularExpr = null;
         } else {
-            regularExpr = new RegularExpr(pattern);
+            this.regularExpr = new RegularExpr(pattern);
         }
     }
 
@@ -56,9 +56,9 @@ public class FileRegularFilter implements FilenameFilter {
      *            - the name of the file.
      */
     public boolean accept(File dir, String name) {
-        if (regularExpr == null) {
+        if (this.regularExpr == null) {
             return true;
         }
-        return regularExpr.isMatch(name);
+        return this.regularExpr.isMatch(name);
     }
 }

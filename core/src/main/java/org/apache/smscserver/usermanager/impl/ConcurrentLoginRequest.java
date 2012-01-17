@@ -25,7 +25,7 @@ import org.apache.smscserver.smsclet.AuthorizationRequest;
  * <strong>Internal class, do not use directly.</strong>
  * 
  * Class representing a request to log in a number of concurrent times
- *
+ * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public class ConcurrentLoginRequest implements AuthorizationRequest {
@@ -42,8 +42,7 @@ public class ConcurrentLoginRequest implements AuthorizationRequest {
      * @param concurrentLogins
      * @param concurrentLoginsFromThisIP
      */
-    public ConcurrentLoginRequest(int concurrentLogins,
-            int concurrentLoginsFromThisIP) {
+    public ConcurrentLoginRequest(int concurrentLogins, int concurrentLoginsFromThisIP) {
         super();
         this.concurrentLogins = concurrentLogins;
         this.concurrentLoginsFromThisIP = concurrentLoginsFromThisIP;
@@ -55,27 +54,36 @@ public class ConcurrentLoginRequest implements AuthorizationRequest {
      * @return the concurrentLogins The number of current concurrent logins
      */
     public int getConcurrentLogins() {
-        return concurrentLogins;
+        return this.concurrentLogins;
     }
 
     /**
      * The number of concurrent logins from this IP requested
      * 
-     * @return the concurrentLoginsFromThisIP The number of current concurrent
-     *         logins from this IP
+     * @return the concurrentLoginsFromThisIP The number of current concurrent logins from this IP
      */
     public int getConcurrentLoginsFromThisIP() {
-        return concurrentLoginsFromThisIP;
+        return this.concurrentLoginsFromThisIP;
     }
 
     /**
-     * The maximum allowed concurrent logins for this user, or 0 if no limit is
-     * set. This is normally populated by {@link ConcurrentLoginPermission}
+     * The maximum allowed concurrent logins for this user, or 0 if no limit is set. This is normally populated by
+     * {@link ConcurrentLoginPermission}
      * 
      * @return The maximum allowed concurrent logins
      */
     public int getMaxConcurrentLogins() {
-        return maxConcurrentLogins;
+        return this.maxConcurrentLogins;
+    }
+
+    /**
+     * The maximum allowed concurrent logins per IP for this user, or 0 if no limit is set. This is normally populated
+     * by {@link ConcurrentLoginPermission}
+     * 
+     * @return The maximum allowed concurrent logins per IP
+     */
+    public int getMaxConcurrentLoginsPerIP() {
+        return this.maxConcurrentLoginsPerIP;
     }
 
     /**
@@ -86,17 +94,6 @@ public class ConcurrentLoginRequest implements AuthorizationRequest {
      */
     void setMaxConcurrentLogins(int maxConcurrentLogins) {
         this.maxConcurrentLogins = maxConcurrentLogins;
-    }
-
-    /**
-     * The maximum allowed concurrent logins per IP for this user, or 0 if no
-     * limit is set. This is normally populated by
-     * {@link ConcurrentLoginPermission}
-     * 
-     * @return The maximum allowed concurrent logins per IP
-     */
-    public int getMaxConcurrentLoginsPerIP() {
-        return maxConcurrentLoginsPerIP;
     }
 
     /**

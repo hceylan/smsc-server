@@ -28,7 +28,7 @@ import org.apache.smscserver.smsclet.SmscReply;
 import org.apache.smscserver.smsclet.SmscRequest;
 
 /**
- * This interface encapsulates all the FTP commands.
+ * This interface encapsulates all the SMSC commands.
  * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */

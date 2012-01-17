@@ -19,10 +19,9 @@
 
 package org.apache.smscserver.smsclet;
 
-
 /**
  * Smsclet exception class.
- *
+ * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public class SmscException extends Exception {
@@ -47,20 +46,10 @@ public class SmscException extends Exception {
     }
 
     /**
-     * Constructs a <code>SmscException</code> object with a
-     * <code>Throwable</code> cause.
+     * Constructs a <code>BaseException</code> object with a <code>Throwable</code> cause.
      * 
-     * @param th
-     *            the original cause
-     */
-    public SmscException(Throwable th) {
-        super(th.getMessage());
-    }
-
-    /**
-     * Constructs a <code>BaseException</code> object with a
-     * <code>Throwable</code> cause.
-     * @param msg A description of the exception
+     * @param msg
+     *            A description of the exception
      * 
      * @param th
      *            The original cause
@@ -70,12 +59,23 @@ public class SmscException extends Exception {
     }
 
     /**
+     * Constructs a <code>SmscException</code> object with a <code>Throwable</code> cause.
+     * 
+     * @param th
+     *            the original cause
+     */
+    public SmscException(Throwable th) {
+        super(th.getMessage());
+    }
+
+    /**
      * Get the root cause.
+     * 
      * @return The root cause
      * @deprecated Use {@link Exception#getCause()} instead
      */
     @Deprecated
     public Throwable getRootCause() {
-        return getCause();
+        return this.getCause();
     }
 }

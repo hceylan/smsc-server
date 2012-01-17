@@ -20,9 +20,8 @@
 package org.apache.smscserver.smsclet;
 
 /**
- * Represents a type of authentication request, typically anonymous or a
- * username and password combination
- *
+ * Represents a type of authentication request, typically anonymous or a username and password combination
+ * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public interface Authentication {

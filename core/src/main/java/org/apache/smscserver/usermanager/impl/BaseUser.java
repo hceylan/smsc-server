@@ -41,7 +41,7 @@ import org.apache.smscserver.smsclet.User;
  * <li>uploadrate</li>
  * <li>downloadrate</li>
  * </ul>
- *
+ * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 
@@ -69,109 +69,12 @@ public class BaseUser implements User {
      * Copy constructor.
      */
     public BaseUser(User user) {
-        name = user.getName();
-        password = user.getPassword();
-        authorities = user.getAuthorities();
-        maxIdleTimeSec = user.getMaxIdleTime();
-        homeDir = user.getHomeDirectory();
-        isEnabled = user.getEnabled();
-    }
-
-    /**
-     * Get the user name.
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Set user name.
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * Get the user password.
-     */
-    public String getPassword() {
-        return password;
-    }
-
-    /**
-     * Set user password.
-     */
-    public void setPassword(String pass) {
-        password = pass;
-    }
-
-    public List<Authority> getAuthorities() {
-        if (authorities != null) {
-            return Collections.unmodifiableList(authorities);
-        } else {
-            return null;
-        }
-    }
-
-    public void setAuthorities(List<Authority> authorities) {
-        if (authorities != null) {
-            this.authorities = Collections.unmodifiableList(authorities);
-        } else {
-            this.authorities = null;
-        }
-    }
-
-    /**
-     * Get the maximum idle time in second.
-     */
-    public int getMaxIdleTime() {
-        return maxIdleTimeSec;
-    }
-
-    /**
-     * Set the maximum idle time in second.
-     */
-    public void setMaxIdleTime(int idleSec) {
-        maxIdleTimeSec = idleSec;
-        if (maxIdleTimeSec < 0) {
-            maxIdleTimeSec = 0;
-        }
-    }
-
-    /**
-     * Get the user enable status.
-     */
-    public boolean getEnabled() {
-        return isEnabled;
-    }
-
-    /**
-     * Set the user enable status.
-     */
-    public void setEnabled(boolean enb) {
-        isEnabled = enb;
-    }
-
-    /**
-     * Get the user home directory.
-     */
-    public String getHomeDirectory() {
-        return homeDir;
-    }
-
-    /**
-     * Set the user home directory.
-     */
-    public void setHomeDirectory(String home) {
-        homeDir = home;
-    }
-
-    /**
-     * String representation.
-     */
-    @Override
-    public String toString() {
-        return name;
+        this.name = user.getName();
+        this.password = user.getPassword();
+        this.authorities = user.getAuthorities();
+        this.maxIdleTimeSec = user.getMaxIdleTime();
+        this.homeDir = user.getHomeDirectory();
+        this.isEnabled = user.getEnabled();
     }
 
     /**
@@ -179,12 +82,12 @@ public class BaseUser implements User {
      */
     public AuthorizationRequest authorize(AuthorizationRequest request) {
         // check for no authorities at all
-        if(authorities == null) {
+        if (this.authorities == null) {
             return null;
         }
-        
+
         boolean someoneCouldAuthorize = false;
-        for (Authority authority : authorities) {
+        for (Authority authority : this.authorities) {
             if (authority.canAuthorize(request)) {
                 someoneCouldAuthorize = true;
 
@@ -205,18 +108,115 @@ public class BaseUser implements User {
         }
     }
 
+    public List<Authority> getAuthorities() {
+        if (this.authorities != null) {
+            return Collections.unmodifiableList(this.authorities);
+        } else {
+            return null;
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
     public List<Authority> getAuthorities(Class<? extends Authority> clazz) {
         List<Authority> selected = new ArrayList<Authority>();
 
-        for (Authority authority : authorities) {
+        for (Authority authority : this.authorities) {
             if (authority.getClass().equals(clazz)) {
                 selected.add(authority);
             }
         }
 
         return selected;
+    }
+
+    /**
+     * Get the user enable status.
+     */
+    public boolean getEnabled() {
+        return this.isEnabled;
+    }
+
+    /**
+     * Get the user home directory.
+     */
+    public String getHomeDirectory() {
+        return this.homeDir;
+    }
+
+    /**
+     * Get the maximum idle time in second.
+     */
+    public int getMaxIdleTime() {
+        return this.maxIdleTimeSec;
+    }
+
+    /**
+     * Get the user name.
+     */
+    public String getName() {
+        return this.name;
+    }
+
+    /**
+     * Get the user password.
+     */
+    public String getPassword() {
+        return this.password;
+    }
+
+    public void setAuthorities(List<Authority> authorities) {
+        if (authorities != null) {
+            this.authorities = Collections.unmodifiableList(authorities);
+        } else {
+            this.authorities = null;
+        }
+    }
+
+    /**
+     * Set the user enable status.
+     */
+    public void setEnabled(boolean enb) {
+        this.isEnabled = enb;
+    }
+
+    /**
+     * Set the user home directory.
+     */
+    public void setHomeDirectory(String home) {
+        this.homeDir = home;
+    }
+
+    /**
+     * Set the maximum idle time in second.
+     */
+    public void setMaxIdleTime(int idleSec) {
+        this.maxIdleTimeSec = idleSec;
+        if (this.maxIdleTimeSec < 0) {
+            this.maxIdleTimeSec = 0;
+        }
+    }
+
+    /**
+     * Set user name.
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Set user password.
+     */
+    public void setPassword(String pass) {
+        this.password = pass;
+    }
+
+    /**
+     * String representation.
+     */
+    @Override
+    public String toString() {
+        return this.name;
     }
 }

@@ -34,11 +34,46 @@ import org.w3c.dom.Element;
 
 /**
  * Parses the SmscServer "commands" element into a Spring bean graph
- *
+ * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
-public class CommandFactoryBeanDefinitionParser extends
-        AbstractSingleBeanDefinitionParser {
+public class CommandFactoryBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doParse(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
+
+        BeanDefinitionBuilder factoryBuilder = BeanDefinitionBuilder.genericBeanDefinition(CommandFactoryFactory.class);
+
+        ManagedMap commands = new ManagedMap();
+
+        List<Element> childs = SpringUtil.getChildElements(element);
+
+        for (Element commandElm : childs) {
+            String name = commandElm.getAttribute("name");
+            Object bean = SpringUtil.parseSpringChildElement(commandElm, parserContext, builder);
+            commands.put(name, bean);
+        }
+
+        factoryBuilder.addPropertyValue("commandMap", commands);
+
+        if (StringUtils.hasText(element.getAttribute("use-default"))) {
+            factoryBuilder.addPropertyValue("useDefaultCommands", Boolean.valueOf(element.getAttribute("use-default")));
+        }
+
+        BeanDefinition factoryDefinition = factoryBuilder.getBeanDefinition();
+        String factoryId = parserContext.getReaderContext().generateBeanName(factoryDefinition);
+
+        BeanDefinitionHolder factoryHolder = new BeanDefinitionHolder(factoryDefinition, factoryId);
+        this.registerBeanDefinition(factoryHolder, parserContext.getRegistry());
+
+        // set the factory on the listener bean
+        builder.getRawBeanDefinition().setFactoryBeanName(factoryId);
+        builder.getRawBeanDefinition().setFactoryMethodName("createCommandFactory");
+
+    }
 
     /**
      * {@inheritDoc}
@@ -46,45 +81,5 @@ public class CommandFactoryBeanDefinitionParser extends
     @Override
     protected Class<? extends CommandFactory> getBeanClass(final Element element) {
         return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void doParse(final Element element,
-            final ParserContext parserContext,
-            final BeanDefinitionBuilder builder) {
-        
-        BeanDefinitionBuilder factoryBuilder = BeanDefinitionBuilder.genericBeanDefinition(CommandFactoryFactory.class);
-        
-        ManagedMap commands = new ManagedMap();
-
-        List<Element> childs = SpringUtil.getChildElements(element);
-
-        for (Element commandElm : childs) {
-            String name = commandElm.getAttribute("name");
-            Object bean = SpringUtil.parseSpringChildElement(commandElm,
-                    parserContext, builder);
-            commands.put(name, bean);
-        }
-
-        factoryBuilder.addPropertyValue("commandMap", commands);
-
-        if (StringUtils.hasText(element.getAttribute("use-default"))) {
-            factoryBuilder.addPropertyValue("useDefaultCommands", Boolean
-                    .valueOf(element.getAttribute("use-default")));
-        }
-        
-        BeanDefinition factoryDefinition = factoryBuilder.getBeanDefinition();
-        String factoryId = parserContext.getReaderContext().generateBeanName(factoryDefinition);
-        
-        BeanDefinitionHolder factoryHolder = new BeanDefinitionHolder(factoryDefinition, factoryId);
-        registerBeanDefinition(factoryHolder, parserContext.getRegistry());
-
-        // set the factory on the listener bean
-        builder.getRawBeanDefinition().setFactoryBeanName(factoryId);
-        builder.getRawBeanDefinition().setFactoryMethodName("createCommandFactory");
-
     }
 }

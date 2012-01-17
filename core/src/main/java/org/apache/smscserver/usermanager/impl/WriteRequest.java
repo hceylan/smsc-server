@@ -25,12 +25,12 @@ import org.apache.smscserver.smsclet.AuthorizationRequest;
  * <strong>Internal class, do not use directly.</strong>
  * 
  * Class representing a write request
- *
+ * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public class WriteRequest implements AuthorizationRequest {
 
-    private String file;
+    private final String file;
 
     /**
      * Request write access to the user home directory (/)
@@ -41,8 +41,7 @@ public class WriteRequest implements AuthorizationRequest {
     }
 
     /**
-     * Request write access to a file or directory relative to the user home
-     * directory
+     * Request write access to a file or directory relative to the user home directory
      * 
      * @param file
      */
@@ -56,7 +55,7 @@ public class WriteRequest implements AuthorizationRequest {
      * @return the file The file or directory
      */
     public String getFile() {
-        return file;
+        return this.file;
     }
 
 }

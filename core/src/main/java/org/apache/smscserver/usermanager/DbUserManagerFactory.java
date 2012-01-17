@@ -27,13 +27,13 @@ import org.apache.smscserver.usermanager.impl.DbUserManager;
 
 /**
  * Factory for database backed {@link UserManager} instances.
- *
+ * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public class DbUserManagerFactory implements UserManagerFactory {
 
     private String adminName = "admin";
-    
+
     private String insertUserStmt;
 
     private String updateUserStmt;
@@ -51,72 +51,136 @@ public class DbUserManagerFactory implements UserManagerFactory {
     private DataSource dataSource;
 
     private PasswordEncryptor passwordEncryptor = new Md5PasswordEncryptor();
-    
+
     public UserManager createUserManager() {
-        if (dataSource == null) {
-            throw new SmscServerConfigurationException(
-                    "Required data source not provided");
+        if (this.dataSource == null) {
+            throw new SmscServerConfigurationException("Required data source not provided");
         }
-        if (insertUserStmt == null) {
-            throw new SmscServerConfigurationException(
-                    "Required insert user SQL statement not provided");
+        if (this.insertUserStmt == null) {
+            throw new SmscServerConfigurationException("Required insert user SQL statement not provided");
         }
-        if (updateUserStmt == null) {
-            throw new SmscServerConfigurationException(
-                    "Required update user SQL statement not provided");
+        if (this.updateUserStmt == null) {
+            throw new SmscServerConfigurationException("Required update user SQL statement not provided");
         }
-        if (deleteUserStmt == null) {
-            throw new SmscServerConfigurationException(
-                    "Required delete user SQL statement not provided");
+        if (this.deleteUserStmt == null) {
+            throw new SmscServerConfigurationException("Required delete user SQL statement not provided");
         }
-        if (selectUserStmt == null) {
-            throw new SmscServerConfigurationException(
-                    "Required select user SQL statement not provided");
+        if (this.selectUserStmt == null) {
+            throw new SmscServerConfigurationException("Required select user SQL statement not provided");
         }
-        if (selectAllStmt == null) {
-            throw new SmscServerConfigurationException(
-                    "Required select all users SQL statement not provided");
+        if (this.selectAllStmt == null) {
+            throw new SmscServerConfigurationException("Required select all users SQL statement not provided");
         }
-        if (isAdminStmt == null) {
-            throw new SmscServerConfigurationException(
-                    "Required is admin user SQL statement not provided");
+        if (this.isAdminStmt == null) {
+            throw new SmscServerConfigurationException("Required is admin user SQL statement not provided");
         }
-        if (authenticateStmt == null) {
-            throw new SmscServerConfigurationException(
-                    "Required authenticate user SQL statement not provided");
+        if (this.authenticateStmt == null) {
+            throw new SmscServerConfigurationException("Required authenticate user SQL statement not provided");
         }
-        
-        return new DbUserManager(dataSource, selectAllStmt, selectUserStmt, 
-                insertUserStmt, updateUserStmt, deleteUserStmt, authenticateStmt, 
-                isAdminStmt, passwordEncryptor, adminName);
-    }
-    
-    /**
-     * Get the admin name.
-     * @return The admin user name
-     */
-    public String getAdminName() {
-        return adminName;
+
+        return new DbUserManager(this.dataSource, this.selectAllStmt, this.selectUserStmt, this.insertUserStmt,
+                this.updateUserStmt, this.deleteUserStmt, this.authenticateStmt, this.isAdminStmt,
+                this.passwordEncryptor, this.adminName);
     }
 
     /**
-     * Set the name to use as the administrator of the server. The default value
-     * is "admin".
+     * Get the admin name.
      * 
-     * @param adminName
-     *            The administrator user name
+     * @return The admin user name
      */
-    public void setAdminName(String adminName) {
-        this.adminName = adminName;
+    public String getAdminName() {
+        return this.adminName;
     }
-    
+
     /**
      * Retrive the data source used by the user manager
      * 
      * @return The current data source
      */
     public DataSource getDataSource() {
-        return dataSource;
+        return this.dataSource;
+    }
+
+    /**
+     * Retrieve the password encryptor used for this user manager
+     * 
+     * @return The password encryptor. Default to {@link Md5PasswordEncryptor} if no other has been provided
+     */
+    public PasswordEncryptor getPasswordEncryptor() {
+        return this.passwordEncryptor;
+    }
+
+    /**
+     * Get the SQL SELECT statement used to find whether an user is admin or not.
+     * 
+     * @return The SQL statement
+     */
+    public String getSqlUserAdmin() {
+        return this.isAdminStmt;
+    }
+
+    /**
+     * Get the SQL SELECT statement used to authenticate user.
+     * 
+     * @return The SQL statement
+     */
+    public String getSqlUserAuthenticate() {
+        return this.authenticateStmt;
+    }
+
+    /**
+     * Get the SQL DELETE statement used to delete an existing user.
+     * 
+     * @return The SQL statement
+     */
+    public String getSqlUserDelete() {
+        return this.deleteUserStmt;
+    }
+
+    /**
+     * Get the SQL INSERT statement used to add a new user.
+     * 
+     * @return The SQL statement
+     */
+    public String getSqlUserInsert() {
+        return this.insertUserStmt;
+    }
+
+    /**
+     * Get the SQL SELECT statement used to select an existing user.
+     * 
+     * @return The SQL statement
+     */
+    public String getSqlUserSelect() {
+        return this.selectUserStmt;
+    }
+
+    /**
+     * Get the SQL SELECT statement used to select all user ids.
+     * 
+     * @return The SQL statement
+     */
+    public String getSqlUserSelectAll() {
+        return this.selectAllStmt;
+    }
+
+    /**
+     * Get the SQL UPDATE statement used to update an existing user.
+     * 
+     * @return The SQL statement
+     */
+    public String getSqlUserUpdate() {
+        return this.updateUserStmt;
+    }
+
+    /**
+     * Set the name to use as the administrator of the server. The default value is "admin".
+     * 
+     * @param adminName
+     *            The administrator user name
+     */
+    public void setAdminName(String adminName) {
+        this.adminName = adminName;
     }
 
     /**
@@ -130,161 +194,86 @@ public class DbUserManagerFactory implements UserManagerFactory {
     }
 
     /**
-     * Get the SQL INSERT statement used to add a new user.
+     * Set the password encryptor to use for this user manager
      * 
-     * @return The SQL statement
+     * @param passwordEncryptor
+     *            The password encryptor
      */
-    public String getSqlUserInsert() {
-        return insertUserStmt;
+    public void setPasswordEncryptor(PasswordEncryptor passwordEncryptor) {
+        this.passwordEncryptor = passwordEncryptor;
     }
 
     /**
-     * Set the SQL INSERT statement used to add a new user. All the dynamic
-     * values will be replaced during runtime.
-     * 
-     * @param sql
-     *            The SQL statement
-     */
-    public void setSqlUserInsert(String sql) {
-        insertUserStmt = sql;
-    }
-
-    /**
-     * Get the SQL DELETE statement used to delete an existing user.
-     * 
-     * @return The SQL statement
-     */
-    public String getSqlUserDelete() {
-        return deleteUserStmt;
-    }
-
-    /**
-     * Set the SQL DELETE statement used to delete an existing user. All the
-     * dynamic values will be replaced during runtime.
-     * 
-     * @param sql
-     *            The SQL statement
-     */
-    public void setSqlUserDelete(String sql) {
-        deleteUserStmt = sql;
-    }
-
-    /**
-     * Get the SQL UPDATE statement used to update an existing user.
-     * 
-     * @return The SQL statement
-     */
-    public String getSqlUserUpdate() {
-        return updateUserStmt;
-    }
-
-    /**
-     * Set the SQL UPDATE statement used to update an existing user. All the
-     * dynamic values will be replaced during runtime.
-     * 
-     * @param sql
-     *            The SQL statement
-     */
-    public void setSqlUserUpdate(String sql) {
-        updateUserStmt = sql;
-    }
-
-    /**
-     * Get the SQL SELECT statement used to select an existing user.
-     * 
-     * @return The SQL statement
-     */
-    public String getSqlUserSelect() {
-        return selectUserStmt;
-    }
-
-    /**
-     * Set the SQL SELECT statement used to select an existing user. All the
-     * dynamic values will be replaced during runtime.
-     * 
-     * @param sql
-     *            The SQL statement
-     */
-    public void setSqlUserSelect(String sql) {
-        selectUserStmt = sql;
-    }
-
-    /**
-     * Get the SQL SELECT statement used to select all user ids.
-     * 
-     * @return The SQL statement
-     */
-    public String getSqlUserSelectAll() {
-        return selectAllStmt;
-    }
-
-    /**
-     * Set the SQL SELECT statement used to select all user ids. All the dynamic
-     * values will be replaced during runtime.
-     * 
-     * @param sql
-     *            The SQL statement
-     */
-    public void setSqlUserSelectAll(String sql) {
-        selectAllStmt = sql;
-    }
-
-    /**
-     * Get the SQL SELECT statement used to authenticate user.
-     * 
-     * @return The SQL statement
-     */
-    public String getSqlUserAuthenticate() {
-        return authenticateStmt;
-    }
-
-    /**
-     * Set the SQL SELECT statement used to authenticate user. All the dynamic
-     * values will be replaced during runtime.
-     * 
-     * @param sql
-     *            The SQL statement
-     */
-    public void setSqlUserAuthenticate(String sql) {
-        authenticateStmt = sql;
-    }
-
-    /**
-     * Get the SQL SELECT statement used to find whether an user is admin or
-     * not.
-     * 
-     * @return The SQL statement
-     */
-    public String getSqlUserAdmin() {
-        return isAdminStmt;
-    }
-
-    /**
-     * Set the SQL SELECT statement used to find whether an user is admin or
-     * not. All the dynamic values will be replaced during runtime.
+     * Set the SQL SELECT statement used to find whether an user is admin or not. All the dynamic values will be
+     * replaced during runtime.
      * 
      * @param sql
      *            The SQL statement
      */
     public void setSqlUserAdmin(String sql) {
-        isAdminStmt = sql;
+        this.isAdminStmt = sql;
     }
 
     /**
-     * Retrieve the password encryptor used for this user manager
-     * @return The password encryptor. Default to {@link Md5PasswordEncryptor}
-     *  if no other has been provided
-     */    
-    public PasswordEncryptor getPasswordEncryptor() {
-        return passwordEncryptor;
-    }
-
-
-    /**
-     * Set the password encryptor to use for this user manager
-     * @param passwordEncryptor The password encryptor
+     * Set the SQL SELECT statement used to authenticate user. All the dynamic values will be replaced during runtime.
+     * 
+     * @param sql
+     *            The SQL statement
      */
-    public void setPasswordEncryptor(PasswordEncryptor passwordEncryptor) {
-        this.passwordEncryptor = passwordEncryptor;
+    public void setSqlUserAuthenticate(String sql) {
+        this.authenticateStmt = sql;
+    }
+
+    /**
+     * Set the SQL DELETE statement used to delete an existing user. All the dynamic values will be replaced during
+     * runtime.
+     * 
+     * @param sql
+     *            The SQL statement
+     */
+    public void setSqlUserDelete(String sql) {
+        this.deleteUserStmt = sql;
+    }
+
+    /**
+     * Set the SQL INSERT statement used to add a new user. All the dynamic values will be replaced during runtime.
+     * 
+     * @param sql
+     *            The SQL statement
+     */
+    public void setSqlUserInsert(String sql) {
+        this.insertUserStmt = sql;
+    }
+
+    /**
+     * Set the SQL SELECT statement used to select an existing user. All the dynamic values will be replaced during
+     * runtime.
+     * 
+     * @param sql
+     *            The SQL statement
+     */
+    public void setSqlUserSelect(String sql) {
+        this.selectUserStmt = sql;
+    }
+
+    /**
+     * Set the SQL SELECT statement used to select all user ids. All the dynamic values will be replaced during runtime.
+     * 
+     * @param sql
+     *            The SQL statement
+     */
+    public void setSqlUserSelectAll(String sql) {
+        this.selectAllStmt = sql;
+    }
+
+    /**
+     * Set the SQL UPDATE statement used to update an existing user. All the dynamic values will be replaced during
+     * runtime.
+     * 
+     * @param sql
+     *            The SQL statement
+     */
+    public void setSqlUserUpdate(String sql) {
+        this.updateUserStmt = sql;
     }
 }

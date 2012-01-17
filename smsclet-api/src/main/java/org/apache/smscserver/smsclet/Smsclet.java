@@ -24,7 +24,7 @@ import java.io.IOException;
 /**
  * Defines methods that all smsclets must implement.
  * 
- * A smsclet is a small Java program that runs within an FTP server. Smsclets receive and respond to requests from FTP
+ * A smsclet is a small Java program that runs within an SMSC server. Smsclets receive and respond to requests from SMSC
  * clients.
  * 
  * This interface defines methods to initialize a smsclet, to service requests, and to remove a smsclet from the server.

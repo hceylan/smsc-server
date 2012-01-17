@@ -31,20 +31,19 @@ import org.apache.mina.filter.codec.textline.TextLineDecoder;
  * <strong>Internal class, do not use directly.</strong>
  * 
  * Factory for creating decoders and encoders
- *
+ * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public class SmscServerProtocolCodecFactory implements ProtocolCodecFactory {
-    private final ProtocolDecoder decoder = new TextLineDecoder(Charset
-            .forName("UTF-8"));
+    private final ProtocolDecoder decoder = new TextLineDecoder(Charset.forName("UTF-8"));
 
     private final ProtocolEncoder encoder = new SmscResponseEncoder();
 
     public ProtocolDecoder getDecoder(IoSession session) throws Exception {
-        return decoder;
+        return this.decoder;
     }
 
     public ProtocolEncoder getEncoder(IoSession session) throws Exception {
-        return encoder;
+        return this.encoder;
     }
 }

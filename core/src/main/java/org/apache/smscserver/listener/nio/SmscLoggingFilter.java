@@ -27,8 +27,8 @@ import org.slf4j.LoggerFactory;
 /**
  * <strong>Internal class, do not use directly.</strong>
  * 
- * Specialized @see {@link LoggingFilter} that optionally masks FTP passwords.
- *
+ * Specialized @see {@link LoggingFilter} that optionally masks SMSC passwords.
+ * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public class SmscLoggingFilter extends LoggingFilter {
@@ -36,7 +36,7 @@ public class SmscLoggingFilter extends LoggingFilter {
     private boolean maskPassword = true;
 
     private final Logger logger;
-    
+
     /**
      * @see LoggingFilter#LoggingFilter()
      */
@@ -56,21 +56,28 @@ public class SmscLoggingFilter extends LoggingFilter {
      */
     public SmscLoggingFilter(String name) {
         super(name);
-        
-        logger = LoggerFactory.getLogger(name);
+
+        this.logger = LoggerFactory.getLogger(name);
     }
 
     /**
-     * @see LoggingFilter#messageReceived(org.apache.mina.core.filterchain.IoFilter.NextFilter,
-     *      IoSession, Object)
+     * Are password masked?
+     * 
+     * @return true if passwords are masked
+     */
+    public boolean isMaskPassword() {
+        return this.maskPassword;
+    }
+
+    /**
+     * @see LoggingFilter#messageReceived(org.apache.mina.core.filterchain.IoFilter.NextFilter, IoSession, Object)
      */
     @Override
-    public void messageReceived(NextFilter nextFilter, IoSession session,
-            Object message) throws Exception {
+    public void messageReceived(NextFilter nextFilter, IoSession session, Object message) throws Exception {
         String request = (String) message;
 
         String logMessage;
-        if (maskPassword) {
+        if (this.maskPassword) {
 
             if (request.trim().toUpperCase().startsWith("PASS ")) {
                 logMessage = "PASS *****";
@@ -81,17 +88,8 @@ public class SmscLoggingFilter extends LoggingFilter {
             logMessage = request;
         }
 
-        logger.info("RECEIVED: {}", logMessage);
+        this.logger.info("RECEIVED: {}", logMessage);
         nextFilter.messageReceived(session, message);
-    }
-
-    /**
-     * Are password masked?
-     * 
-     * @return true if passwords are masked
-     */
-    public boolean isMaskPassword() {
-        return maskPassword;
     }
 
     /**

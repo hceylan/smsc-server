@@ -26,14 +26,14 @@ import org.apache.smscserver.smsclet.AuthorizationRequest;
  * <strong>Internal class, do not use directly.</strong>
  * 
  * The max upload rate permission
- *
+ * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public class TransferRatePermission implements Authority {
 
-    private int maxDownloadRate;
+    private final int maxDownloadRate;
 
-    private int maxUploadRate;
+    private final int maxUploadRate;
 
     public TransferRatePermission(int maxDownloadRate, int maxUploadRate) {
         this.maxDownloadRate = maxDownloadRate;
@@ -47,8 +47,8 @@ public class TransferRatePermission implements Authority {
         if (request instanceof TransferRateRequest) {
             TransferRateRequest transferRateRequest = (TransferRateRequest) request;
 
-            transferRateRequest.setMaxDownloadRate(maxDownloadRate);
-            transferRateRequest.setMaxUploadRate(maxUploadRate);
+            transferRateRequest.setMaxDownloadRate(this.maxDownloadRate);
+            transferRateRequest.setMaxUploadRate(this.maxUploadRate);
 
             return transferRateRequest;
         } else {

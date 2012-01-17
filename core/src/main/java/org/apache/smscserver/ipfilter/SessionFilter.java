@@ -35,8 +35,7 @@ public interface SessionFilter {
      * 
      * @param session
      *            the session to check
-     * @return <code>true</code>, if the given session is accepted by this
-     *         filter; <code>false</code>, otherwise.
+     * @return <code>true</code>, if the given session is accepted by this filter; <code>false</code>, otherwise.
      */
     public boolean accept(IoSession session);
 

@@ -42,7 +42,7 @@ public class Version {
         InputStream in = null;
 
         try {
-            in = Version.class.getClassLoader().getResourceAsStream("org/apache/smscserver/ftpserver.properties");
+            in = Version.class.getClassLoader().getResourceAsStream("org/apache/smscserver/smscserver.properties");
             props.load(in);
             return props.getProperty("smscserver.version");
         } catch (IOException e) {

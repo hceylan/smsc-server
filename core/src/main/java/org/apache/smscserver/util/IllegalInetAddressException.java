@@ -22,9 +22,8 @@ package org.apache.smscserver.util;
 /**
  * <strong>Internal class, do not use directly.</strong>
  * 
- * Thrown if the provided string representation does not match a valid IP
- * address
- *
+ * Thrown if the provided string representation does not match a valid IP address
+ * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public class IllegalInetAddressException extends IllegalArgumentException {

@@ -24,17 +24,16 @@ import org.apache.smscserver.ssl.SslConfigurationFactory;
 import org.springframework.beans.factory.FactoryBean;
 
 /**
- * Spring {@link FactoryBean} which extends {@link SslConfigurationFactory}
- * making it easier to use Spring's standard &lt;bean&gt; tag instead of 
- * SmscServer's custom XML tags to configure things.
- *
+ * Spring {@link FactoryBean} which extends {@link SslConfigurationFactory} making it easier to use Spring's standard
+ * &lt;bean&gt; tag instead of SmscServer's custom XML tags to configure things.
+ * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  * @see SslConfigurationFactory
  */
 public class SslConfigurationFactoryBean extends SslConfigurationFactory implements FactoryBean {
 
     public Object getObject() throws Exception {
-        return createSslConfiguration();
+        return this.createSslConfiguration();
     }
 
     public Class<?> getObjectType() {
@@ -44,5 +43,5 @@ public class SslConfigurationFactoryBean extends SslConfigurationFactory impleme
     public boolean isSingleton() {
         return false;
     }
-    
+
 }

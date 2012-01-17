@@ -21,80 +21,96 @@ package org.apache.smscserver.smsclet;
 
 /**
  * User manager interface.
- *
+ * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public interface UserManager {
 
     /**
-     * Get user by name.
-     *
-     * @param username the name to search for.
-     * @throws SmscException when the UserManager can't fulfill the request.
-     * @return the user with the specified name, or null if a such user does
-     *         not exist.
+     * Authenticate user
+     * 
+     * @param authentication
+     *            The {@link Authentication} that proves the users identity
+     * @return the authenticated account.
+     * @throws AuthenticationFailedException
+     * @throws SmscException
+     *             when the UserManager can't fulfill the request.
      */
-    User getUserByName(String username) throws SmscException;
-
-    /**
-     * Get all user names in the system.
-     *
-     * @throws SmscException when the UserManager can't fulfill the request.
-     * @return an array of username strings, note that the result should never
-     *         be null, if there is no users the result is an empty array.
-     */
-    String[] getAllUserNames() throws SmscException;
+    User authenticate(Authentication authentication) throws AuthenticationFailedException;
 
     /**
      * Delete the user from the system.
-     * @param username The name of the {@link User} to delete
-     *
-     * @throws SmscException when the UserManager can't fulfill the request.
+     * 
+     * @param username
+     *            The name of the {@link User} to delete
+     * 
+     * @throws SmscException
+     *             when the UserManager can't fulfill the request.
      * @throws UnsupportedOperationException
      *             if UserManager in read-only mode
      */
     void delete(String username) throws SmscException;
 
     /**
-     * Save user. If a new user, create it else update the existing user.
-     *
-     * @param user the Uset to save
-     * @throws SmscException when the UserManager can't fulfill the request.
-     * @throws UnsupportedOperationException
-     *             if UserManager in read-only mode
-     */
-    void save(User user) throws SmscException;
-
-    /**
      * Check if the user exists.
-     * @param username the name of the user to check.
+     * 
+     * @param username
+     *            the name of the user to check.
      * @return true if the user exist, false otherwise.
-     * @throws SmscException 
+     * @throws SmscException
      */
     boolean doesExist(String username) throws SmscException;
 
     /**
-     * Authenticate user
-     * @param authentication The {@link Authentication} that proves the users identity
-     * @return the authenticated account.
-     * @throws AuthenticationFailedException 
-     * @throws SmscException when the UserManager can't fulfill the request.
-     */
-    User authenticate(Authentication authentication)
-            throws AuthenticationFailedException;
-
-    /**
      * Get admin user name
+     * 
      * @return the admin user name
-     * @throws SmscException when the UserManager can't fulfill the request.
+     * @throws SmscException
+     *             when the UserManager can't fulfill the request.
      */
     String getAdminName() throws SmscException;
 
     /**
+     * Get all user names in the system.
+     * 
+     * @throws SmscException
+     *             when the UserManager can't fulfill the request.
+     * @return an array of username strings, note that the result should never be null, if there is no users the result
+     *         is an empty array.
+     */
+    String[] getAllUserNames() throws SmscException;
+
+    /**
+     * Get user by name.
+     * 
+     * @param username
+     *            the name to search for.
+     * @throws SmscException
+     *             when the UserManager can't fulfill the request.
+     * @return the user with the specified name, or null if a such user does not exist.
+     */
+    User getUserByName(String username) throws SmscException;
+
+    /**
      * Check if the user is admin.
-     * @param username The name of the {@link User} to check
+     * 
+     * @param username
+     *            The name of the {@link User} to check
      * @return true if user with this login is administrator
-     * @throws SmscException when the UserManager can't fulfill the request.
+     * @throws SmscException
+     *             when the UserManager can't fulfill the request.
      */
     boolean isAdmin(String username) throws SmscException;
+
+    /**
+     * Save user. If a new user, create it else update the existing user.
+     * 
+     * @param user
+     *            the Uset to save
+     * @throws SmscException
+     *             when the UserManager can't fulfill the request.
+     * @throws UnsupportedOperationException
+     *             if UserManager in read-only mode
+     */
+    void save(User user) throws SmscException;
 }

@@ -24,7 +24,7 @@ import org.apache.smscserver.usermanager.impl.UserMetadata;
 
 /**
  * Class representing an anonymous authentication attempt
- *
+ * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public class AnonymousAuthentication implements Authentication {
@@ -54,7 +54,7 @@ public class AnonymousAuthentication implements Authentication {
      * @return The user metadata
      */
     public UserMetadata getUserMetadata() {
-        return userMetadata;
+        return this.userMetadata;
     }
 
 }

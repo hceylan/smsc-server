@@ -22,14 +22,13 @@ package org.apache.smscserver.util;
 /**
  * <strong>Internal class, do not use directly.</strong>
  * 
- * This is a simplified regular character mattching class. Supports *?^[]-
- * pattern characters.
- *
+ * This is a simplified regular character mattching class. Supports *?^[]- pattern characters.
+ * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public class RegularExpr {
 
-    private char[] pattern;
+    private final char[] pattern;
 
     /**
      * Constructor.
@@ -42,19 +41,6 @@ public class RegularExpr {
     }
 
     /**
-     * Compare string with a regular expression.
-     */
-    public boolean isMatch(String name) {
-
-        // common pattern - *
-        if ((pattern.length == 1) && (pattern[0] == '*')) {
-            return true;
-        }
-
-        return isMatch(name.toCharArray(), 0, 0);
-    }
-
-    /**
      * Is a match?
      */
     private boolean isMatch(char[] strName, int strIndex, int patternIndex) {
@@ -63,11 +49,11 @@ public class RegularExpr {
 
             // no more pattern characters
             // if no more strName characters - return true
-            if (patternIndex >= pattern.length) {
+            if (patternIndex >= this.pattern.length) {
                 return strIndex == strName.length;
             }
 
-            char pc = pattern[patternIndex++];
+            char pc = this.pattern[patternIndex++];
             switch (pc) {
 
             // Match a single character in the range
@@ -90,10 +76,10 @@ public class RegularExpr {
 
                     // single character match
                     // no more pattern character - error condition.
-                    if (patternIndex >= pattern.length) {
+                    if (patternIndex >= this.pattern.length) {
                         return false;
                     }
-                    pc = pattern[patternIndex++];
+                    pc = this.pattern[patternIndex++];
 
                     // end character - break out the loop
                     // if end bracket is the first character - always a match.
@@ -122,12 +108,12 @@ public class RegularExpr {
                     if (pc == '-') {
 
                         // pattern string is [a- error condition.
-                        if (patternIndex >= pattern.length) {
+                        if (patternIndex >= this.pattern.length) {
                             return false;
                         }
 
                         // read the high range character and compare.
-                        pc = pattern[patternIndex++];
+                        pc = this.pattern[patternIndex++];
                         bMatch = (fc >= lastc) && (fc <= pc);
                         lastc = pc;
                     }
@@ -158,13 +144,13 @@ public class RegularExpr {
             case '*':
 
                 // no more string character remaining - returns true
-                if (patternIndex >= pattern.length) {
+                if (patternIndex >= this.pattern.length) {
                     return true;
                 }
 
                 // compare rest of the string
                 do {
-                    if (isMatch(strName, strIndex++, patternIndex)) {
+                    if (this.isMatch(strName, strIndex++, patternIndex)) {
                         return true;
                     }
                 } while (strIndex < strName.length);
@@ -198,6 +184,19 @@ public class RegularExpr {
                 break;
             }
         }
+    }
+
+    /**
+     * Compare string with a regular expression.
+     */
+    public boolean isMatch(String name) {
+
+        // common pattern - *
+        if ((this.pattern.length == 1) && (this.pattern[0] == '*')) {
+            return true;
+        }
+
+        return this.isMatch(name.toCharArray(), 0, 0);
     }
 
 }

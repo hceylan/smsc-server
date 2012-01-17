@@ -24,17 +24,16 @@ import org.apache.smscserver.SmscServerFactory;
 import org.springframework.beans.factory.FactoryBean;
 
 /**
- * Spring {@link FactoryBean} which extends {@link SmscServerFactory}
- * making it easier to use Spring's standard &lt;bean&gt; tag instead of 
- * SmscServer's custom XML tags to configure things.
- *
+ * Spring {@link FactoryBean} which extends {@link SmscServerFactory} making it easier to use Spring's standard
+ * &lt;bean&gt; tag instead of SmscServer's custom XML tags to configure things.
+ * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  * @see SmscServerFactory
  */
 public class SmscServerFactoryBean extends SmscServerFactory implements FactoryBean {
 
     public Object getObject() throws Exception {
-        return createServer();
+        return this.createServer();
     }
 
     public Class<?> getObjectType() {

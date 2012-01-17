@@ -27,7 +27,7 @@ import org.apache.smscserver.usermanager.impl.PropertiesUserManager;
 
 /**
  * Factory for the properties file based <code>UserManager</code> implementation.
- *
+ * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public class PropertiesUserManagerFactory implements UserManagerFactory {
@@ -44,27 +44,52 @@ public class PropertiesUserManagerFactory implements UserManagerFactory {
      * Creates a {@link PropertiesUserManager} instance based on the provided configuration
      */
     public UserManager createUserManager() {
-        if (userDataURL != null) {
-            return new PropertiesUserManager(passwordEncryptor, userDataURL,
-                    adminName);
+        if (this.userDataURL != null) {
+            return new PropertiesUserManager(this.passwordEncryptor, this.userDataURL, this.adminName);
         } else {
 
-            return new PropertiesUserManager(passwordEncryptor, userDataFile,
-                    adminName);
+            return new PropertiesUserManager(this.passwordEncryptor, this.userDataFile, this.adminName);
         }
     }
 
     /**
      * Get the admin name.
+     * 
      * @return The admin user name
      */
     public String getAdminName() {
-        return adminName;
+        return this.adminName;
     }
 
     /**
-     * Set the name to use as the administrator of the server. The default value
-     * is "admin".
+     * Retrieve the file used to load and store users
+     * 
+     * @return The file
+     */
+    public File getFile() {
+        return this.userDataFile;
+    }
+
+    /**
+     * Retrieve the password encryptor used by user managers created by this factory
+     * 
+     * @return The password encryptor. Default to {@link Md5PasswordEncryptor} if no other has been provided
+     */
+    public PasswordEncryptor getPasswordEncryptor() {
+        return this.passwordEncryptor;
+    }
+
+    /**
+     * Retrieve the URL used to load and store users
+     * 
+     * @return The {@link URL}
+     */
+    public URL getUrl() {
+        return this.userDataURL;
+    }
+
+    /**
+     * Set the name to use as the administrator of the server. The default value is "admin".
      * 
      * @param adminName
      *            The administrator user name
@@ -74,15 +99,7 @@ public class PropertiesUserManagerFactory implements UserManagerFactory {
     }
 
     /**
-     * Retrieve the file used to load and store users
-     * @return The file
-     */
-    public File getFile() {
-        return userDataFile;
-    }
-
-    /**
-     * Set the file used to store and read users. 
+     * Set the file used to store and read users.
      * 
      * @param propFile
      *            A file containing users
@@ -92,37 +109,22 @@ public class PropertiesUserManagerFactory implements UserManagerFactory {
     }
 
     /**
-     * Retrieve the URL used to load and store users
-     * @return The {@link URL}
+     * Set the password encryptor to use by user managers created by this factory
+     * 
+     * @param passwordEncryptor
+     *            The password encryptor
      */
-    public URL getUrl() {
-        return userDataURL;
+    public void setPasswordEncryptor(PasswordEncryptor passwordEncryptor) {
+        this.passwordEncryptor = passwordEncryptor;
     }
 
     /**
-     * Set the URL used to store and read users. 
+     * Set the URL used to store and read users.
      * 
      * @param userDataURL
      *            A {@link URL} containing users
      */
     public void setUrl(URL userDataURL) {
         this.userDataURL = userDataURL;
-    }
-    
-    /**
-     * Retrieve the password encryptor used by user managers created by this factory
-     * @return The password encryptor. Default to {@link Md5PasswordEncryptor}
-     *  if no other has been provided
-     */
-    public PasswordEncryptor getPasswordEncryptor() {
-        return passwordEncryptor;
-    }
-
-    /**
-     * Set the password encryptor to use by user managers created by this factory
-     * @param passwordEncryptor The password encryptor
-     */
-    public void setPasswordEncryptor(PasswordEncryptor passwordEncryptor) {
-        this.passwordEncryptor = passwordEncryptor;
     }
 }

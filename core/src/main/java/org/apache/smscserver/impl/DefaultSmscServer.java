@@ -179,7 +179,7 @@ public class DefaultSmscServer implements SmscServer {
 
             this.started = true;
 
-            this.LOG.info("FTP server started");
+            this.LOG.info("SMSC server started");
         } catch (Exception e) {
             // must close listeners that we were able to start
             for (Listener listener : startedListeners) {

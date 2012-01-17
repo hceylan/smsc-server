@@ -36,10 +36,34 @@ import org.w3c.dom.NodeList;
 
 /**
  * Various util methods for the Spring config parsing and configuration
- *
+ * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public class SpringUtil {
+
+    /**
+     * Get the first child element matching the local name and namespace
+     * 
+     * @param parent
+     *            The element for which to locate the child
+     * @param ns
+     *            The namespace to match, or null for any namespace
+     * @param localName
+     *            The local name to match, or null for any local name
+     * @return The first child matching the criteria
+     */
+    public static Element getChildElement(final Element parent, final String ns, final String localName) {
+        List<Element> elements = SpringUtil.getChildElements(parent);
+
+        for (Element element : elements) {
+            if (((ns == null) || (ns.equals(element.getNamespaceURI()) && ((localName == null) || localName
+                    .equals(element.getLocalName()))))) {
+                return element;
+            }
+        }
+
+        return null;
+    }
 
     /**
      * Get all child elements for the element
@@ -63,7 +87,7 @@ public class SpringUtil {
     }
 
     /**
-     * Get the first child element matching the local name and namespace
+     * Get the text context of first child element matching the local name and namespace
      * 
      * @param parent
      *            The element for which to locate the child
@@ -71,44 +95,14 @@ public class SpringUtil {
      *            The namespace to match, or null for any namespace
      * @param localName
      *            The local name to match, or null for any local name
-     * @return The first child matching the criteria
+     * @return The text content of the first child matching the criteria or null if element not found
      */
-    public static Element getChildElement(final Element parent,
-            final String ns, final String localName) {
-        List<Element> elements = getChildElements(parent);
+    public static String getChildElementText(final Element parent, final String ns, final String localName) {
+        List<Element> elements = SpringUtil.getChildElements(parent);
 
         for (Element element : elements) {
-            if ((ns == null || ns.equals(element.getNamespaceURI())
-                    && (localName == null || localName.equals(element
-                            .getLocalName())))) {
-                return element;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Get the text context of first child element matching the local name and
-     * namespace
-     * 
-     * @param parent
-     *            The element for which to locate the child
-     * @param ns
-     *            The namespace to match, or null for any namespace
-     * @param localName
-     *            The local name to match, or null for any local name
-     * @return The text content of the first child matching the criteria or null
-     *         if element not found
-     */
-    public static String getChildElementText(final Element parent,
-            final String ns, final String localName) {
-        List<Element> elements = getChildElements(parent);
-
-        for (Element element : elements) {
-            if ((ns == null || ns.equals(element.getNamespaceURI())
-                    && (localName == null || localName.equals(element
-                            .getLocalName())))) {
+            if (((ns == null) || (ns.equals(element.getNamespaceURI()) && ((localName == null) || localName
+                    .equals(element.getLocalName()))))) {
                 return DomUtils.getTextValue(element);
             }
         }
@@ -117,37 +111,8 @@ public class SpringUtil {
     }
 
     /**
-     * Parse specific Spring elements, bean and ref
-     * 
-     * @param parent
-     *            The element in which we will look for Spring elements
-     * @param parserContext
-     *            The Spring parser context
-     * @param builder
-     *            The Spring bean definition builder
-     * @return The Spring bean definition
-     */
-    public static Object parseSpringChildElement(final Element parent,
-            final ParserContext parserContext,
-            final BeanDefinitionBuilder builder) {
-        Element springElm = getChildElement(parent, null, null);
-
-        String ln = springElm.getLocalName();
-        if ("bean".equals(ln)) {
-            return parserContext.getDelegate().parseBeanDefinitionElement(
-                    springElm, builder.getBeanDefinition());
-        } else if ("ref".equals(ln)) {
-            return parserContext.getDelegate().parsePropertySubElement(
-                    springElm, builder.getBeanDefinition());
-        } else {
-            throw new SmscServerConfigurationException("Unknown spring element "
-                    + ln);
-        }
-    }
-
-    /**
-     * Parses a attribute value into a boolean. If the attribute is missing or
-     * has no content, a default value is returned
+     * Parses a attribute value into a boolean. If the attribute is missing or has no content, a default value is
+     * returned
      * 
      * @param parent
      *            The element
@@ -157,65 +122,11 @@ public class SpringUtil {
      *            The default value
      * @return The value, or the default value
      */
-    public static boolean parseBoolean(final Element parent,
-            final String attrName, final boolean defaultValue) {
+    public static boolean parseBoolean(final Element parent, final String attrName, final boolean defaultValue) {
         if (StringUtils.hasText(parent.getAttribute(attrName))) {
             return Boolean.parseBoolean(parent.getAttribute(attrName));
         }
         return defaultValue;
-    }
-
-    /**
-     * Parses a attribute value into an integer.
-     * 
-     * @param parent
-     *            The element
-     * @param attrName
-     *            The attribute name
-     * @return The value
-     * @throws NumberFormatException
-     *             If the attribute does not contain a number
-     */
-    public static int parseInt(final Element parent, final String attrName) {
-        return Integer.parseInt(parent.getAttribute(attrName));
-    }
-
-    /**
-     * Parses a attribute value into an integer. If the attribute is missing or
-     * has no content, a default value is returned
-     * 
-     * @param parent
-     *            The element
-     * @param attrName
-     *            The attribute name
-     * @param defaultValue
-     *            The default value
-     * @return The value, or the default value
-     */
-    public static int parseInt(final Element parent, final String attrName,
-            final int defaultValue) {
-        if (StringUtils.hasText(parent.getAttribute(attrName))) {
-            return Integer.parseInt(parent.getAttribute(attrName));
-        }
-        return defaultValue;
-    }
-
-    /**
-     * Return the string value of an attribute, or null if the attribute is
-     * missing
-     * 
-     * @param parent
-     *            The element
-     * @param attrName
-     *            The attribute name
-     * @return The attribute string value
-     */
-    public static String parseString(final Element parent, final String attrName) {
-        if (parent.hasAttribute(attrName)) {
-            return parent.getAttribute(attrName);
-        } else {
-            return null;
-        }
     }
 
     /**
@@ -243,8 +154,7 @@ public class SpringUtil {
      *            The attribute name
      * @return The attribute value parsed into a {@link InetAddress}
      */
-    public static InetAddress parseInetAddress(final Element parent,
-            final String attrName) {
+    public static InetAddress parseInetAddress(final Element parent, final String attrName) {
         if (StringUtils.hasText(parent.getAttribute(attrName))) {
             try {
                 return InetAddress.getByName(parent.getAttribute(attrName));
@@ -254,6 +164,83 @@ public class SpringUtil {
         }
         return null;
     }
+
+    /**
+     * Parses a attribute value into an integer.
+     * 
+     * @param parent
+     *            The element
+     * @param attrName
+     *            The attribute name
+     * @return The value
+     * @throws NumberFormatException
+     *             If the attribute does not contain a number
+     */
+    public static int parseInt(final Element parent, final String attrName) {
+        return Integer.parseInt(parent.getAttribute(attrName));
+    }
+
+    /**
+     * Parses a attribute value into an integer. If the attribute is missing or has no content, a default value is
+     * returned
+     * 
+     * @param parent
+     *            The element
+     * @param attrName
+     *            The attribute name
+     * @param defaultValue
+     *            The default value
+     * @return The value, or the default value
+     */
+    public static int parseInt(final Element parent, final String attrName, final int defaultValue) {
+        if (StringUtils.hasText(parent.getAttribute(attrName))) {
+            return Integer.parseInt(parent.getAttribute(attrName));
+        }
+        return defaultValue;
+    }
+
+    /**
+     * Parse specific Spring elements, bean and ref
+     * 
+     * @param parent
+     *            The element in which we will look for Spring elements
+     * @param parserContext
+     *            The Spring parser context
+     * @param builder
+     *            The Spring bean definition builder
+     * @return The Spring bean definition
+     */
+    public static Object parseSpringChildElement(final Element parent, final ParserContext parserContext,
+            final BeanDefinitionBuilder builder) {
+        Element springElm = SpringUtil.getChildElement(parent, null, null);
+
+        String ln = springElm.getLocalName();
+        if ("bean".equals(ln)) {
+            return parserContext.getDelegate().parseBeanDefinitionElement(springElm, builder.getBeanDefinition());
+        } else if ("ref".equals(ln)) {
+            return parserContext.getDelegate().parsePropertySubElement(springElm, builder.getBeanDefinition());
+        } else {
+            throw new SmscServerConfigurationException("Unknown spring element " + ln);
+        }
+    }
+
+    /**
+     * Return the string value of an attribute, or null if the attribute is missing
+     * 
+     * @param parent
+     *            The element
+     * @param attrName
+     *            The attribute name
+     * @return The attribute string value
+     */
+    public static String parseString(final Element parent, final String attrName) {
+        if (parent.hasAttribute(attrName)) {
+            return parent.getAttribute(attrName);
+        } else {
+            return null;
+        }
+    }
+
     /**
      * Return an attribute value after checking it is a valid {@link InetAddress}
      * 
@@ -263,11 +250,10 @@ public class SpringUtil {
      *            The attribute name
      * @return The attribute string value.
      */
-    public static String parseStringFromInetAddress(final Element parent,
-    		final String attrName){
-    	if ( parseInetAddress(parent, attrName)!=null){
-    		return parent.getAttribute(attrName);
-    	}
-    	return null;
+    public static String parseStringFromInetAddress(final Element parent, final String attrName) {
+        if (SpringUtil.parseInetAddress(parent, attrName) != null) {
+            return parent.getAttribute(attrName);
+        }
+        return null;
     }
 }

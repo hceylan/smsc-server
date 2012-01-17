@@ -31,7 +31,7 @@ import org.apache.smscserver.smscletcontainer.SmscletContainer;
 /**
  * <strong>Internal class, do not use directly.</strong>
  * 
- * This is basically <code>org.apache.ftpserver.smsclet.SmscletContext</code> with added connection manager, message
+ * This is basically <code>org.apache.smscserver.smsclet.SmscletContext</code> with added connection manager, message
  * resource functionalities.
  * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>

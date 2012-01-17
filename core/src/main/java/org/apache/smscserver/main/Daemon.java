@@ -27,9 +27,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 /**
- * Invokes SmscServer as a daemon, running in the background. Used for example
- * for the Windows service.
- *
+ * Invokes SmscServer as a daemon, running in the background. Used for example for the Windows service.
+ * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public class Daemon {
@@ -41,68 +40,25 @@ public class Daemon {
     private static Object lock = new Object();
 
     /**
-     * Main entry point for the daemon
-     * @param args The arguments
-     * @throws Exception
-     */
-    public static void main(String[] args) throws Exception {
-        try {
-            if (server == null) {
-                // get configuration
-                server = getConfiguration(args);
-                if (server == null) {
-                    LOG.error("No configuration provided");
-                    throw new SmscException("No configuration provided");
-                }
-            }
-
-            String command = "start";
-
-            if (args != null && args.length > 0) {
-                command = args[0];
-            }
-
-            if (command.equals("start")) {
-                LOG.info("Starting FTP server daemon");
-                server.start();
-
-                synchronized (lock) {
-                    lock.wait();
-                }
-            } else if (command.equals("stop")) {
-                synchronized (lock) {
-                    lock.notify();
-                }
-                LOG.info("Stopping FTP server daemon");
-                server.stop();
-            }
-        } catch (Throwable t) {
-            LOG.error("Daemon error", t);
-        }
-    }
-
-    /**
      * Get the configuration object.
      */
     private static SmscServer getConfiguration(String[] args) throws Exception {
 
         SmscServer server = null;
-        if (args == null || args.length < 2) {
-            LOG.info("Using default configuration....");
+        if ((args == null) || (args.length < 2)) {
+            Daemon.LOG.info("Using default configuration....");
             server = new SmscServerFactory().createServer();
         } else if ((args.length == 2) && args[1].equals("-default")) {
             // supported for backwards compatibility, but not documented
-            System.out
-                    .println("The -default switch is deprecated, please use --default instead");
-            LOG.info("Using default configuration....");
+            System.out.println("The -default switch is deprecated, please use --default instead");
+            Daemon.LOG.info("Using default configuration....");
             server = new SmscServerFactory().createServer();
         } else if ((args.length == 2) && args[1].equals("--default")) {
-            LOG.info("Using default configuration....");
+            Daemon.LOG.info("Using default configuration....");
             server = new SmscServerFactory().createServer();
         } else if (args.length == 2) {
-            LOG.info("Using xml configuration file " + args[1] + "...");
-            FileSystemXmlApplicationContext ctx = new FileSystemXmlApplicationContext(
-                    args[1]);
+            Daemon.LOG.info("Using xml configuration file " + args[1] + "...");
+            FileSystemXmlApplicationContext ctx = new FileSystemXmlApplicationContext(args[1]);
 
             if (ctx.containsBean("server")) {
                 server = (SmscServer) ctx.getBean("server");
@@ -111,13 +67,10 @@ public class Daemon {
                 if (beanNames.length == 1) {
                     server = (SmscServer) ctx.getBean(beanNames[0]);
                 } else if (beanNames.length > 1) {
-                    System.out
-                            .println("Using the first server defined in the configuration, named "
-                                    + beanNames[0]);
+                    System.out.println("Using the first server defined in the configuration, named " + beanNames[0]);
                     server = (SmscServer) ctx.getBean(beanNames[0]);
                 } else {
-                    System.err
-                            .println("XML configuration does not contain a server configuration");
+                    System.err.println("XML configuration does not contain a server configuration");
                 }
             }
         } else {
@@ -125,5 +78,48 @@ public class Daemon {
         }
 
         return server;
+    }
+
+    /**
+     * Main entry point for the daemon
+     * 
+     * @param args
+     *            The arguments
+     * @throws Exception
+     */
+    public static void main(String[] args) throws Exception {
+        try {
+            if (Daemon.server == null) {
+                // get configuration
+                Daemon.server = Daemon.getConfiguration(args);
+                if (Daemon.server == null) {
+                    Daemon.LOG.error("No configuration provided");
+                    throw new SmscException("No configuration provided");
+                }
+            }
+
+            String command = "start";
+
+            if ((args != null) && (args.length > 0)) {
+                command = args[0];
+            }
+
+            if (command.equals("start")) {
+                Daemon.LOG.info("Starting SMSC server daemon");
+                Daemon.server.start();
+
+                synchronized (Daemon.lock) {
+                    Daemon.lock.wait();
+                }
+            } else if (command.equals("stop")) {
+                synchronized (Daemon.lock) {
+                    Daemon.lock.notify();
+                }
+                Daemon.LOG.info("Stopping SMSC server daemon");
+                Daemon.server.stop();
+            }
+        } catch (Throwable t) {
+            Daemon.LOG.error("Daemon error", t);
+        }
     }
 }

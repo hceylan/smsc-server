@@ -24,9 +24,9 @@ import org.apache.smscserver.ConnectionConfigFactory;
 
 /**
  * <strong>Internal class, do not use directly.</strong>
- *
+ * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
- *
+ * 
  */
 public class DefaultConnectionConfig implements ConnectionConfig {
 
@@ -39,7 +39,7 @@ public class DefaultConnectionConfig implements ConnectionConfig {
     private final int maxLoginFailures;
 
     private final int loginFailureDelay;
-    
+
     private final int maxThreads;
 
     public DefaultConnectionConfig() {
@@ -49,9 +49,8 @@ public class DefaultConnectionConfig implements ConnectionConfig {
     /**
      * Internal constructor, do not use directly. Use {@link ConnectionConfigFactory} instead
      */
-    public DefaultConnectionConfig(boolean anonymousLoginEnabled,
-            int loginFailureDelay, int maxLogins, int maxAnonymousLogins,
-            int maxLoginFailures, int maxThreads) {
+    public DefaultConnectionConfig(boolean anonymousLoginEnabled, int loginFailureDelay, int maxLogins,
+            int maxAnonymousLogins, int maxLoginFailures, int maxThreads) {
         this.anonymousLoginEnabled = anonymousLoginEnabled;
         this.loginFailureDelay = loginFailureDelay;
         this.maxLogins = maxLogins;
@@ -61,27 +60,27 @@ public class DefaultConnectionConfig implements ConnectionConfig {
     }
 
     public int getBindFailureDelay() {
-        return loginFailureDelay;
+        return this.loginFailureDelay;
     }
 
     public int getMaxAnonymousLogins() {
-        return maxAnonymousLogins;
+        return this.maxAnonymousLogins;
     }
 
     public int getMaxBindFailures() {
-        return maxLoginFailures;
+        return this.maxLoginFailures;
     }
 
     public int getMaxBinds() {
-        return maxLogins;
+        return this.maxLogins;
+    }
+
+    public int getMaxThreads() {
+        return this.maxThreads;
     }
 
     public boolean isAnonymousLoginEnabled() {
-        return anonymousLoginEnabled;
+        return this.anonymousLoginEnabled;
     }
-    
-    public int getMaxThreads() {
-        return maxThreads;
-    }
-    
+
 }

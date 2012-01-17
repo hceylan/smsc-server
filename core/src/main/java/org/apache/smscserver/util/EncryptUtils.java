@@ -26,7 +26,7 @@ import java.security.NoSuchAlgorithmException;
  * <strong>Internal class, do not use directly.</strong>
  * 
  * String encryption utility methods.
- *
+ * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public class EncryptUtils {
@@ -34,8 +34,7 @@ public class EncryptUtils {
     /**
      * Encrypt byte array.
      */
-    public final static byte[] encrypt(byte[] source, String algorithm)
-            throws NoSuchAlgorithmException {
+    public final static byte[] encrypt(byte[] source, String algorithm) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance(algorithm);
         md.reset();
         md.update(source);
@@ -45,9 +44,8 @@ public class EncryptUtils {
     /**
      * Encrypt string
      */
-    public final static String encrypt(String source, String algorithm)
-            throws NoSuchAlgorithmException {
-        byte[] resByteArray = encrypt(source.getBytes(), algorithm);
+    public final static String encrypt(String source, String algorithm) throws NoSuchAlgorithmException {
+        byte[] resByteArray = EncryptUtils.encrypt(source.getBytes(), algorithm);
         return StringUtils.toHexString(resByteArray);
     }
 
@@ -61,7 +59,7 @@ public class EncryptUtils {
 
         String result = "";
         try {
-            result = encrypt(source, "MD5");
+            result = EncryptUtils.encrypt(source, "MD5");
         } catch (NoSuchAlgorithmException ex) {
             // this should never happen
             throw new RuntimeException(ex);
@@ -79,7 +77,7 @@ public class EncryptUtils {
 
         String result = "";
         try {
-            result = encrypt(source, "SHA");
+            result = EncryptUtils.encrypt(source, "SHA");
         } catch (NoSuchAlgorithmException ex) {
             // this should never happen
             throw new RuntimeException(ex);

@@ -20,9 +20,8 @@
 package org.apache.smscserver;
 
 /**
- * Exception used during startup to indicate that the configuration is not
- * correct.
- *
+ * Exception used during startup to indicate that the configuration is not correct.
+ * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public class SmscServerConfigurationException extends RuntimeException {
@@ -37,18 +36,17 @@ public class SmscServerConfigurationException extends RuntimeException {
     }
 
     /**
-     * {@link RuntimeException#RuntimeException(String, Throwable)}
-     */
-    public SmscServerConfigurationException(final String message,
-            final Throwable cause) {
-        super(message, cause);
-    }
-
-    /**
      * {@link RuntimeException#RuntimeException(String)}
      */
     public SmscServerConfigurationException(final String message) {
         super(message);
+    }
+
+    /**
+     * {@link RuntimeException#RuntimeException(String, Throwable)}
+     */
+    public SmscServerConfigurationException(final String message, final Throwable cause) {
+        super(message, cause);
     }
 
     /**

@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
 /**
  * <strong>Internal class, do not use directly.</strong>
  * 
- * FTP server configuration implementation. It holds all the components used.
+ * SMSC server configuration implementation. It holds all the components used.
  * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
@@ -185,7 +185,7 @@ public class DefaultSmscServerContext implements SmscServerContext {
     }
 
     /**
-     * Get ftp statistics.
+     * Get ssc statistics.
      */
     public SmscStatistics getSmscStatistics() {
         return this.statistics;

@@ -33,7 +33,7 @@ import org.apache.smscserver.smsclet.User;
 /**
  * <strong>Internal class, do not use directly.</strong>
  * 
- * This is FTP statistics implementation.
+ * This is SMSC statistics implementation.
  * 
  * TODO revisit concurrency, right now we're a bit over zealous with both Atomic* counters and synchronization
  * 

@@ -21,7 +21,7 @@ package org.apache.smscserver.smsclet;
 
 /**
  * Thrown if an authentication request fails
- *
+ * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public class AuthenticationFailedException extends SmscException {
@@ -35,8 +35,7 @@ public class AuthenticationFailedException extends SmscException {
     }
 
     /**
-     * Constructs a <code>AuthenticationFailedException</code> object with a
-     * message.
+     * Constructs a <code>AuthenticationFailedException</code> object with a message.
      * 
      * @param msg
      *            A description of the exception
@@ -46,25 +45,25 @@ public class AuthenticationFailedException extends SmscException {
     }
 
     /**
-     * Constructs a <code>AuthenticationFailedException</code> object with a
-     * <code>Throwable</code> cause.
+     * Constructs a <code>AuthenticationFailedException</code> object with a <code>Throwable</code> cause.
      * 
-     * @param th
-     *            The original cause
-     */
-    public AuthenticationFailedException(Throwable th) {
-        super(th);
-    }
-
-    /**
-     * Constructs a <code>AuthenticationFailedException</code> object with a
-     * <code>Throwable</code> cause.
-     * @param msg A description of the exception
+     * @param msg
+     *            A description of the exception
      * 
      * @param th
      *            The original cause
      */
     public AuthenticationFailedException(String msg, Throwable th) {
         super(msg, th);
+    }
+
+    /**
+     * Constructs a <code>AuthenticationFailedException</code> object with a <code>Throwable</code> cause.
+     * 
+     * @param th
+     *            The original cause
+     */
+    public AuthenticationFailedException(Throwable th) {
+        super(th);
     }
 }

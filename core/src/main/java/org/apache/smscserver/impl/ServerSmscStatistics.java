@@ -26,7 +26,7 @@ import org.apache.smscserver.smsclet.SmscStatistics;
 /**
  * <strong>Internal class, do not use directly.</strong>
  * 
- * This is same as <code>org.apache.ftpserver.smsclet.SmscStatistics</code> with added observer and setting values
+ * This is same as <code>org.apache.smscserver.smsclet.SmscStatistics</code> with added observer and setting values
  * functionalities.
  * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>

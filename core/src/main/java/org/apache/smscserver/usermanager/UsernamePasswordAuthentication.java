@@ -23,16 +23,15 @@ import org.apache.smscserver.smsclet.Authentication;
 import org.apache.smscserver.usermanager.impl.UserMetadata;
 
 /**
- * Class representing a normal authentication attempt using username and
- * password
- *
+ * Class representing a normal authentication attempt using username and password
+ * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public class UsernamePasswordAuthentication implements Authentication {
 
-    private String username;
+    private final String username;
 
-    private String password;
+    private final String password;
 
     private UserMetadata userMetadata;
 
@@ -44,8 +43,7 @@ public class UsernamePasswordAuthentication implements Authentication {
      * @param password
      *            The password, can be null
      */
-    public UsernamePasswordAuthentication(final String username,
-            final String password) {
+    public UsernamePasswordAuthentication(final String username, final String password) {
         this.username = username;
         this.password = password;
     }
@@ -60,8 +58,7 @@ public class UsernamePasswordAuthentication implements Authentication {
      * @param userMetadata
      *            The user metadata
      */
-    public UsernamePasswordAuthentication(final String username,
-            final String password, final UserMetadata userMetadata) {
+    public UsernamePasswordAuthentication(final String username, final String password, final UserMetadata userMetadata) {
         this(username, password);
         this.userMetadata = userMetadata;
     }
@@ -72,16 +69,7 @@ public class UsernamePasswordAuthentication implements Authentication {
      * @return The password
      */
     public String getPassword() {
-        return password;
-    }
-
-    /**
-     * Retrive the user name
-     * 
-     * @return The user name
-     */
-    public String getUsername() {
-        return username;
+        return this.password;
     }
 
     /**
@@ -90,6 +78,15 @@ public class UsernamePasswordAuthentication implements Authentication {
      * @return The user metadata
      */
     public UserMetadata getUserMetadata() {
-        return userMetadata;
+        return this.userMetadata;
+    }
+
+    /**
+     * Retrive the user name
+     * 
+     * @return The user name
+     */
+    public String getUsername() {
+        return this.username;
     }
 }

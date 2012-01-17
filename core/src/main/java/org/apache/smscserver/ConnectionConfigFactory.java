@@ -23,9 +23,9 @@ import org.apache.smscserver.impl.DefaultConnectionConfig;
 
 /**
  * Factory for creating connection configurations
- *
+ * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
- *
+ * 
  */
 public class ConnectionConfigFactory {
 
@@ -43,99 +43,93 @@ public class ConnectionConfigFactory {
 
     /**
      * Create a connection configuration instances based on the configuration on this factory
+     * 
      * @return The {@link ConnectionConfig} instance
      */
     public ConnectionConfig createConnectionConfig() {
-        return new DefaultConnectionConfig(anonymousLoginEnabled,
-                loginFailureDelay, maxLogins, maxAnonymousLogins,
-                maxLoginFailures, maxThreads);
+        return new DefaultConnectionConfig(this.anonymousLoginEnabled, this.loginFailureDelay, this.maxLogins,
+                this.maxAnonymousLogins, this.maxLoginFailures, this.maxThreads);
     }
 
     /**
-     * The delay in number of milliseconds between login failures. Important to 
-     * make brute force attacks harder.
+     * The delay in number of milliseconds between login failures. Important to make brute force attacks harder.
      * 
      * @return The delay time in milliseconds
      */
     public int getLoginFailureDelay() {
-        return loginFailureDelay;
+        return this.loginFailureDelay;
     }
 
     /**
      * The maximum number of anonymous logins the server would allow at any given time
+     * 
      * @return The maximum number of anonymous logins
      */
     public int getMaxAnonymousLogins() {
-        return maxAnonymousLogins;
+        return this.maxAnonymousLogins;
     }
 
     /**
      * The maximum number of time an user can fail to login before getting disconnected
+     * 
      * @return The maximum number of failure login attempts
      */
     public int getMaxLoginFailures() {
-        return maxLoginFailures;
+        return this.maxLoginFailures;
     }
 
     /**
      * The maximum number of concurrently logged in users
+     * 
      * @return The maximum number of users
      */
     public int getMaxLogins() {
-        return maxLogins;
+        return this.maxLogins;
+    }
+
+    /**
+     * Returns the maximum number of threads the server is allowed to create for processing client requests.
+     * 
+     * @return the maximum number of threads the server is allowed to create for processing client requests.
+     */
+    public int getMaxThreads() {
+        return this.maxThreads;
     }
 
     /**
      * Is anonymous logins allowed at the server?
+     * 
      * @return true if anonymous logins are enabled
      */
     public boolean isAnonymousLoginEnabled() {
-        return anonymousLoginEnabled;
-    }
-
-    /**
-     * Set she maximum number of concurrently logged in users
-     * @param maxLogins The maximum number of users
-     */
-
-    public void setMaxLogins(final int maxLogins) {
-        this.maxLogins = maxLogins;
-    }
-
-    /**
-     * Returns the maximum number of threads the server is allowed to create for
-     * processing client requests.
-     * 
-     * @return the maximum number of threads the server is allowed to create for
-     *         processing client requests.
-     */
-    public int getMaxThreads() {
-        return maxThreads;
-    }
-
-    /**
-     * Sets the maximum number of threads the server is allowed to create for
-     * processing client requests.
-     * 
-     * @param maxThreads
-     *            the maximum number of threads the server is allowed to create
-     *            for processing client requests.
-     */
-    public void setMaxThreads(int maxThreads) {
-        this.maxThreads = maxThreads;
+        return this.anonymousLoginEnabled;
     }
 
     /**
      * Set if anonymous logins are allowed at the server
-     * @param anonymousLoginEnabled true if anonymous logins should be enabled
+     * 
+     * @param anonymousLoginEnabled
+     *            true if anonymous logins should be enabled
      */
     public void setAnonymousLoginEnabled(final boolean anonymousLoginEnabled) {
         this.anonymousLoginEnabled = anonymousLoginEnabled;
     }
 
     /**
+     * Set the delay in number of milliseconds between login failures. Important to make brute force attacks harder.
+     * 
+     * @param loginFailureDelay
+     *            The delay time in milliseconds
+     */
+    public void setLoginFailureDelay(final int loginFailureDelay) {
+        this.loginFailureDelay = loginFailureDelay;
+    }
+
+    /**
      * Sets the maximum number of anonymous logins the server would allow at any given time
-     * @param maxAnonymousLogins The maximum number of anonymous logins
+     * 
+     * @param maxAnonymousLogins
+     *            The maximum number of anonymous logins
      */
     public void setMaxAnonymousLogins(final int maxAnonymousLogins) {
         this.maxAnonymousLogins = maxAnonymousLogins;
@@ -143,20 +137,33 @@ public class ConnectionConfigFactory {
 
     /**
      * Set the maximum number of time an user can fail to login before getting disconnected
-     * @param maxLoginFailures The maximum number of failure login attempts
+     * 
+     * @param maxLoginFailures
+     *            The maximum number of failure login attempts
      */
     public void setMaxLoginFailures(final int maxLoginFailures) {
         this.maxLoginFailures = maxLoginFailures;
     }
 
     /**
-     * Set the delay in number of milliseconds between login failures. Important to 
-     * make brute force attacks harder.
+     * Set she maximum number of concurrently logged in users
      * 
-     * @param loginFailureDelay The delay time in milliseconds
+     * @param maxLogins
+     *            The maximum number of users
      */
-    public void setLoginFailureDelay(final int loginFailureDelay) {
-        this.loginFailureDelay = loginFailureDelay;
+
+    public void setMaxLogins(final int maxLogins) {
+        this.maxLogins = maxLogins;
+    }
+
+    /**
+     * Sets the maximum number of threads the server is allowed to create for processing client requests.
+     * 
+     * @param maxThreads
+     *            the maximum number of threads the server is allowed to create for processing client requests.
+     */
+    public void setMaxThreads(int maxThreads) {
+        this.maxThreads = maxThreads;
     }
 
 }

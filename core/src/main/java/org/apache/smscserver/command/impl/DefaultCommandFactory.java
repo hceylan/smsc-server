@@ -28,7 +28,7 @@ import org.apache.smscserver.command.CommandFactoryFactory;
 /**
  * <strong>Internal class, do not use directly.</strong>
  * 
- * Command factory to return appropriate command implementation depending on the FTP request command string.
+ * Command factory to return appropriate command implementation depending on the SMSC Command id.
  * 
  * <strong><strong>Internal class, do not use directly.</strong></strong>
  * 
@@ -45,19 +45,12 @@ public class DefaultCommandFactory implements CommandFactory {
         this.commandMap = commandMap;
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     */
     public Command getCommand(int commandID) {
-        // TODO Auto-generated method stub
-        return null;
+        return this.commandMap.get(commandID);
     }
 
-    /**
-     * Get command. Returns null if not found.
-     */
-    public Command getCommand(final String cmdName) {
-        if ((cmdName == null) || cmdName.equals("")) {
-            return null;
-        }
-        String upperCaseCmdName = cmdName.toUpperCase();
-        return this.commandMap.get(upperCaseCmdName);
-    }
 }

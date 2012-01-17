@@ -24,17 +24,16 @@ import org.apache.smscserver.listener.ListenerFactory;
 import org.springframework.beans.factory.FactoryBean;
 
 /**
- * Spring {@link FactoryBean} which extends {@link ListenerFactory}
- * making it easier to use Spring's standard &lt;bean&gt; tag instead of 
- * SmscServer's custom XML tags to configure things.
- *
+ * Spring {@link FactoryBean} which extends {@link ListenerFactory} making it easier to use Spring's standard
+ * &lt;bean&gt; tag instead of SmscServer's custom XML tags to configure things.
+ * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  * @see ListenerFactory
  */
 public class ListenerFactoryBean extends ListenerFactory implements FactoryBean {
 
     public Object getObject() throws Exception {
-        return createListener();
+        return this.createListener();
     }
 
     public Class<?> getObjectType() {

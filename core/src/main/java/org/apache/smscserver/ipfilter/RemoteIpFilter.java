@@ -32,15 +32,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An implementation of the <code>SessionFilter</code> interface, to filter
- * sessions based on the remote IP address.
+ * An implementation of the <code>SessionFilter</code> interface, to filter sessions based on the remote IP address.
  * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  * 
  */
 
-public class RemoteIpFilter extends CopyOnWriteArraySet<Subnet> implements
-        SessionFilter {
+public class RemoteIpFilter extends CopyOnWriteArraySet<Subnet> implements SessionFilter {
 
     /**
      * Logger
@@ -75,8 +73,7 @@ public class RemoteIpFilter extends CopyOnWriteArraySet<Subnet> implements
      * @param collection
      *            a collection of <code>Subnet</code>s to filter out/in.
      */
-    public RemoteIpFilter(IpFilterType type,
-            Collection<? extends Subnet> collection) {
+    public RemoteIpFilter(IpFilterType type, Collection<? extends Subnet> collection) {
         super(collection);
         this.type = type;
     }
@@ -87,29 +84,98 @@ public class RemoteIpFilter extends CopyOnWriteArraySet<Subnet> implements
      * @param type
      *            the filter type
      * @param addresses
-     *            a comma, space, tab, CR, LF separated list of IP
-     *            addresses/CIDRs.
+     *            a comma, space, tab, CR, LF separated list of IP addresses/CIDRs.
      * @throws UnknownHostException
      *             propagated
      * @throws NumberFormatException
      *             propagated
      */
-    public RemoteIpFilter(IpFilterType type, String addresses)
-            throws NumberFormatException, UnknownHostException {
+    public RemoteIpFilter(IpFilterType type, String addresses) throws NumberFormatException, UnknownHostException {
         super();
         this.type = type;
         if (addresses != null) {
             String[] tokens = addresses.split("[\\s,]+");
             for (String token : tokens) {
                 if (token.trim().length() > 0) {
-                    add(token);
+                    this.add(token);
                 }
             }
         }
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(
-                    "Created DefaultIpFilter of type {} with the subnets {}",
-                    type, this);
+        if (this.LOGGER.isDebugEnabled()) {
+            this.LOGGER.debug("Created DefaultIpFilter of type {} with the subnets {}", type, this);
+        }
+    }
+
+    public boolean accept(IoSession session) {
+        InetAddress address = ((InetSocketAddress) session.getRemoteAddress()).getAddress();
+        switch (this.type) {
+        case ALLOW:
+            for (Subnet subnet : this) {
+                if (subnet.inSubnet(address)) {
+                    if (this.LOGGER.isDebugEnabled()) {
+                        this.LOGGER.debug(
+                                "Allowing connection from {} because it matches with the whitelist subnet {}",
+                                new Object[] { address, subnet });
+                    }
+                    return true;
+                }
+            }
+            if (this.LOGGER.isDebugEnabled()) {
+                this.LOGGER.debug("Denying connection from {} because it does not match any of the whitelist subnets",
+                        new Object[] { address });
+            }
+            return false;
+        case DENY:
+            if (this.isEmpty()) {
+                if (this.LOGGER.isDebugEnabled()) {
+                    this.LOGGER.debug("Allowing connection from {} because blacklist is empty",
+                            new Object[] { address });
+                }
+                return true;
+            }
+            for (Subnet subnet : this) {
+                if (subnet.inSubnet(address)) {
+                    if (this.LOGGER.isDebugEnabled()) {
+                        this.LOGGER.debug("Denying connection from {} because it matches with the blacklist subnet {}",
+                                new Object[] { address, subnet });
+                    }
+                    return false;
+                }
+            }
+            if (this.LOGGER.isDebugEnabled()) {
+                this.LOGGER.debug("Allowing connection from {} because it does not match any of the blacklist subnets",
+                        new Object[] { address });
+            }
+            return true;
+        default:
+            throw new RuntimeException("Unknown or unimplemented filter type: " + this.type);
+        }
+    }
+
+    /**
+     * Adds the given string representation of InetAddress or CIDR notation to this filter.
+     * 
+     * @param str
+     *            the string representation of InetAddress or CIDR notation
+     * @return if the given element was added or not. <code>true</code>, if the given element was added to the filter;
+     *         <code>false</code>, if the element already exists in the filter.
+     * @throws NumberFormatException
+     *             propagated
+     * @throws UnknownHostException
+     *             propagated
+     */
+    public boolean add(String str) throws NumberFormatException, UnknownHostException {
+        // This is required so we do not block loopback address if some one adds
+        // a string with blanks as the InetAddress class assumes loopback
+        // address on a blank string.
+        if (str.trim().length() < 1) {
+            throw new IllegalArgumentException("Invalid IP Address or Subnet: " + str);
+        }
+        String[] tokens = str.split("/");
+        if (tokens.length == 2) {
+            return this.add(new Subnet(InetAddress.getByName(tokens[0]), Integer.parseInt(tokens[1])));
+        } else {
+            return this.add(new Subnet(InetAddress.getByName(tokens[0]), 32));
         }
     }
 
@@ -119,7 +185,7 @@ public class RemoteIpFilter extends CopyOnWriteArraySet<Subnet> implements
      * @return the type of this filter.
      */
     public IpFilterType getType() {
-        return type;
+        return this.type;
     }
 
     /**
@@ -130,94 +196,5 @@ public class RemoteIpFilter extends CopyOnWriteArraySet<Subnet> implements
      */
     public void setType(IpFilterType type) {
         this.type = type;
-    }
-
-    /**
-     * Adds the given string representation of InetAddress or CIDR notation to
-     * this filter.
-     * 
-     * @param str
-     *            the string representation of InetAddress or CIDR notation
-     * @return if the given element was added or not. <code>true</code>, if the
-     *         given element was added to the filter; <code>false</code>, if the
-     *         element already exists in the filter.
-     * @throws NumberFormatException
-     *             propagated
-     * @throws UnknownHostException
-     *             propagated
-     */
-    public boolean add(String str) throws NumberFormatException,
-            UnknownHostException {
-        // This is required so we do not block loopback address if some one adds
-        // a string with blanks as the InetAddress class assumes loopback
-        // address on a blank string.
-        if (str.trim().length() < 1) {
-            throw new IllegalArgumentException("Invalid IP Address or Subnet: "
-                    + str);
-        }
-        String[] tokens = str.split("/");
-        if (tokens.length == 2) {
-            return add(new Subnet(InetAddress.getByName(tokens[0]), Integer
-                    .parseInt(tokens[1])));
-        } else {
-            return add(new Subnet(InetAddress.getByName(tokens[0]), 32));
-        }
-    }
-
-    public boolean accept(IoSession session) {
-        InetAddress address = ((InetSocketAddress) session.getRemoteAddress())
-                .getAddress();
-        switch (type) {
-        case ALLOW:
-            for (Subnet subnet : this) {
-                if (subnet.inSubnet(address)) {
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER
-                                .debug(
-                                        "Allowing connection from {} because it matches with the whitelist subnet {}",
-                                        new Object[] { address, subnet });
-                    }
-                    return true;
-                }
-            }
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER
-                        .debug(
-                                "Denying connection from {} because it does not match any of the whitelist subnets",
-                                new Object[] { address });
-            }
-            return false;
-        case DENY:
-            if (isEmpty()) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER
-                            .debug(
-                                    "Allowing connection from {} because blacklist is empty",
-                                    new Object[] { address });
-                }
-                return true;
-            }
-            for (Subnet subnet : this) {
-                if (subnet.inSubnet(address)) {
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER
-                                .debug(
-                                        "Denying connection from {} because it matches with the blacklist subnet {}",
-                                        new Object[] { address, subnet });
-                    }
-                    return false;
-                }
-            }
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER
-                        .debug(
-                                "Allowing connection from {} because it does not match any of the blacklist subnets",
-                                new Object[] { address });
-            }
-            return true;
-        default:
-            throw new RuntimeException("Unknown or unimplemented filter type: "
-                    + type);
-        }
     }
 }

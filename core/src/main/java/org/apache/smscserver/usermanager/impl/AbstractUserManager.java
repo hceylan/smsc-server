@@ -28,7 +28,7 @@ import org.apache.smscserver.usermanager.PasswordEncryptor;
  * <strong>Internal class, do not use directly.</strong>
  * 
  * Abstract common base type for {@link UserManager} implementations
- *
+ * 
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public abstract class AbstractUserManager implements UserManager {
@@ -54,11 +54,11 @@ public abstract class AbstractUserManager implements UserManager {
     public static final String ATTR_MAX_LOGIN_PER_IP = "maxloginperip";
 
     private final String adminName;
-    
+
     private final PasswordEncryptor passwordEncryptor;
 
     public AbstractUserManager() {
-        this(null,  new Md5PasswordEncryptor());
+        this(null, new Md5PasswordEncryptor());
     }
 
     /**
@@ -73,23 +73,22 @@ public abstract class AbstractUserManager implements UserManager {
      * Get the admin name.
      */
     public String getAdminName() {
-        return adminName;
+        return this.adminName;
+    }
+
+    /**
+     * Retrieve the password encryptor used for this user manager
+     * 
+     * @return The password encryptor. Default to {@link Md5PasswordEncryptor} if no other has been provided
+     */
+    public PasswordEncryptor getPasswordEncryptor() {
+        return this.passwordEncryptor;
     }
 
     /**
      * @return true if user with this login is administrator
      */
     public boolean isAdmin(String login) throws SmscException {
-        return adminName.equals(login);
-    }
-    
-    
-    /**
-     * Retrieve the password encryptor used for this user manager
-     * @return The password encryptor. Default to {@link Md5PasswordEncryptor}
-     *  if no other has been provided
-     */
-    public PasswordEncryptor getPasswordEncryptor() {
-        return passwordEncryptor;
+        return this.adminName.equals(login);
     }
 }
