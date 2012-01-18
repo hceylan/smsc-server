@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * Basic user interface.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public interface User {
 
@@ -59,13 +59,6 @@ public interface User {
      * @return true if the user is enabled
      */
     boolean getEnabled();
-
-    /**
-     * Get the user home directory
-     * 
-     * @return The path to the home directory for the user
-     */
-    String getHomeDirectory();
 
     /**
      * Get the maximum idle time in seconds. Zero or less idle time means no limit.

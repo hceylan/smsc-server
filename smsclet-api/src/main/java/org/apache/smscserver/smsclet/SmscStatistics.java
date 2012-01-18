@@ -25,7 +25,7 @@ import java.util.Date;
 /**
  * This interface holds all the smsc server statistical information.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public interface SmscStatistics {
 

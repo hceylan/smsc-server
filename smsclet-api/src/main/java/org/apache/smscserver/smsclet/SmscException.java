@@ -22,7 +22,7 @@ package org.apache.smscserver.smsclet;
 /**
  * Smsclet exception class.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public class SmscException extends Exception {
 

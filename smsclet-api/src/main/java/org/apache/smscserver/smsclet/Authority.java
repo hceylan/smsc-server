@@ -22,7 +22,7 @@ package org.apache.smscserver.smsclet;
 /**
  * Interface for an authority granted to the user, typical example is write access or the number of concurrent logins
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public interface Authority {
 

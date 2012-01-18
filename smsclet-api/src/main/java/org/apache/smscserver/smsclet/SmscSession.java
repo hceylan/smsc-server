@@ -31,7 +31,7 @@ import java.util.UUID;
  * by <code>setAttribute()</code> will be always available later unless that attribute is removed or the client
  * disconnects.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public interface SmscSession {
 

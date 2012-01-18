@@ -25,7 +25,7 @@ import java.io.IOException;
  * Default smsclet implementation. All the callback method returns null. It is just an empty implementation. You can
  * derive your smsclet implementation from this class.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public class DefaultSmsclet implements Smsclet {
 
@@ -39,15 +39,7 @@ public class DefaultSmsclet implements Smsclet {
         return null;
     }
 
-    public SmscReply onBindReceiver(SmscSession session, BindReceiverRequest request) {
-        return null;
-    }
-
-    public SmscReply onBindTransceiver(SmscSession session, BindTransceiverRequest request) {
-        return null;
-    }
-
-    public SmscReply onBindTransmitter(SmscSession session, BindTransmitterRequest request) {
+    public SmscReply onBind(SmscSession session, BindRequest request) {
         return null;
     }
 
@@ -101,12 +93,8 @@ public class DefaultSmsclet implements Smsclet {
     public final SmscReply onRequest(SmscSession session, SmscRequest request) throws SmscException, IOException {
         if (request instanceof AlertNotificationRequest) {
             return this.onAlertNotification(session, (AlertNotificationRequest) request);
-        } else if (request instanceof BindReceiverRequest) {
-            return this.onBindReceiver(session, (BindReceiverRequest) request);
-        } else if (request instanceof BindTransceiverRequest) {
-            return this.onBindTransceiver(session, (BindTransceiverRequest) request);
-        } else if (request instanceof BindTransmitterRequest) {
-            return this.onBindTransmitter(session, (BindTransmitterRequest) request);
+        } else if (request instanceof BindRequest) {
+            return this.onBind(session, (BindRequest) request);
         } else if (request instanceof CancelSMRequest) {
             return this.onCancelSM(session, (CancelSMRequest) request);
         } else if (request instanceof CancelSMRequest) {

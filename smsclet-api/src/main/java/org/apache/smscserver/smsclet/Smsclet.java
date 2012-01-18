@@ -41,7 +41,7 @@ import java.io.IOException;
  * All the callback methods return SmscletEnum. If it returns null SmscletEnum.DEFAULT will be assumed. If any smsclet
  * callback method throws exception, that particular connection will be disconnected.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public interface Smsclet {
 

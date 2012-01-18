@@ -22,8 +22,14 @@ package org.apache.smscserver.smsclet;
 /**
  * Represents a type of authentication request, typically anonymous or a username and password combination
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public interface Authentication {
 
+    /**
+     * Returns the io session for the authentication.
+     * 
+     * @return the io session for the authentication
+     */
+    SmscIoSession getSession();
 }

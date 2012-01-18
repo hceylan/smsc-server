@@ -20,9 +20,10 @@
 package org.apache.smscserver.smsclet;
 
 /**
+ * 
  * User manager interface.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public interface UserManager {
 
@@ -113,4 +114,16 @@ public interface UserManager {
      *             if UserManager in read-only mode
      */
     void save(User user) throws SmscException;
+
+    /**
+     * Sets the server context
+     * 
+     * @param context
+     *            the server context
+     * @throws NullPointerException
+     *             if the context is null
+     * @throws IllegalStateException
+     *             if the context is already been assigned
+     */
+    void setContext(SmscletContext serverContext);
 }

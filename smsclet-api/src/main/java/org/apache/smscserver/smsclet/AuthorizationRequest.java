@@ -22,7 +22,7 @@ package org.apache.smscserver.smsclet;
 /**
  * A request for authorization for a specific task, for example write access.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public interface AuthorizationRequest {
 

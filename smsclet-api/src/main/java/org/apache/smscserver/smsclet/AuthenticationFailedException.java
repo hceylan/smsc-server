@@ -22,7 +22,7 @@ package org.apache.smscserver.smsclet;
 /**
  * Thrown if an authentication request fails
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public class AuthenticationFailedException extends SmscException {
     private static final long serialVersionUID = -1328383839915898987L;

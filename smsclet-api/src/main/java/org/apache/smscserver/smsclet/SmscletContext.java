@@ -23,7 +23,7 @@ package org.apache.smscserver.smsclet;
  * A smsclet configuration object used by a smsclet container used to pass information to a smsclet during
  * initialization. The configuration information contains initialization parameters.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public interface SmscletContext {
 

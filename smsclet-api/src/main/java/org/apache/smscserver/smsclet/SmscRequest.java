@@ -19,19 +19,40 @@
 
 package org.apache.smscserver.smsclet;
 
+import java.util.UUID;
+
 /**
  * One SmscRequest made by the client.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public interface SmscRequest {
 
-    int getCommandId();
+    /**
+     * Get the Command Id of this SMPP packet.
+     * 
+     * @return The Command Id of this packet
+     */
+    public int getCommandId();
 
     /**
-     * Returns the SMPP Request Id of the request
+     * Returns the UUID for this request.
      * 
-     * @return
+     * @return the UUID for this request.
      */
-    String getId();
+    public UUID getId();
+
+    /**
+     * Get the sequence number of this packet.
+     * 
+     * @return The sequence number of this SMPP packet
+     */
+    public int getSequenceNum();
+
+    /**
+     * Returns the version of the SMPP Protocol.
+     * 
+     * @return the version of the SMPP Protocol
+     */
+    public int getVersionID();
 }

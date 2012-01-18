@@ -22,7 +22,7 @@ package org.apache.smscserver.smsclet;
 /**
  * Interface for a reply to an FTP request.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public interface SmscReply {
 
@@ -75,9 +75,7 @@ public interface SmscReply {
         ESME_RMISSINGTLV(195, "Expected TLV missing"), // ERROR
         ESME_RINVTLVVAL(196, "Invalid TLV value"), // ERROR
         ESME_RDELIVERYFAILURE(254, "Transaction delivery failure"), // ERROR
-        ESME_RUNKNOWNERR(255, "Unknown error"), // ERROR
-
-        ESME_PROVIDER_RUNKNOWNERR(0x401, "Message not supported"); // PROVIDER ERROR
+        ESME_RUNKNOWNERR(255, "Unknown error"); // ERROR
 
         private final int code;
         private final String message;
@@ -96,70 +94,11 @@ public interface SmscReply {
         }
     }
 
-    public static final int ESME_ROK = 0;
-
-    public static final int ESME_RINVMSGLEN = 1;
-    public static final int ESME_RINVCMDLEN = 2;
-    public static final int ESME_RINVCMDID = 3;
-    public static final int ESME_RINVBNDSTS = 4;
-    public static final int ESME_RALYBND = 5;
-    public static final int ESME_RINVPRTFLG = 6;
-    public static final int ESME_RINVREGDLVFLG = 7;
-    public static final int ESME_RSYSERR = 8;
-    public static final int ESME_RINVSRCADR = 10;
-    public static final int ESME_RINVDSTADR = 11;
-    public static final int ESME_RINVMSGID = 12;
-    public static final int ESME_RBINDFAIL = 13;
-    public static final int ESME_RINVPASWD = 14;
-    public static final int ESME_RINVSYSID = 15;
-    public static final int ESME_RCANCELFAIL = 17;
-    public static final int ESME_RREPLACEFAIL = 19;
-    public static final int ESME_RMSSQFUL = 20;
-    public static final int ESME_RINVSERTYP = 21;
-    public static final int ESME_RINVNUMDESTS = 51;
-    public static final int ESME_RINVDLNAME = 52;
-    public static final int ESME_RINVDESTFLAG = 64;
-    public static final int ESME_RINVSUBREP = 66;
-    public static final int ESME_RINVESMCLASS = 67;
-    public static final int ESME_RCNTSUBDL = 68;
-    public static final int ESME_RSUBMITFAIL = 69;
-    public static final int ESME_RINVSRCTON = 72;
-    public static final int ESME_RINVSRCNPI = 73;
-    public static final int ESME_RINVDSTTON = 80;
-    public static final int ESME_RINVDSTNPI = 81;
-    public static final int ESME_RINVSYSTYP = 83;
-    public static final int ESME_RINVREPFLAG = 84;
-    public static final int ESME_RINVNUMMSGS = 85;
-    public static final int ESME_RTHROTTLED = 88;
-    public static final int ESME_RINVSCHED = 97;
-    public static final int ESME_RINVEXPIRY = 98;
-    public static final int ESME_RINVDFTMSGID = 99;
-    public static final int ESME_RX_T_APPN = 100;
-    public static final int ESME_RX_P_APPN = 101;
-    public static final int ESME_RX_R_APPN = 102;
-    public static final int ESME_RQUERYFAIL = 103;
-    public static final int ESME_RINVTLVSTREAM = 192;
-    public static final int ESME_RTLVNOTALLWD = 193;
-    public static final int ESME_RINVTLVLEN = 194;
-    public static final int ESME_RMISSINGTLV = 195;
-    public static final int ESME_RINVTLVVAL = 196;
-    public static final int ESME_RDELIVERYFAILURE = 254;
-    public static final int ESME_RUNKNOWNERR = 255;
-
-    public static final int ESME_PROVIDER_NOT_SUPPORTED = 0x401;
-
     /**
-     * The reply code
+     * Get the status of this packet.
      * 
-     * @return The reply code
+     * @return The error status of this packet (only relevent to Response packets)
      */
-    int getCode();
+    public int getCommandStatus();
 
-    /**
-     * Tells whether or not this reply indicates a positive completion.
-     * 
-     * @return <code>true</code>, if this reply is a positive completion or positive intermediate reply;
-     *         <code>false</code>, otherwise.
-     */
-    boolean isOK();
 }
