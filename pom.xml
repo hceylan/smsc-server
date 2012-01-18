@@ -29,7 +29,7 @@
 		<system>Jira</system>
 		<url>http://issues.apache.org/jira/browse/SMSCSERVER</url>
 	</issueManagement>
-	<inceptionYear>2003</inceptionYear>
+	<inceptionYear>2012</inceptionYear>
 
 	<licenses>
 		<license>
@@ -38,7 +38,6 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
-
 
 	<mailingLists>
 		<mailingList>
@@ -195,7 +194,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>
-				<version>1.0-alpha-3</version>
 				<executions>
 					<execution>
 						<phase>validate</phase>
@@ -216,7 +214,6 @@
 
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.8.1</version>
 			</plugin>
 
 			<plugin>
@@ -229,7 +226,6 @@
 
 			<plugin>
 				<artifactId>maven-release-plugin</artifactId>
-				<version>2.0-beta-7</version>
 				<configuration>
 					<tagBase>https://svn.apache.org/repos/asf/mina/smscserver/tags/</tagBase>
 				</configuration>
@@ -237,7 +233,6 @@
 
 			<plugin>
 				<artifactId>maven-remote-resources-plugin</artifactId>
-				<version>1.0</version>
 				<executions>
 					<execution>
 						<goals>
@@ -257,7 +252,6 @@
 
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.0.2</version>
 				<configuration>
 					<source>${maven.compile.source}</source>
 					<target>${maven.compile.target}</target>
@@ -272,7 +266,6 @@
 
 			<plugin>
 				<artifactId>maven-source-plugin</artifactId>
-				<version>2.0.4</version>
 				<executions>
 					<execution>
 						<id>create-source-jar</id>
@@ -293,7 +286,6 @@
 
 			<plugin>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.2</version>
 				<configuration>
 					<archive>
 						<addMavenDescriptor>false</addMavenDescriptor>
@@ -375,7 +367,6 @@
 	<modules>
 		<module>smsclet-api</module>
 		<module>core</module>
-		<module>examples</module>
 	</modules>
 
 	<properties>

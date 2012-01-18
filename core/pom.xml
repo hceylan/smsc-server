@@ -22,13 +22,9 @@
 	<name>Apache SmscServer Core</name>
 	<packaging>bundle</packaging>
 	<scm>
-		<connection>
-			scm:svn:http://svn.apache.org/repos/asf/mina/smscserver/trunk/core
-		</connection>
-		<developerConnection>
-			scm:svn:https://svn.apache.org/repos/asf/mina/smscserver/trunk/core
-		</developerConnection>
-		<url> http://svn.apache.org/viewvc/mina/smscserver/trunk/core</url>
+		<connection>scm:svn:http://svn.apache.org/repos/asf/mina/smscserver/trunk/core</connection>
+		<developerConnection>scm:svn:https://svn.apache.org/repos/asf/mina/smscserver/trunk/core</developerConnection>
+		<url>http://svn.apache.org/viewvc/mina/smscserver/trunk/core</url>
 	</scm>
 	<build>
 		<resources>
