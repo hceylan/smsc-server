@@ -35,9 +35,10 @@ import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.apache.smscserver.ConnectionConfigFactory;
+import org.apache.smscserver.SmscServer;
 import org.apache.smscserver.SmscServerFactory;
-import org.apache.smscserver.impl.DefaultSmscServer;
 import org.apache.smscserver.impl.DefaultSmscIoSession;
+import org.apache.smscserver.impl.DefaultSmscServer;
 import org.apache.smscserver.listener.ListenerFactory;
 import org.apache.smscserver.test.TestUtil;
 import org.apache.smscserver.usermanager.ClearTextPasswordEncryptor;
@@ -65,7 +66,7 @@ public abstract class ClientTestTemplate extends TestCase {
 
     protected static final String TESTUSER_PASSWORD = "password";
 
-    protected DefaultSmscServer server;
+    protected SmscServer server;
 
     protected Connection connection;
 
@@ -89,6 +90,10 @@ public abstract class ClientTestTemplate extends TestCase {
 
     protected BindResp bind(String sysID, String password) throws Exception {
         return this.bind(this.connection, Connection.TRANSCEIVER, sysID, password);
+    }
+
+    protected BindResp bindTest() throws Exception {
+        return this.bind(ClientTestTemplate.TESTUSER1_USERNAME, ClientTestTemplate.TESTUSER_PASSWORD);
     }
 
     protected void cleanTmpDirs() throws IOException {
@@ -165,12 +170,33 @@ public abstract class ClientTestTemplate extends TestCase {
         return serverFactory;
     }
 
+    protected void disconnect() {
+        this.disconnect(this.connection);
+        this.connection = null;
+    }
+
+    protected void disconnect(Connection connection) {
+        if (connection != null) {
+            try {
+                this.connection.unbind();
+            } catch (Exception e) {
+                // ignore
+            }
+
+            try {
+                connection.closeLink();
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+    }
+
     protected DefaultSmscIoSession getActiveSession() {
-        return this.server.getListener("default").getActiveSessions().iterator().next();
+        return ((DefaultSmscServer) this.server).getListener("default").getActiveSessions().iterator().next();
     }
 
     protected int getListenerPort() {
-        return this.server.getListener("default").getPort();
+        return ((DefaultSmscServer) this.server).getListener("default").getPort();
     }
 
     /**
@@ -188,16 +214,14 @@ public abstract class ClientTestTemplate extends TestCase {
      * @throws Exception
      */
     protected void initServer() throws IOException, Exception {
-        // cast to internal class to get access to getters
-        this.server = (DefaultSmscServer) this.createServer().createServer();
-
         if (this.isStartServer()) {
-            this.server.start();
-        }
-    }
+            // cast to internal class to get access to getters
+            this.server = this.createServer().createServer();
 
-    protected boolean isConnectClient() {
-        return true;
+            if (this.isStartServer()) {
+                this.server.start();
+            }
+        }
     }
 
     protected boolean isStartServer() {
@@ -225,12 +249,7 @@ public abstract class ClientTestTemplate extends TestCase {
      */
     @Override
     protected void tearDown() throws Exception {
-        if (this.isConnectClient()) {
-            this.unbind(this.connection);
-            this.connection = null;
-
-            this.connection = null;
-        }
+        this.disconnect();
 
         if (this.server != null) {
             try {
@@ -245,14 +264,4 @@ public abstract class ClientTestTemplate extends TestCase {
 
         this.cleanTmpDirs();
     }
-
-    protected void unbind(Connection connection) {
-        try {
-            this.connection.unbind();
-            this.connection.closeLink();
-        } catch (Exception e) {
-            // ignore
-        }
-    }
-
 }

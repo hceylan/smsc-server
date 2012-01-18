@@ -48,9 +48,9 @@ public class DefaultMaxLoginTest extends ClientTestTemplate {
             Assert.assertFalse(this.bind(ClientTestTemplate.TESTUSER1_USERNAME, ClientTestTemplate.TESTUSER_PASSWORD)
                     .getCommandStatus() == 0);
         } finally {
-            this.unbind(connection1);
-            this.unbind(connection2);
-            this.unbind(connection3);
+            this.disconnect(connection1);
+            this.disconnect(connection2);
+            this.disconnect(connection3);
         }
     }
 }

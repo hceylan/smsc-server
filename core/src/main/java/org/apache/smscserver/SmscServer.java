@@ -30,6 +30,13 @@ import org.apache.smscserver.smsclet.SmscException;
 public interface SmscServer {
 
     /**
+     * Returns the the SMSC Server Context.
+     * 
+     * @return the SMSC Server Context
+     */
+    SmscServerContext getServerContext();
+
+    /**
      * Get the server status.
      * 
      * @return true if the server is stopped

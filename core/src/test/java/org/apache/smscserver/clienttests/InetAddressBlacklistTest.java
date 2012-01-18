@@ -50,14 +50,8 @@ public class InetAddressBlacklistTest extends ClientTestTemplate {
         return server;
     }
 
-    @Override
-    protected boolean isConnectClient() {
-        return false;
-    }
-
     public void testConnect() throws Exception {
         try {
-            this.connectClient();
             this.bind(ClientTestTemplate.TESTUSER1_USERNAME, ClientTestTemplate.TESTUSER_PASSWORD);
 
             Assert.fail("Must throw");

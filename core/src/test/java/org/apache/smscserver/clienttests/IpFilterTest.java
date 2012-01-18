@@ -50,11 +50,6 @@ public class IpFilterTest extends ClientTestTemplate {
         return server;
     }
 
-    @Override
-    protected boolean isConnectClient() {
-        return false;
-    }
-
     public void testDenyBlackList() throws Exception {
         this.filter.clear();
         this.filter.setType(IpFilterType.DENY);

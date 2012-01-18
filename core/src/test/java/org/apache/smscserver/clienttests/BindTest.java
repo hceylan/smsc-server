@@ -105,10 +105,10 @@ public class BindTest extends ClientTestTemplate {
                 // expected
             }
         } finally {
-            this.unbind(connection1);
-            this.unbind(connection2);
-            this.unbind(connection3);
-            this.unbind(connection4);
+            this.disconnect(connection1);
+            this.disconnect(connection2);
+            this.disconnect(connection3);
+            this.disconnect(connection4);
         }
     }
 
