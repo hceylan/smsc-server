@@ -40,7 +40,7 @@ public class SmscDeliverSMRequestImpl extends DeliverSM implements DeliverSMRequ
      * {@inheritDoc}
      * 
      */
-    public int getVersionID() {
+    public int getVersionId() {
         return this.getVersion().getVersionID();
     }
 }

@@ -39,7 +39,7 @@ public class SmscSubmitMultiRequestImpl extends SubmitMulti implements SubmitMul
      * {@inheritDoc}
      * 
      */
-    public int getVersionID() {
+    public int getVersionId() {
         return this.getVersion().getVersionID();
     }
 }

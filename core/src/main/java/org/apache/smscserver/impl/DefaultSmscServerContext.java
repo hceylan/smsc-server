@@ -35,6 +35,7 @@ import org.apache.smscserver.command.CommandFactoryFactory;
 import org.apache.smscserver.listener.Listener;
 import org.apache.smscserver.listener.ListenerFactory;
 import org.apache.smscserver.smsclet.Authority;
+import org.apache.smscserver.smsclet.MessageManager;
 import org.apache.smscserver.smsclet.SmscStatistics;
 import org.apache.smscserver.smsclet.Smsclet;
 import org.apache.smscserver.smsclet.UserManager;
@@ -56,6 +57,10 @@ public class DefaultSmscServerContext implements SmscServerContext {
 
     private final Logger LOG = LoggerFactory.getLogger(DefaultSmscServerContext.class);
 
+    private static final List<Authority> ADMIN_AUTHORITIES = new ArrayList<Authority>();
+
+    private MessageManager messageManager = null;// new DBMessageManagerFactory().createMessageManager();
+
     private UserManager userManager = new PropertiesUserManagerFactory().createUserManager();
 
     private SmscletContainer smscletContainer = new DefaultSmscletContainer();
@@ -67,8 +72,6 @@ public class DefaultSmscServerContext implements SmscServerContext {
     private ConnectionConfig connectionConfig = new ConnectionConfigFactory().createConnectionConfig();
 
     private Map<String, Listener> listeners = new HashMap<String, Listener>();
-
-    private static final List<Authority> ADMIN_AUTHORITIES = new ArrayList<Authority>();
 
     /**
      * The thread pool executor to be used by the server using this context
@@ -125,45 +128,73 @@ public class DefaultSmscServerContext implements SmscServerContext {
     }
 
     /**
-     * Get the command factory.
+     * {@inheritDoc}
+     * 
      */
     public CommandFactory getCommandFactory() {
         return this.commandFactory;
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     */
     public ConnectionConfig getConnectionConfig() {
         return this.connectionConfig;
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     */
     public Listener getListener(String name) {
         return this.listeners.get(name);
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     */
     public Map<String, Listener> getListeners() {
         return this.listeners;
     }
 
     /**
-     * Get Smsclet.
+     * {@inheritDoc}
+     * 
+     */
+    public MessageManager getMessageManager() {
+        return this.messageManager;
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
      */
     public Smsclet getSmsclet(String name) {
         return this.smscletContainer.getSmsclet(name);
     }
 
     /**
-     * Get smsclet handler.
+     * {@inheritDoc}
+     * 
      */
     public SmscletContainer getSmscletContainer() {
         return this.smscletContainer;
     }
 
     /**
-     * Get ssc statistics.
+     * {@inheritDoc}
+     * 
      */
     public SmscStatistics getSmscStatistics() {
         return this.statistics;
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     */
     public synchronized ThreadPoolExecutor getThreadPoolExecutor() {
         if (this.threadPoolExecutor == null) {
             int maxThreads = this.connectionConfig.getMaxThreads();
@@ -182,7 +213,8 @@ public class DefaultSmscServerContext implements SmscServerContext {
     }
 
     /**
-     * Get user manager.
+     * {@inheritDoc}
+     * 
      */
     public UserManager getUserManager() {
         return this.userManager;
@@ -206,6 +238,10 @@ public class DefaultSmscServerContext implements SmscServerContext {
 
     public void setListeners(Map<String, Listener> listeners) {
         this.listeners = listeners;
+    }
+
+    public void setMessageManager(MessageManager messageManager) {
+        this.messageManager = messageManager;
     }
 
     public void setSmscletContainer(SmscletContainer smscletContainer) {

@@ -39,7 +39,7 @@ public class SmscReplaceSMRequestImpl extends ReplaceSM implements ReplaceSMRequ
      * {@inheritDoc}
      * 
      */
-    public int getVersionID() {
+    public int getVersionId() {
         return this.getVersion().getVersionID();
     }
 }

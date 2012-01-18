@@ -39,7 +39,7 @@ public class SmscOutbindRequestImpl extends Outbind implements OutbindRequest {
      * {@inheritDoc}
      * 
      */
-    public int getVersionID() {
+    public int getVersionId() {
         return this.getVersion().getVersionID();
     }
 }

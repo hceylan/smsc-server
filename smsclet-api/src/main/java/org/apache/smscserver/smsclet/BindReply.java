@@ -18,9 +18,26 @@ package org.apache.smscserver.smsclet;
 
 /**
  * 
- *
+ * 
  * @version $Rev$ $Date$
  */
 public interface BindReply extends SmscReply {
 
+    /**
+     * Returns the identification of the type of ESME system requesting to bind as a transmitter with the SMSC.
+     * <p>
+     * The recommended use of system id is to identify the binding entity, e.g., "InternetGW" in the case of an Internet
+     * Gateway or "VMS" for a Voice Mail System.
+     * 
+     * @return the identification of the type of ESME system requesting to bind as a transmitter with the SMSC
+     */
+    String getSystemId();
+
+    /**
+     * Sets the identification of the type of SMSC
+     * 
+     * @see #getSystemId()
+     * @param systemId
+     */
+    void setSystemId(String systemId);
 }

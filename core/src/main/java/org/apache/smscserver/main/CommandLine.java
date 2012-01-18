@@ -132,7 +132,7 @@ public class CommandLine {
      * Print the usage message.
      */
     protected void usage() {
-        System.err.println("Usage: java org.apache.smscserver.main.CommandLine [OPTION] [CONFIGFILE]");
+        System.err.println("Usage: java org.apache.smscserver.test.main.CommandLine [OPTION] [CONFIGFILE]");
         System.err.println("Starts SmscServer using the default configuration of the ");
         System.err.println("configuration file if provided.");
         System.err.println("");

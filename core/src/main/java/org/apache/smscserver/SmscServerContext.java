@@ -24,13 +24,14 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.smscserver.command.CommandFactory;
 import org.apache.smscserver.listener.Listener;
+import org.apache.smscserver.smsclet.MessageManager;
 import org.apache.smscserver.smsclet.SmscletContext;
 import org.apache.smscserver.smscletcontainer.SmscletContainer;
 
 /**
  * <strong>Internal class, do not use directly.</strong>
  * 
- * This is basically <code>org.apache.smscserver.smsclet.SmscletContext</code> with added connection manager, message
+ * This is basically <code>org.apache.smscserver.test.smsclet.SmscletContext</code> with added connection manager, message
  * resource functionalities.
  * 
  * @author hceylan
@@ -38,20 +39,46 @@ import org.apache.smscserver.smscletcontainer.SmscletContainer;
 public interface SmscServerContext extends SmscletContext {
 
     /**
-     * Release all components.
+     * Releases all components.
      */
     void dispose();
 
     /**
-     * Get the command factory.
+     * Returns the command factory.
+     * 
+     * @return the command factory
      */
     CommandFactory getCommandFactory();
 
+    /**
+     * Returns the the connection configuration.
+     * 
+     * @return the connection configuration
+     */
     ConnectionConfig getConnectionConfig();
 
+    /**
+     * Returns the listener identified with the name
+     * 
+     * @param name
+     *            the identifier of the listener
+     * @return the listener identified with the name
+     */
     Listener getListener(String name);
 
+    /**
+     * Returns map of all the listeners.
+     * 
+     * @return map of all the listeners
+     */
     Map<String, Listener> getListeners();
+
+    /**
+     * Returns the message manager.
+     * 
+     * @return the message manager
+     */
+    MessageManager getMessageManager();
 
     /**
      * Get smsclet container.

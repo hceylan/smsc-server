@@ -56,125 +56,25 @@ public class DbUserManagerFactory implements UserManagerFactory {
         super();
     }
 
+    private void check(Object field, String errorMessage) {
+        if (field == null) {
+            throw new SmscServerConfigurationException(errorMessage);
+        }
+    }
+
     public UserManager createUserManager() {
-        if (this.dataSource == null) {
-            throw new SmscServerConfigurationException("Required data source not provided");
-        }
-        if (this.insertUserStmt == null) {
-            throw new SmscServerConfigurationException("Required insert user SQL statement not provided");
-        }
-        if (this.updateUserStmt == null) {
-            throw new SmscServerConfigurationException("Required update user SQL statement not provided");
-        }
-        if (this.deleteUserStmt == null) {
-            throw new SmscServerConfigurationException("Required delete user SQL statement not provided");
-        }
-        if (this.selectUserStmt == null) {
-            throw new SmscServerConfigurationException("Required select user SQL statement not provided");
-        }
-        if (this.selectAllStmt == null) {
-            throw new SmscServerConfigurationException("Required select all users SQL statement not provided");
-        }
-        if (this.isAdminStmt == null) {
-            throw new SmscServerConfigurationException("Required is admin user SQL statement not provided");
-        }
-        if (this.authenticateStmt == null) {
-            throw new SmscServerConfigurationException("Required authenticate user SQL statement not provided");
-        }
+        this.check(this.dataSource, "Required data source not provided");
+        this.check(this.insertUserStmt, "Required insert user SQL statement not provided");
+        this.check(this.updateUserStmt, "Required update user SQL statement not provided");
+        this.check(this.deleteUserStmt, "Required delete user SQL statement not provided");
+        this.check(this.selectUserStmt, "Required select user SQL statement not provided");
+        this.check(this.selectAllStmt, "Required select all users SQL statement not provided");
+        this.check(this.isAdminStmt, "Required is admin user SQL statement not provided");
+        this.check(this.authenticateStmt, "Required authenticate user SQL statement not provided");
 
         return new DbUserManager(this.dataSource, this.selectAllStmt, this.selectUserStmt, this.insertUserStmt,
                 this.updateUserStmt, this.deleteUserStmt, this.authenticateStmt, this.isAdminStmt,
                 this.passwordEncryptor, this.adminName);
-    }
-
-    /**
-     * Get the admin name.
-     * 
-     * @return The admin user name
-     */
-    public String getAdminName() {
-        return this.adminName;
-    }
-
-    /**
-     * Retrive the data source used by the user manager
-     * 
-     * @return The current data source
-     */
-    public DataSource getDataSource() {
-        return this.dataSource;
-    }
-
-    /**
-     * Retrieve the password encryptor used for this user manager
-     * 
-     * @return The password encryptor. Default to {@link Md5PasswordEncryptor} if no other has been provided
-     */
-    public PasswordEncryptor getPasswordEncryptor() {
-        return this.passwordEncryptor;
-    }
-
-    /**
-     * Get the SQL SELECT statement used to find whether an user is admin or not.
-     * 
-     * @return The SQL statement
-     */
-    public String getSqlUserAdmin() {
-        return this.isAdminStmt;
-    }
-
-    /**
-     * Get the SQL SELECT statement used to authenticate user.
-     * 
-     * @return The SQL statement
-     */
-    public String getSqlUserAuthenticate() {
-        return this.authenticateStmt;
-    }
-
-    /**
-     * Get the SQL DELETE statement used to delete an existing user.
-     * 
-     * @return The SQL statement
-     */
-    public String getSqlUserDelete() {
-        return this.deleteUserStmt;
-    }
-
-    /**
-     * Get the SQL INSERT statement used to add a new user.
-     * 
-     * @return The SQL statement
-     */
-    public String getSqlUserInsert() {
-        return this.insertUserStmt;
-    }
-
-    /**
-     * Get the SQL SELECT statement used to select an existing user.
-     * 
-     * @return The SQL statement
-     */
-    public String getSqlUserSelect() {
-        return this.selectUserStmt;
-    }
-
-    /**
-     * Get the SQL SELECT statement used to select all user ids.
-     * 
-     * @return The SQL statement
-     */
-    public String getSqlUserSelectAll() {
-        return this.selectAllStmt;
-    }
-
-    /**
-     * Get the SQL UPDATE statement used to update an existing user.
-     * 
-     * @return The SQL statement
-     */
-    public String getSqlUserUpdate() {
-        return this.updateUserStmt;
     }
 
     /**

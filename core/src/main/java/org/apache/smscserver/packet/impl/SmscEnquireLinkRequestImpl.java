@@ -39,7 +39,7 @@ public class SmscEnquireLinkRequestImpl extends EnquireLink implements EnquireLi
      * {@inheritDoc}
      * 
      */
-    public int getVersionID() {
+    public int getVersionId() {
         return this.getVersion().getVersionID();
     }
 }

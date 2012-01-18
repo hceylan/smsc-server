@@ -54,5 +54,5 @@ public interface SmscRequest {
      * 
      * @return the version of the SMPP Protocol
      */
-    public int getVersionID();
+    public int getVersionId();
 }

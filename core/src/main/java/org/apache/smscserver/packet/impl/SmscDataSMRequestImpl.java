@@ -39,7 +39,7 @@ public class SmscDataSMRequestImpl extends DataSM implements DataSMRequest {
      * {@inheritDoc}
      * 
      */
-    public int getVersionID() {
+    public int getVersionId() {
         return this.getVersion().getVersionID();
     }
 }

@@ -26,6 +26,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -38,6 +39,7 @@ import org.apache.smscserver.smsclet.User;
 import org.apache.smscserver.usermanager.DbUserManagerFactory;
 import org.apache.smscserver.usermanager.PasswordEncryptor;
 import org.apache.smscserver.usermanager.UsernamePasswordAuthentication;
+import org.apache.smscserver.util.DBUtils;
 import org.apache.smscserver.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,81 +97,40 @@ public class DbUserManager extends AbstractUserManager {
             // test the connection
             con = this.createConnection();
 
-            DbUserManager.LOG.info("Database connection opened.");
-        } catch (SQLException ex) {
-            DbUserManager.LOG.error("Failed to open connection to user database", ex);
-            throw new SmscServerConfigurationException("Failed to open connection to user database", ex);
+            DbUserManager.LOG.info("Database connection for user manager successfully opened.");
+        } catch (SQLException e) {
+            String msg = "Failed to open connection to user database";
+            DbUserManager.LOG.error(msg, e);
+            throw new SmscServerConfigurationException(msg, e);
         } finally {
-            this.closeQuitely(con);
+            DBUtils.closeQuitely(con);
         }
     }
 
-    protected void closeQuitely(Connection con) {
-        if (con != null) {
-            try {
-                con.close();
-            } catch (SQLException e) {
-                // ignore
-            }
-        }
-    }
-
-    private void closeQuitely(ResultSet rs) {
-        if (rs != null) {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                // ignore
-            }
-        }
-    }
-
-    private void closeQuitely(Statement stmt) {
-        if (stmt != null) {
-            Connection con = null;
-            try {
-                con = stmt.getConnection();
-            } catch (Exception e) {
-            }
-            try {
-                stmt.close();
-            } catch (SQLException e) {
-                // ignore
-            }
-            this.closeQuitely(con);
-        }
-    }
-
-    /**
-     * Open connection to database.
-     */
-    protected Connection createConnection() throws SQLException {
-        Connection connection = this.dataSource.getConnection();
-        connection.setAutoCommit(true);
-
-        return connection;
+    private Connection createConnection() throws SQLException {
+        return DBUtils.createConnection(this.dataSource);
     }
 
     /**
      * Delete user. Delete the row from the table.
      */
     public void delete(String name) throws SmscException {
-        // create sql query
-        HashMap<String, Object> map = new HashMap<String, Object>();
-        map.put(AbstractUserManager.ATTR_LOGIN, this.escapeString(name));
-        String sql = StringUtils.replaceString(this.deleteUserStmt, map);
-        DbUserManager.LOG.info(sql);
-
-        // execute query
         Statement stmt = null;
+        String sql = null;
         try {
+            // create sql query
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put(AbstractUserManager.ATTR_LOGIN, DBUtils.escapeString(name));
+            sql = StringUtils.replaceString(this.deleteUserStmt, map);
+            DbUserManager.LOG.debug(sql);
+
+            // execute query
             stmt = this.createConnection().createStatement();
             stmt.executeUpdate(sql);
-        } catch (SQLException ex) {
-            DbUserManager.LOG.error("DbUserManager.delete()", ex);
-            throw new SmscException("DbUserManager.delete()", ex);
+        } catch (Exception e) {
+            throw DBUtils.handleException(sql, e);
         } finally {
-            this.closeQuitely(stmt);
+            DBUtils.closeQuitelyWithConnection(stmt);
         }
     }
 
@@ -179,60 +140,39 @@ public class DbUserManager extends AbstractUserManager {
     public boolean doesExist(String name) throws SmscException {
         Statement stmt = null;
         ResultSet rs = null;
-        try {
+        String sql = null;
 
+        try {
             // create the sql
-            HashMap<String, Object> map = new HashMap<String, Object>();
-            map.put(AbstractUserManager.ATTR_LOGIN, this.escapeString(name));
-            String sql = StringUtils.replaceString(this.selectUserStmt, map);
-            DbUserManager.LOG.info(sql);
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put(AbstractUserManager.ATTR_LOGIN, DBUtils.escapeString(name));
+            sql = StringUtils.replaceString(this.selectUserStmt, map);
+            DbUserManager.LOG.debug(sql);
 
             // execute query
             stmt = this.createConnection().createStatement();
             rs = stmt.executeQuery(sql);
+
             return rs.next();
-        } catch (SQLException ex) {
-            DbUserManager.LOG.error("DbUserManager.doesExist()", ex);
-            throw new SmscException("DbUserManager.doesExist()", ex);
+        } catch (Exception e) {
+            throw DBUtils.handleException(sql, e);
         } finally {
-            this.closeQuitely(rs);
-            this.closeQuitely(stmt);
+            DBUtils.closeQuitelyWithConnection(rs, stmt);
         }
-    }
-
-    /**
-     * Escape string to be embedded in SQL statement.
-     */
-    private String escapeString(String input) {
-        if (input == null) {
-            return input;
-        }
-
-        StringBuilder valBuf = new StringBuilder(input);
-        for (int i = 0; i < valBuf.length(); i++) {
-            char ch = valBuf.charAt(i);
-            if ((ch == '\'') || (ch == '\\') || (ch == '$') || (ch == '^') || (ch == '[') || (ch == ']') || (ch == '{')
-                    || (ch == '}')) {
-
-                valBuf.insert(i, '\\');
-                i++;
-            }
-        }
-        return valBuf.toString();
     }
 
     /**
      * Get all user names from the database.
      */
     public String[] getAllUserNames() throws SmscException {
-
         Statement stmt = null;
         ResultSet rs = null;
-        try {
+        String sql = null;
 
+        try {
             // create sql query
-            String sql = this.selectAllStmt;
-            DbUserManager.LOG.info(sql);
+            sql = this.selectAllStmt;
+            DbUserManager.LOG.debug(sql);
 
             // execute query
             stmt = this.createConnection().createStatement();
@@ -244,114 +184,29 @@ public class DbUserManager extends AbstractUserManager {
                 names.add(rs.getString(AbstractUserManager.ATTR_LOGIN));
             }
             return names.toArray(new String[0]);
-        } catch (SQLException ex) {
-            DbUserManager.LOG.error("DbUserManager.getAllUserNames()", ex);
-            throw new SmscException("DbUserManager.getAllUserNames()", ex);
+        } catch (Exception e) {
+            throw DBUtils.handleException(sql, e);
         } finally {
-            this.closeQuitely(rs);
-            this.closeQuitely(stmt);
+            DBUtils.closeQuitelyWithConnection(rs, stmt);
         }
-    }
-
-    /**
-     * Retrive the data source used by the user manager
-     * 
-     * @return The current data source
-     */
-    public DataSource getDataSource() {
-        return this.dataSource;
-    }
-
-    /**
-     * Get the SQL SELECT statement used to find whether an user is admin or not.
-     * 
-     * @return The SQL statement
-     */
-    public String getSqlUserAdmin() {
-        return this.isAdminStmt;
-    }
-
-    /**
-     * Get the SQL SELECT statement used to authenticate user.
-     * 
-     * @return The SQL statement
-     */
-    public String getSqlUserAuthenticate() {
-        return this.authenticateStmt;
-    }
-
-    /**
-     * Get the SQL DELETE statement used to delete an existing user.
-     * 
-     * @return The SQL statement
-     */
-    public String getSqlUserDelete() {
-        return this.deleteUserStmt;
-    }
-
-    /**
-     * Get the SQL INSERT statement used to add a new user.
-     * 
-     * @return The SQL statement
-     */
-    public String getSqlUserInsert() {
-        return this.insertUserStmt;
-    }
-
-    /**
-     * Get the SQL SELECT statement used to select an existing user.
-     * 
-     * @return The SQL statement
-     */
-    public String getSqlUserSelect() {
-        return this.selectUserStmt;
-    }
-
-    /**
-     * Get the SQL SELECT statement used to select all user ids.
-     * 
-     * @return The SQL statement
-     */
-    public String getSqlUserSelectAll() {
-        return this.selectAllStmt;
-    }
-
-    /**
-     * Get the SQL UPDATE statement used to update an existing user.
-     * 
-     * @return The SQL statement
-     */
-    public String getSqlUserUpdate() {
-        return this.updateUserStmt;
     }
 
     /**
      * Get the user object. Fetch the row from the table.
      */
     public User getUserByName(String name) throws SmscException {
-        Statement stmt = null;
-        ResultSet rs = null;
-        try {
+        BaseUser user = this.selectUserByName(name);
 
-            BaseUser user = this.selectUserByName(name);
-
-            if (user != null) {
-                // reset the password, not to be sent to API users
-                user.setPassword(null);
-            }
-            return user;
-
-        } catch (SQLException ex) {
-            DbUserManager.LOG.error("DbUserManager.getUserByName()", ex);
-            throw new SmscException("DbUserManager.getUserByName()", ex);
-        } finally {
-            this.closeQuitely(rs);
-            this.closeQuitely(stmt);
+        if (user != null) {
+            // reset the password, not to be sent to API users
+            user.setPassword(null);
         }
+
+        return user;
     }
 
     @Override
-    protected User internalAuthenticate(Authentication authentication) throws AuthenticationFailedException {
+    protected User internalAuthenticate(Authentication authentication) throws SmscException {
         if (authentication instanceof UsernamePasswordAuthentication) {
             UsernamePasswordAuthentication upauth = (UsernamePasswordAuthentication) authentication;
 
@@ -368,12 +223,14 @@ public class DbUserManager extends AbstractUserManager {
 
             Statement stmt = null;
             ResultSet rs = null;
+            String sql = null;
+
             try {
                 // create the sql query
-                HashMap<String, Object> map = new HashMap<String, Object>();
-                map.put(AbstractUserManager.ATTR_LOGIN, this.escapeString(username));
-                String sql = StringUtils.replaceString(this.authenticateStmt, map);
-                DbUserManager.LOG.info(sql);
+                Map<String, Object> map = new HashMap<String, Object>();
+                map.put(AbstractUserManager.ATTR_LOGIN, DBUtils.escapeString(username));
+                sql = StringUtils.replaceString(this.authenticateStmt, map);
+                DbUserManager.LOG.debug(sql);
 
                 // execute query
                 stmt = this.createConnection().createStatement();
@@ -396,12 +253,13 @@ public class DbUserManager extends AbstractUserManager {
                 } else {
                     throw new AuthenticationFailedException("Authentication failed");
                 }
-            } catch (SQLException ex) {
-                DbUserManager.LOG.error("DbUserManager.authenticate()", ex);
-                throw new AuthenticationFailedException("Authentication failed", ex);
+            } catch (Exception e) {
+                if (e instanceof AuthenticationFailedException) {
+                    throw (AuthenticationFailedException) e;
+                }
+                throw DBUtils.handleException(sql, e);
             } finally {
-                this.closeQuitely(rs);
-                this.closeQuitely(stmt);
+                DBUtils.closeQuitelyWithConnection(rs, stmt);
             }
         } else {
             throw new IllegalArgumentException("Authentication not supported by this user manager");
@@ -413,7 +271,6 @@ public class DbUserManager extends AbstractUserManager {
      */
     @Override
     public boolean isAdmin(String login) throws SmscException {
-
         // check input
         if (login == null) {
             return false;
@@ -421,24 +278,23 @@ public class DbUserManager extends AbstractUserManager {
 
         Statement stmt = null;
         ResultSet rs = null;
-        try {
+        String sql = null;
 
+        try {
             // create the sql query
-            HashMap<String, Object> map = new HashMap<String, Object>();
-            map.put(AbstractUserManager.ATTR_LOGIN, this.escapeString(login));
-            String sql = StringUtils.replaceString(this.isAdminStmt, map);
-            DbUserManager.LOG.info(sql);
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put(AbstractUserManager.ATTR_LOGIN, DBUtils.escapeString(login));
+            sql = StringUtils.replaceString(this.isAdminStmt, map);
+            DbUserManager.LOG.debug(sql);
 
             // execute query
             stmt = this.createConnection().createStatement();
             rs = stmt.executeQuery(sql);
             return rs.next();
-        } catch (SQLException ex) {
-            DbUserManager.LOG.error("DbUserManager.isAdmin()", ex);
-            throw new SmscException("DbUserManager.isAdmin()", ex);
+        } catch (Exception e) {
+            throw DBUtils.handleException(sql, e);
         } finally {
-            this.closeQuitely(rs);
-            this.closeQuitely(stmt);
+            DBUtils.closeQuitelyWithConnection(rs, stmt);
         }
     }
 
@@ -452,11 +308,12 @@ public class DbUserManager extends AbstractUserManager {
         }
 
         Statement stmt = null;
-        try {
+        String sql = null;
 
+        try {
             // create sql query
-            HashMap<String, Object> map = new HashMap<String, Object>();
-            map.put(AbstractUserManager.ATTR_LOGIN, this.escapeString(user.getName()));
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put(AbstractUserManager.ATTR_LOGIN, DBUtils.escapeString(user.getName()));
 
             String password = null;
             if (user.getPassword() != null) {
@@ -475,11 +332,11 @@ public class DbUserManager extends AbstractUserManager {
                         password = userWithPassword.getPassword();
                     }
                 } finally {
-                    this.closeQuitely(rs);
+                    DBUtils.closeQuitely(rs);
                 }
             }
 
-            map.put(AbstractUserManager.ATTR_PASSWORD, this.escapeString(password));
+            map.put(AbstractUserManager.ATTR_PASSWORD, DBUtils.escapeString(password));
             map.put(AbstractUserManager.ATTR_ENABLE, String.valueOf(user.getEnabled()));
             map.put(AbstractUserManager.ATTR_MAX_IDLE_TIME, user.getMaxIdleTime());
 
@@ -495,35 +352,35 @@ public class DbUserManager extends AbstractUserManager {
                 map.put(AbstractUserManager.ATTR_MAX_LOGIN_PER_IP, 0);
             }
 
-            String sql = null;
             if (!this.doesExist(user.getName())) {
                 sql = StringUtils.replaceString(this.insertUserStmt, map);
             } else {
                 sql = StringUtils.replaceString(this.updateUserStmt, map);
             }
-            DbUserManager.LOG.info(sql);
+            DbUserManager.LOG.debug(sql);
 
             // execute query
             stmt = this.createConnection().createStatement();
             stmt.executeUpdate(sql);
-        } catch (SQLException ex) {
-            DbUserManager.LOG.error("DbUserManager.save()", ex);
-            throw new SmscException("DbUserManager.save()", ex);
+        } catch (Exception e) {
+            throw DBUtils.handleException(sql, e);
         } finally {
-            this.closeQuitely(stmt);
+            DBUtils.closeQuitelyWithConnection(stmt);
         }
     }
 
-    private BaseUser selectUserByName(String name) throws SQLException {
-        // create sql query
-        HashMap<String, Object> map = new HashMap<String, Object>();
-        map.put(AbstractUserManager.ATTR_LOGIN, this.escapeString(name));
-        String sql = StringUtils.replaceString(this.selectUserStmt, map);
-        DbUserManager.LOG.info(sql);
-
+    private BaseUser selectUserByName(String name) throws SmscException {
         Statement stmt = null;
         ResultSet rs = null;
+        String sql = null;
+
         try {
+            // create sql query
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put(AbstractUserManager.ATTR_LOGIN, DBUtils.escapeString(name));
+            sql = StringUtils.replaceString(this.selectUserStmt, map);
+            DbUserManager.LOG.debug(sql);
+
             // execute query
             stmt = this.createConnection().createStatement();
             rs = stmt.executeQuery(sql);
@@ -545,10 +402,10 @@ public class DbUserManager extends AbstractUserManager {
                 thisUser.setAuthorities(authorities);
             }
             return thisUser;
-
+        } catch (Exception e) {
+            throw DBUtils.handleException(sql, e);
         } finally {
-            this.closeQuitely(rs);
-            this.closeQuitely(stmt);
+            DBUtils.closeQuitelyWithConnection(rs, stmt);
         }
     }
 

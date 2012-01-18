@@ -24,10 +24,13 @@ import org.apache.smscserver.packet.impl.SmscStatusReplyImpl;
 import org.apache.smscserver.smsclet.Authentication;
 import org.apache.smscserver.smsclet.AuthenticationFailedException;
 import org.apache.smscserver.smsclet.BindRequest;
+import org.apache.smscserver.smsclet.SmscException;
 import org.apache.smscserver.smsclet.SmscReply;
 import org.apache.smscserver.smsclet.SmscRequest;
 import org.apache.smscserver.smsclet.User;
 import org.apache.smscserver.usermanager.UsernamePasswordAuthentication;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <strong>Internal class, do not use directly.</strong>
@@ -39,6 +42,8 @@ import org.apache.smscserver.usermanager.UsernamePasswordAuthentication;
  * @author hceylan
  */
 public class BindCommand implements Command {
+
+    private static final Logger LOG = LoggerFactory.getLogger(BindCommand.class);
 
     public static final BindCommand SINGLETON = new BindCommand();
 
@@ -70,6 +75,10 @@ public class BindCommand implements Command {
 
         } catch (AuthenticationFailedException e) {
             return new SmscStatusReplyImpl(request, SmscReply.ErrorCode.ESME_RBINDFAIL);
+        } catch (SmscException e) {
+            BindCommand.LOG.error("Error occurred during authentication", e);
+
+            return new SmscStatusReplyImpl(request, SmscReply.ErrorCode.ESME_RUNKNOWNERR);
         }
 
         return new SmscBindReplyImpl(request, bindRequest.getSystemId());

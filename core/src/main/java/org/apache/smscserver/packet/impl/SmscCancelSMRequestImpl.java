@@ -39,7 +39,7 @@ public class SmscCancelSMRequestImpl extends CancelSM implements CancelSMRequest
      * {@inheritDoc}
      * 
      */
-    public int getVersionID() {
+    public int getVersionId() {
         return this.getVersion().getVersionID();
     }
 }

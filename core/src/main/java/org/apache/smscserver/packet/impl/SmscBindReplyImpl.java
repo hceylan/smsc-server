@@ -29,7 +29,7 @@ public class SmscBindReplyImpl extends BindResp implements BindReply {
 
         this.setSystemId(systemId);
         this.setSequenceNum(request.getSequenceNum());
-        this.setVersion(SMPPVersion.getVersion(request.getVersionID()));
+        this.setVersion(SMPPVersion.getVersion(request.getVersionId()));
     }
 
     /**

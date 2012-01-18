@@ -79,8 +79,10 @@ public abstract class AbstractUserManager implements UserManager {
 
     /**
      * User authenticate method
+     * 
+     * @throws SmscException
      */
-    public final User authenticate(Authentication authentication) throws AuthenticationFailedException {
+    public final User authenticate(Authentication authentication) throws SmscException {
         try {
             User internalAuthenticate = this.internalAuthenticate(authentication);
             return internalAuthenticate;
@@ -138,7 +140,8 @@ public abstract class AbstractUserManager implements UserManager {
         return this.passwordEncryptor;
     }
 
-    protected abstract User internalAuthenticate(Authentication authentication) throws AuthenticationFailedException;
+    protected abstract User internalAuthenticate(Authentication authentication) throws AuthenticationFailedException,
+            SmscException;
 
     /**
      * @return true if user with this login is administrator

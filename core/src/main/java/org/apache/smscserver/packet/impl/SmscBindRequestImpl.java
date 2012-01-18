@@ -39,7 +39,7 @@ public class SmscBindRequestImpl extends Bind implements BindRequest {
      * {@inheritDoc}
      * 
      */
-    public int getVersionID() {
+    public int getVersionId() {
         return this.getVersion().getVersionID();
     }
 }

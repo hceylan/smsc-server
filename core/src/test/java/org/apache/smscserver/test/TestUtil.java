@@ -22,14 +22,11 @@ package org.apache.smscserver.test;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
-import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.List;
 
 import junit.framework.Assert;
 
@@ -179,36 +176,4 @@ public class TestUtil {
         }
     }
 
-    public static String[] getHostAddresses() throws Exception {
-        Enumeration<NetworkInterface> nifs = NetworkInterface.getNetworkInterfaces();
-
-        List<String> hostIps = new ArrayList<String>();
-        while (nifs.hasMoreElements()) {
-            NetworkInterface nif = nifs.nextElement();
-            Enumeration<InetAddress> ips = nif.getInetAddresses();
-
-            while (ips.hasMoreElements()) {
-                InetAddress ip = ips.nextElement();
-                if (ip instanceof java.net.Inet4Address) {
-                    hostIps.add(ip.getHostAddress());
-                } else {
-                    // IPv6 not tested
-                }
-            }
-        }
-
-        return hostIps.toArray(new String[0]);
-    }
-
-    public static void writeDataToFile(File file, byte[] data) throws IOException {
-        FileOutputStream fos = null;
-
-        try {
-            fos = new FileOutputStream(file);
-
-            fos.write(data);
-        } finally {
-            IoUtils.close(fos);
-        }
-    }
 }

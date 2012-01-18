@@ -60,7 +60,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultSmscIoSession implements SmscIoSession, IoSession {
 
-    public static final String ATTRIBUTE_PREFIX = "org.apache.smscserver.";
+    public static final String ATTRIBUTE_PREFIX = "org.apache.smscserver.test.";
 
     private static final String ATTRIBUTE_SESSION_ID = DefaultSmscIoSession.ATTRIBUTE_PREFIX + "session-id";
     private static final String ATTRIBUTE_USER = DefaultSmscIoSession.ATTRIBUTE_PREFIX + "user";

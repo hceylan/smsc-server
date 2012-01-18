@@ -35,11 +35,7 @@ import org.apache.smscserver.smsclet.User;
  * <li>userid</li>
  * <li>userpassword</li>
  * <li>enableflag</li>
- * <li>homedirectory</li>
- * <li>writepermission</li>
  * <li>idletime</li>
- * <li>uploadrate</li>
- * <li>downloadrate</li>
  * </ul>
  * 
  * @author hceylan

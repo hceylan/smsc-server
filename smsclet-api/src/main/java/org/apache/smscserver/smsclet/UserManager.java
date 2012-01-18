@@ -37,7 +37,7 @@ public interface UserManager {
      * @throws SmscException
      *             when the UserManager can't fulfill the request.
      */
-    User authenticate(Authentication authentication) throws AuthenticationFailedException;
+    User authenticate(Authentication authentication) throws AuthenticationFailedException, SmscException;
 
     /**
      * Delete the user from the system.

@@ -39,7 +39,7 @@ public class SmscQuerySMRequestImpl extends QuerySM implements QuerySMRequest {
      * {@inheritDoc}
      * 
      */
-    public int getVersionID() {
+    public int getVersionId() {
         return this.getVersion().getVersionID();
     }
 

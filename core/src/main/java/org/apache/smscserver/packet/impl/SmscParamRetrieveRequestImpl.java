@@ -39,7 +39,7 @@ public class SmscParamRetrieveRequestImpl extends ParamRetrieve implements Param
      * {@inheritDoc}
      * 
      */
-    public int getVersionID() {
+    public int getVersionId() {
         return this.getVersion().getVersionID();
     }
 }

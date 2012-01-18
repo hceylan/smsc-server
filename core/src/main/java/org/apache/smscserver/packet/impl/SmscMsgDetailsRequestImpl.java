@@ -39,7 +39,7 @@ public class SmscMsgDetailsRequestImpl extends QueryLastMsgs implements QueryLas
      * {@inheritDoc}
      * 
      */
-    public int getVersionID() {
+    public int getVersionId() {
         return this.getVersion().getVersionID();
     }
 }

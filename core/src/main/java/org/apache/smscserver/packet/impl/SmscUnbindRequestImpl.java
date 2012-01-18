@@ -39,7 +39,7 @@ public class SmscUnbindRequestImpl extends Unbind implements UnbindRequest {
      * {@inheritDoc}
      * 
      */
-    public int getVersionID() {
+    public int getVersionId() {
         return this.getVersion().getVersionID();
     }
 }
