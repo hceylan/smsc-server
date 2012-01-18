@@ -91,6 +91,7 @@ public class ListenerFactory {
         } catch (UnknownHostException e) {
             throw new SmscServerConfigurationException("Unknown host", e);
         }
+
         // Deal with the old style black list and new session Filter here.
         if (this.sessionFilter != null) {
             if ((this.blockedAddresses != null) || (this.blockedSubnets != null)) {
@@ -98,6 +99,7 @@ public class ListenerFactory {
                         "Usage of SessionFilter in combination with blockedAddesses/subnets is not supported. ");
             }
         }
+
         if ((this.blockedAddresses != null) || (this.blockedSubnets != null)) {
             return new NioListener(this.serverAddress, this.port, this.implicitSsl, this.ssl, this.idleTimeout,
                     this.blockedAddresses, this.blockedSubnets);

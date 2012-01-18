@@ -58,6 +58,8 @@ public class InetAddressBlacklistTest extends ClientTestTemplate {
     public void testConnect() throws Exception {
         try {
             this.connectClient();
+            this.bind(ClientTestTemplate.TESTUSER1_USERNAME, ClientTestTemplate.TESTUSER_PASSWORD);
+
             Assert.fail("Must throw");
         } catch (Exception e) {
             // OK

@@ -194,7 +194,7 @@ public abstract class UserManagerTestTemplate extends TestCase {
         BaseUser user = new BaseUser();
         user.setName("newuser");
         user.setPassword("newpw");
-        user.setEnabled(false);
+        user.setEnabled(true);
         user.setMaxIdleTime(2);
 
         List<Authority> authorities = new ArrayList<Authority>();
@@ -255,7 +255,7 @@ public abstract class UserManagerTestTemplate extends TestCase {
         BaseUser user = new BaseUser();
         user.setName("newuser");
         user.setPassword("newpw");
-        user.setEnabled(false);
+        user.setEnabled(true);
         user.setMaxIdleTime(2);
 
         List<Authority> authorities = new ArrayList<Authority>();

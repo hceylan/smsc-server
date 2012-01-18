@@ -97,6 +97,10 @@ public abstract class AbstractUserManager implements UserManager {
     }
 
     protected void authorizeConcurency(Authentication authentication, User user) throws AuthenticationFailedException {
+        if (!user.getEnabled()) {
+            throw new AuthenticationFailedException("User account is disabled by administrator");
+        }
+
         // user login limit check
         InetAddress address = null;
         SmscIoSession session = authentication.getSession();

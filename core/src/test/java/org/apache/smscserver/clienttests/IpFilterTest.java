@@ -59,7 +59,10 @@ public class IpFilterTest extends ClientTestTemplate {
         this.filter.clear();
         this.filter.setType(IpFilterType.DENY);
         this.filter.add(new Subnet(InetAddress.getByName("localhost"), 32));
+
         try {
+            this.connectClient();
+            this.bind(ClientTestTemplate.TESTUSER1_USERNAME, ClientTestTemplate.TESTUSER_PASSWORD);
 
             Assert.fail("Must throw");
         } catch (Exception e) {
@@ -70,8 +73,11 @@ public class IpFilterTest extends ClientTestTemplate {
     public void testDenyEmptyWhiteList() throws Exception {
         this.filter.clear();
         this.filter.setType(IpFilterType.ALLOW);
+
         try {
             this.connectClient();
+            this.bind(ClientTestTemplate.TESTUSER1_USERNAME, ClientTestTemplate.TESTUSER_PASSWORD);
+
             Assert.fail("Must throw");
         } catch (Exception e) {
             // OK
