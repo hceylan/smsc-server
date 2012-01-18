@@ -25,7 +25,7 @@ import org.apache.mina.core.session.IoSession;
 /**
  * A wrapper for <code>SessionFilter</code> so it can be added to the MINA filter chain.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  * 
  */
 

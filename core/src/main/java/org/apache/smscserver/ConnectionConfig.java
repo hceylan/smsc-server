@@ -23,7 +23,7 @@ package org.apache.smscserver;
  * Interface for providing the configuration for the control socket connections.
  * 
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  * 
  */
 public interface ConnectionConfig {

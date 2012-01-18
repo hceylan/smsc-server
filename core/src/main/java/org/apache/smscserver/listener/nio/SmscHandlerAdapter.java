@@ -23,10 +23,10 @@ import org.apache.mina.core.service.IoHandler;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.logging.MdcInjectionFilter;
-import org.apache.smscserver.impl.SmscHandler;
-import org.apache.smscserver.impl.SmscIoSession;
-import org.apache.smscserver.impl.SmscServerContext;
-import org.apache.smscserver.packet.impl.NotImplementedReply;
+import org.apache.smscserver.SmscHandler;
+import org.apache.smscserver.SmscServerContext;
+import org.apache.smscserver.impl.DefaultSmscIoSession;
+import org.apache.smscserver.packet.impl.SmscStatusReplyImpl;
 import org.apache.smscserver.smsclet.SmscReply;
 import org.apache.smscserver.smsclet.SmscRequest;
 
@@ -35,7 +35,7 @@ import org.apache.smscserver.smsclet.SmscRequest;
  * 
  * Adapter between MINA handler and the {@link SmscHandler} interface
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  * 
  */
 public class SmscHandlerAdapter implements IoHandler {
@@ -54,7 +54,7 @@ public class SmscHandlerAdapter implements IoHandler {
      * 
      */
     public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
-        this.smscHandler.exceptionCaught(new SmscIoSession(session, this.context), cause);
+        this.smscHandler.exceptionCaught(new DefaultSmscIoSession(session, this.context), cause);
     }
 
     public SmscHandler getSmscHandler() {
@@ -62,45 +62,41 @@ public class SmscHandlerAdapter implements IoHandler {
     }
 
     public void messageReceived(IoSession session, Object message) throws Exception {
-        SmscIoSession smscSession = new SmscIoSession(session, this.context);
+        DefaultSmscIoSession smscSession = new DefaultSmscIoSession(session, this.context);
 
         SmscRequest request = (SmscRequest) message;
-
-        if (request == null) {
-            // TODO: Hasan handle InvMsgId
-        }
 
         smscSession.setRequest(request);
 
         SmscReply reply = this.smscHandler.messageReceived(smscSession, request);
         if (reply == null) {
-            reply = new NotImplementedReply(request);
+            reply = new SmscStatusReplyImpl(request, SmscReply.ErrorCode.ESME_RINVCMDID);
         }
 
         session.write(reply);
     }
 
     public void messageSent(IoSession session, Object message) throws Exception {
-        this.smscHandler.messageSent(new SmscIoSession(session, this.context), (SmscReply) message);
+        this.smscHandler.messageSent(new DefaultSmscIoSession(session, this.context), (SmscReply) message);
     }
 
     public void sessionClosed(IoSession session) throws Exception {
-        this.smscHandler.sessionClosed(new SmscIoSession(session, this.context));
+        this.smscHandler.sessionClosed(new DefaultSmscIoSession(session, this.context));
     }
 
     public void sessionCreated(IoSession session) throws Exception {
-        SmscIoSession smscSession = new SmscIoSession(session, this.context);
+        DefaultSmscIoSession smscSession = new DefaultSmscIoSession(session, this.context);
         MdcInjectionFilter.setProperty(session, "session", smscSession.getSessionId().toString());
 
         this.smscHandler.sessionCreated(smscSession);
     }
 
     public void sessionIdle(IoSession session, IdleStatus status) throws Exception {
-        this.smscHandler.sessionIdle(new SmscIoSession(session, this.context), status);
+        this.smscHandler.sessionIdle(new DefaultSmscIoSession(session, this.context), status);
     }
 
     public void sessionOpened(IoSession session) throws Exception {
-        this.smscHandler.sessionOpened(new SmscIoSession(session, this.context));
+        this.smscHandler.sessionOpened(new DefaultSmscIoSession(session, this.context));
     }
 
     public void setSmscHandler(SmscHandler handler) {

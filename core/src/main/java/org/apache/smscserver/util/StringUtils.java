@@ -26,7 +26,7 @@ import java.util.Map;
  * 
  * String utility methods.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public class StringUtils {
 

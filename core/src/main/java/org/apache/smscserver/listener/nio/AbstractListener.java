@@ -35,7 +35,7 @@ import org.apache.smscserver.ssl.SslConfiguration;
  * 
  * Common base class for listener implementations
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public abstract class AbstractListener implements Listener {
 

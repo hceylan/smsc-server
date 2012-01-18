@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.mina.filter.executor.OrderedThreadPoolExecutor;
 import org.apache.smscserver.ConnectionConfig;
 import org.apache.smscserver.ConnectionConfigFactory;
+import org.apache.smscserver.SmscServerContext;
 import org.apache.smscserver.command.CommandFactory;
 import org.apache.smscserver.command.CommandFactoryFactory;
 import org.apache.smscserver.listener.Listener;
@@ -41,9 +42,6 @@ import org.apache.smscserver.smscletcontainer.SmscletContainer;
 import org.apache.smscserver.smscletcontainer.impl.DefaultSmscletContainer;
 import org.apache.smscserver.usermanager.PropertiesUserManagerFactory;
 import org.apache.smscserver.usermanager.impl.BaseUser;
-import org.apache.smscserver.usermanager.impl.ConcurrentLoginPermission;
-import org.apache.smscserver.usermanager.impl.TransferRatePermission;
-import org.apache.smscserver.usermanager.impl.WritePermission;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +50,7 @@ import org.slf4j.LoggerFactory;
  * 
  * SMSC server configuration implementation. It holds all the components used.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public class DefaultSmscServerContext implements SmscServerContext {
 
@@ -71,19 +69,11 @@ public class DefaultSmscServerContext implements SmscServerContext {
     private Map<String, Listener> listeners = new HashMap<String, Listener>();
 
     private static final List<Authority> ADMIN_AUTHORITIES = new ArrayList<Authority>();
-    private static final List<Authority> ANON_AUTHORITIES = new ArrayList<Authority>();
 
     /**
      * The thread pool executor to be used by the server using this context
      */
     private ThreadPoolExecutor threadPoolExecutor = null;
-
-    static {
-        DefaultSmscServerContext.ADMIN_AUTHORITIES.add(new WritePermission());
-
-        DefaultSmscServerContext.ANON_AUTHORITIES.add(new ConcurrentLoginPermission(20, 2));
-        DefaultSmscServerContext.ANON_AUTHORITIES.add(new TransferRatePermission(4800, 4800));
-    }
 
     public DefaultSmscServerContext() {
         // create the default listener
@@ -111,25 +101,8 @@ public class DefaultSmscServerContext implements SmscServerContext {
 
             adminUser.setAuthorities(DefaultSmscServerContext.ADMIN_AUTHORITIES);
 
-            adminUser.setHomeDirectory("./res/home");
             adminUser.setMaxIdleTime(0);
             userManager.save(adminUser);
-        }
-
-        // create anonymous user
-        if (!userManager.doesExist("anonymous")) {
-            this.LOG.info("Creating user : anonymous");
-            BaseUser anonUser = new BaseUser();
-            anonUser.setName("anonymous");
-            anonUser.setPassword("");
-
-            anonUser.setAuthorities(DefaultSmscServerContext.ANON_AUTHORITIES);
-
-            anonUser.setEnabled(true);
-
-            anonUser.setHomeDirectory("./res/home");
-            anonUser.setMaxIdleTime(300);
-            userManager.save(anonUser);
         }
     }
 

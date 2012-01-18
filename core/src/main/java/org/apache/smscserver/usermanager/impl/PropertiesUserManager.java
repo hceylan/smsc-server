@@ -37,7 +37,6 @@ import org.apache.smscserver.smsclet.AuthenticationFailedException;
 import org.apache.smscserver.smsclet.Authority;
 import org.apache.smscserver.smsclet.SmscException;
 import org.apache.smscserver.smsclet.User;
-import org.apache.smscserver.usermanager.AnonymousAuthentication;
 import org.apache.smscserver.usermanager.PasswordEncryptor;
 import org.apache.smscserver.usermanager.PropertiesUserManagerFactory;
 import org.apache.smscserver.usermanager.UsernamePasswordAuthentication;
@@ -94,11 +93,11 @@ import org.slf4j.LoggerFactory;
  * smscserver.user.admin.maxloginperip=0
  * </pre>
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public class PropertiesUserManager extends AbstractUserManager {
 
-    private final Logger LOG = LoggerFactory.getLogger(PropertiesUserManager.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PropertiesUserManager.class);
 
     private final static String PREFIX = "smscserver.user.";
 
@@ -127,55 +126,12 @@ public class PropertiesUserManager extends AbstractUserManager {
     }
 
     /**
-     * User authenticate method
-     */
-    public User authenticate(Authentication authentication) throws AuthenticationFailedException {
-        if (authentication instanceof UsernamePasswordAuthentication) {
-            UsernamePasswordAuthentication upauth = (UsernamePasswordAuthentication) authentication;
-
-            String user = upauth.getUsername();
-            String password = upauth.getPassword();
-
-            if (user == null) {
-                throw new AuthenticationFailedException("Authentication failed");
-            }
-
-            if (password == null) {
-                password = "";
-            }
-
-            String storedPassword = this.userDataProp.getProperty(PropertiesUserManager.PREFIX + user + '.'
-                    + AbstractUserManager.ATTR_PASSWORD);
-
-            if (storedPassword == null) {
-                // user does not exist
-                throw new AuthenticationFailedException("Authentication failed");
-            }
-
-            if (this.getPasswordEncryptor().matches(password, storedPassword)) {
-                return this.getUserByName(user);
-            } else {
-                throw new AuthenticationFailedException("Authentication failed");
-            }
-
-        } else if (authentication instanceof AnonymousAuthentication) {
-            if (this.doesExist("anonymous")) {
-                return this.getUserByName("anonymous");
-            } else {
-                throw new AuthenticationFailedException("Authentication failed");
-            }
-        } else {
-            throw new IllegalArgumentException("Authentication not supported by this user manager");
-        }
-    }
-
-    /**
      * Delete an user. Removes all this user entries from the properties. After removing the corresponding from the
      * properties, save the data.
      */
     public void delete(String usrName) throws SmscException {
         // remove entries from properties
-        String thisPrefix = PropertiesUserManager.PREFIX + usrName + '.';
+        String thisPrefix = PropertiesUserManager.PREFIX + usrName;
         Enumeration<?> propNames = this.userDataProp.propertyNames();
         ArrayList<String> remKeys = new ArrayList<String>();
         while (propNames.hasMoreElements()) {
@@ -206,7 +162,7 @@ public class PropertiesUserManager extends AbstractUserManager {
      * User existance check
      */
     public boolean doesExist(String name) {
-        String key = PropertiesUserManager.PREFIX + name + '.' + AbstractUserManager.ATTR_HOME;
+        String key = PropertiesUserManager.PREFIX + name;
         return this.userDataProp.containsKey(key);
     }
 
@@ -215,7 +171,7 @@ public class PropertiesUserManager extends AbstractUserManager {
      */
     public String[] getAllUserNames() {
         // get all user names
-        String suffix = '.' + AbstractUserManager.ATTR_HOME;
+        String suffix = '.' + AbstractUserManager.ATTR_LOGIN;
         ArrayList<String> ulst = new ArrayList<String>();
         Enumeration<?> allKeys = this.userDataProp.propertyNames();
         int prefixlen = PropertiesUserManager.PREFIX.length();
@@ -287,23 +243,13 @@ public class PropertiesUserManager extends AbstractUserManager {
         BaseUser user = new BaseUser();
         user.setName(userName);
         user.setEnabled(this.userDataProp.getBoolean(baseKey + AbstractUserManager.ATTR_ENABLE, true));
-        user.setHomeDirectory(this.userDataProp.getProperty(baseKey + AbstractUserManager.ATTR_HOME, "/"));
 
         List<Authority> authorities = new ArrayList<Authority>();
-
-        if (this.userDataProp.getBoolean(baseKey + AbstractUserManager.ATTR_WRITE_PERM, false)) {
-            authorities.add(new WritePermission());
-        }
 
         int maxLogin = this.userDataProp.getInteger(baseKey + AbstractUserManager.ATTR_MAX_LOGIN_NUMBER, 0);
         int maxLoginPerIP = this.userDataProp.getInteger(baseKey + AbstractUserManager.ATTR_MAX_LOGIN_PER_IP, 0);
 
-        authorities.add(new ConcurrentLoginPermission(maxLogin, maxLoginPerIP));
-
-        int uploadRate = this.userDataProp.getInteger(baseKey + AbstractUserManager.ATTR_MAX_UPLOAD_RATE, 0);
-        int downloadRate = this.userDataProp.getInteger(baseKey + AbstractUserManager.ATTR_MAX_DOWNLOAD_RATE, 0);
-
-        authorities.add(new TransferRatePermission(downloadRate, uploadRate));
+        authorities.add(new ConcurrentBindPermission(maxLogin, maxLoginPerIP));
 
         user.setAuthorities(authorities);
 
@@ -312,17 +258,55 @@ public class PropertiesUserManager extends AbstractUserManager {
         return user;
     }
 
+    @Override
+    protected User internalAuthenticate(Authentication authentication) throws AuthenticationFailedException {
+        if (authentication instanceof UsernamePasswordAuthentication) {
+            UsernamePasswordAuthentication upauth = (UsernamePasswordAuthentication) authentication;
+
+            String username = upauth.getUsername();
+            String password = upauth.getPassword();
+
+            if (username == null) {
+                throw new AuthenticationFailedException("Authentication failed");
+            }
+
+            if (password == null) {
+                password = "";
+            }
+
+            String storedPassword = this.userDataProp.getProperty(PropertiesUserManager.PREFIX + username + '.'
+                    + AbstractUserManager.ATTR_PASSWORD);
+
+            if (storedPassword == null) {
+                // user does not exist
+                throw new AuthenticationFailedException("Authentication failed");
+            }
+
+            if (this.getPasswordEncryptor().matches(password, storedPassword)) {
+                User user = this.getUserByName(username);
+
+                this.authorizeConcurency(authentication, user);
+
+                return user;
+            } else {
+                throw new AuthenticationFailedException("Authentication failed");
+            }
+        } else {
+            throw new IllegalArgumentException("Authentication not supported by this user manager");
+        }
+    }
+
     private void loadFromFile(File userDataFile) {
         try {
             this.userDataProp = new BaseProperties();
 
             if (userDataFile != null) {
-                this.LOG.debug("File configured, will try loading");
+                PropertiesUserManager.LOG.debug("File configured, will try loading");
 
                 if (userDataFile.exists()) {
                     this.userDataFile = userDataFile;
 
-                    this.LOG.debug("File found on file system");
+                    PropertiesUserManager.LOG.debug("File found on file system");
                     FileInputStream fis = null;
                     try {
                         fis = new FileInputStream(userDataFile);
@@ -332,7 +316,7 @@ public class PropertiesUserManager extends AbstractUserManager {
                     }
                 } else {
                     // try loading it from the classpath
-                    this.LOG.debug("File not found on file system, try loading from classpath");
+                    PropertiesUserManager.LOG.debug("File not found on file system, try loading from classpath");
 
                     InputStream is = this.getClass().getClassLoader().getResourceAsStream(userDataFile.getPath());
 
@@ -349,6 +333,8 @@ public class PropertiesUserManager extends AbstractUserManager {
                     }
                 }
             }
+
+            this.sanitize();
         } catch (IOException e) {
             throw new SmscServerConfigurationException("Error loading user data file : " + userDataFile, e);
         }
@@ -359,7 +345,7 @@ public class PropertiesUserManager extends AbstractUserManager {
             this.userDataProp = new BaseProperties();
 
             if (userDataPath != null) {
-                this.LOG.debug("URL configured, will try loading");
+                PropertiesUserManager.LOG.debug("URL configured, will try loading");
 
                 this.userUrl = userDataPath;
                 InputStream is = null;
@@ -372,6 +358,8 @@ public class PropertiesUserManager extends AbstractUserManager {
                     IoUtils.close(is);
                 }
             }
+
+            this.sanitize();
         } catch (IOException e) {
             throw new SmscServerConfigurationException("Error loading user data resource : " + userDataPath, e);
         }
@@ -384,13 +372,33 @@ public class PropertiesUserManager extends AbstractUserManager {
     public void refresh() {
         synchronized (this.userDataProp) {
             if (this.userDataFile != null) {
-                this.LOG.debug("Refreshing user manager using file: " + this.userDataFile.getAbsolutePath());
+                PropertiesUserManager.LOG.debug("Refreshing user manager using file: "
+                        + this.userDataFile.getAbsolutePath());
                 this.loadFromFile(this.userDataFile);
 
             } else {
                 // file is null, must have been created using URL
-                this.LOG.debug("Refreshing user manager using URL: " + this.userUrl.toString());
+                PropertiesUserManager.LOG.debug("Refreshing user manager using URL: " + this.userUrl.toString());
                 this.loadFromUrl(this.userUrl);
+            }
+        }
+    }
+
+    private void sanitize() {
+        @SuppressWarnings("unchecked")
+        Enumeration<String> e = (Enumeration<String>) this.userDataProp.propertyNames();
+        while (e.hasMoreElements()) {
+            String property = e.nextElement();
+            property = property.substring(PropertiesUserManager.PREFIX.length());
+
+            String[] split = property.split("\\.");
+            if (split.length == 1) {
+                continue;
+            }
+
+            property = PropertiesUserManager.PREFIX + split[0];
+            if (!this.userDataProp.containsKey(property)) {
+                this.userDataProp.put(property, new String());
             }
         }
     }
@@ -403,43 +411,28 @@ public class PropertiesUserManager extends AbstractUserManager {
         if (usr.getName() == null) {
             throw new NullPointerException("User name is null.");
         }
-        String thisPrefix = PropertiesUserManager.PREFIX + usr.getName() + '.';
+
+        String thisPrefix = PropertiesUserManager.PREFIX + usr.getName();
+
+        // save the username
+        this.userDataProp.put(thisPrefix, new String());
+
+        thisPrefix = thisPrefix + ".";
 
         // set other properties
         this.userDataProp.setProperty(thisPrefix + AbstractUserManager.ATTR_PASSWORD, this.getPassword(usr));
-
-        String home = usr.getHomeDirectory();
-        if (home == null) {
-            home = "/";
-        }
-        this.userDataProp.setProperty(thisPrefix + AbstractUserManager.ATTR_HOME, home);
         this.userDataProp.setProperty(thisPrefix + AbstractUserManager.ATTR_ENABLE, usr.getEnabled());
-        this.userDataProp.setProperty(thisPrefix + AbstractUserManager.ATTR_WRITE_PERM,
-                usr.authorize(new WriteRequest()) != null);
         this.userDataProp.setProperty(thisPrefix + AbstractUserManager.ATTR_MAX_IDLE_TIME, usr.getMaxIdleTime());
 
-        TransferRateRequest transferRateRequest = new TransferRateRequest();
-        transferRateRequest = (TransferRateRequest) usr.authorize(transferRateRequest);
-
-        if (transferRateRequest != null) {
-            this.userDataProp.setProperty(thisPrefix + AbstractUserManager.ATTR_MAX_UPLOAD_RATE,
-                    transferRateRequest.getMaxUploadRate());
-            this.userDataProp.setProperty(thisPrefix + AbstractUserManager.ATTR_MAX_DOWNLOAD_RATE,
-                    transferRateRequest.getMaxDownloadRate());
-        } else {
-            this.userDataProp.remove(thisPrefix + AbstractUserManager.ATTR_MAX_UPLOAD_RATE);
-            this.userDataProp.remove(thisPrefix + AbstractUserManager.ATTR_MAX_DOWNLOAD_RATE);
-        }
-
         // request that always will succeed
-        ConcurrentLoginRequest concurrentLoginRequest = new ConcurrentLoginRequest(0, 0);
-        concurrentLoginRequest = (ConcurrentLoginRequest) usr.authorize(concurrentLoginRequest);
+        ConcurrentBindRequest concurrentLoginRequest = new ConcurrentBindRequest(0, 0);
+        concurrentLoginRequest = (ConcurrentBindRequest) usr.authorize(concurrentLoginRequest);
 
         if (concurrentLoginRequest != null) {
             this.userDataProp.setProperty(thisPrefix + AbstractUserManager.ATTR_MAX_LOGIN_NUMBER,
-                    concurrentLoginRequest.getMaxConcurrentLogins());
+                    concurrentLoginRequest.getMaxConcurrentBinds());
             this.userDataProp.setProperty(thisPrefix + AbstractUserManager.ATTR_MAX_LOGIN_PER_IP,
-                    concurrentLoginRequest.getMaxConcurrentLoginsPerIP());
+                    concurrentLoginRequest.getMaxConcurrentBindsPerIP());
         } else {
             this.userDataProp.remove(thisPrefix + AbstractUserManager.ATTR_MAX_LOGIN_NUMBER);
             this.userDataProp.remove(thisPrefix + AbstractUserManager.ATTR_MAX_LOGIN_PER_IP);
@@ -468,7 +461,7 @@ public class PropertiesUserManager extends AbstractUserManager {
             fos = new FileOutputStream(this.userDataFile);
             this.userDataProp.store(fos, "Generated file - don't edit (please)");
         } catch (IOException ex) {
-            this.LOG.error("Failed saving user data", ex);
+            PropertiesUserManager.LOG.error("Failed saving user data", ex);
             throw new SmscException("Failed saving user data", ex);
         } finally {
             IoUtils.close(fos);

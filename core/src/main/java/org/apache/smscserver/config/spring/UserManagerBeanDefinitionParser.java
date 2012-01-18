@@ -35,7 +35,7 @@ import org.w3c.dom.Element;
 /**
  * Parses the SmscServer "file-user-manager" or "db-user-manager" elements into a Spring bean graph
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public class UserManagerBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 

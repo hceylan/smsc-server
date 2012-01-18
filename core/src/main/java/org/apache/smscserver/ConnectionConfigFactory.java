@@ -24,16 +24,12 @@ import org.apache.smscserver.impl.DefaultConnectionConfig;
 /**
  * Factory for creating connection configurations
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  * 
  */
 public class ConnectionConfigFactory {
 
     private int maxLogins = 10;
-
-    private boolean anonymousLoginEnabled = true;
-
-    private int maxAnonymousLogins = 10;
 
     private int maxLoginFailures = 3;
 
@@ -47,8 +43,8 @@ public class ConnectionConfigFactory {
      * @return The {@link ConnectionConfig} instance
      */
     public ConnectionConfig createConnectionConfig() {
-        return new DefaultConnectionConfig(this.anonymousLoginEnabled, this.loginFailureDelay, this.maxLogins,
-                this.maxAnonymousLogins, this.maxLoginFailures, this.maxThreads);
+        return new DefaultConnectionConfig(this.loginFailureDelay, this.maxLogins, this.maxLoginFailures,
+                this.maxThreads);
     }
 
     /**
@@ -58,15 +54,6 @@ public class ConnectionConfigFactory {
      */
     public int getLoginFailureDelay() {
         return this.loginFailureDelay;
-    }
-
-    /**
-     * The maximum number of anonymous logins the server would allow at any given time
-     * 
-     * @return The maximum number of anonymous logins
-     */
-    public int getMaxAnonymousLogins() {
-        return this.maxAnonymousLogins;
     }
 
     /**
@@ -97,25 +84,6 @@ public class ConnectionConfigFactory {
     }
 
     /**
-     * Is anonymous logins allowed at the server?
-     * 
-     * @return true if anonymous logins are enabled
-     */
-    public boolean isAnonymousLoginEnabled() {
-        return this.anonymousLoginEnabled;
-    }
-
-    /**
-     * Set if anonymous logins are allowed at the server
-     * 
-     * @param anonymousLoginEnabled
-     *            true if anonymous logins should be enabled
-     */
-    public void setAnonymousLoginEnabled(final boolean anonymousLoginEnabled) {
-        this.anonymousLoginEnabled = anonymousLoginEnabled;
-    }
-
-    /**
      * Set the delay in number of milliseconds between login failures. Important to make brute force attacks harder.
      * 
      * @param loginFailureDelay
@@ -123,16 +91,6 @@ public class ConnectionConfigFactory {
      */
     public void setLoginFailureDelay(final int loginFailureDelay) {
         this.loginFailureDelay = loginFailureDelay;
-    }
-
-    /**
-     * Sets the maximum number of anonymous logins the server would allow at any given time
-     * 
-     * @param maxAnonymousLogins
-     *            The maximum number of anonymous logins
-     */
-    public void setMaxAnonymousLogins(final int maxAnonymousLogins) {
-        this.maxAnonymousLogins = maxAnonymousLogins;
     }
 
     /**

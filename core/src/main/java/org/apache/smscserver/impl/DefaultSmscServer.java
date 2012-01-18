@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.apache.smscserver.ConnectionConfig;
 import org.apache.smscserver.SmscServer;
+import org.apache.smscserver.SmscServerContext;
 import org.apache.smscserver.SmscServerFactory;
 import org.apache.smscserver.command.CommandFactory;
 import org.apache.smscserver.listener.Listener;
@@ -40,7 +41,7 @@ import org.slf4j.LoggerFactory;
  * This is the starting point of all the servers. It invokes a new listener thread. <code>Server</code> implementation
  * is used to create the server socket and handle client connection.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public class DefaultSmscServer implements SmscServer {
 

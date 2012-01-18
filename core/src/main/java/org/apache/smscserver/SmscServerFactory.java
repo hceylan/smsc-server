@@ -33,7 +33,7 @@ import org.apache.smscserver.smscletcontainer.impl.DefaultSmscletContainer;
 /**
  * This is the starting point of all the servers. Creates server instances based on the provided configuration.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public class SmscServerFactory {
 
@@ -181,5 +181,7 @@ public class SmscServerFactory {
      */
     public void setUserManager(final UserManager userManager) {
         this.serverContext.setUserManager(userManager);
+
+        userManager.setContext(this.serverContext);
     }
 }

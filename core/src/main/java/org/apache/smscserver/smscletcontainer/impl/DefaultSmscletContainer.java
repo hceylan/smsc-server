@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
  * 
  * <strong><strong>Internal class, do not use directly.</strong></strong>
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public class DefaultSmscletContainer implements SmscletContainer {
 

@@ -32,7 +32,7 @@ import java.util.TimeZone;
  * 
  * Standard date related utility methods.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public class DateUtils {
 

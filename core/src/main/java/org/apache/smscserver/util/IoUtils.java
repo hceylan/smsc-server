@@ -43,7 +43,7 @@ import java.util.Random;
  * library we prefer to our own implementation to, using a external library might cause additional constraints on users
  * embedding SmscServer.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public class IoUtils {
 

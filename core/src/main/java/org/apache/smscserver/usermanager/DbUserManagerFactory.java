@@ -28,7 +28,7 @@ import org.apache.smscserver.usermanager.impl.DbUserManager;
 /**
  * Factory for database backed {@link UserManager} instances.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public class DbUserManagerFactory implements UserManagerFactory {
 
@@ -51,6 +51,10 @@ public class DbUserManagerFactory implements UserManagerFactory {
     private DataSource dataSource;
 
     private PasswordEncryptor passwordEncryptor = new Md5PasswordEncryptor();
+
+    public DbUserManagerFactory() {
+        super();
+    }
 
     public UserManager createUserManager() {
         if (this.dataSource == null) {

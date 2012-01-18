@@ -24,7 +24,7 @@ import org.apache.mina.core.session.IoSession;
 /**
  * The interface for filtering sessions based on various session attributes.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  * 
  */
 

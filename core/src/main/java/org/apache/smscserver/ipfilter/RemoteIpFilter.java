@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 /**
  * An implementation of the <code>SessionFilter</code> interface, to filter sessions based on the remote IP address.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  * 
  */
 

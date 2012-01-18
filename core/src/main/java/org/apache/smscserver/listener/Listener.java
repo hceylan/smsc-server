@@ -24,16 +24,16 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.mina.filter.firewall.Subnet;
-import org.apache.smscserver.impl.SmscIoSession;
-import org.apache.smscserver.impl.SmscServerContext;
+import org.apache.smscserver.SmscServerContext;
+import org.apache.smscserver.impl.DefaultSmscIoSession;
 import org.apache.smscserver.ipfilter.SessionFilter;
 import org.apache.smscserver.ssl.SslConfiguration;
 
 /**
  * Interface for the component responsible for waiting for incoming socket requests and kicking off
- * {@link SmscIoSession}s
+ * {@link DefaultSmscIoSession}s
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public interface Listener {
 
@@ -43,7 +43,7 @@ public interface Listener {
      * 
      * @return The currently active sessions
      */
-    Set<SmscIoSession> getActiveSessions();
+    Set<DefaultSmscIoSession> getActiveSessions();
 
     /**
      * @deprecated Replaced by IpFilter. Retrieves the {@link InetAddress} for which this listener blocks connections.

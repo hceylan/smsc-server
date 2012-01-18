@@ -20,7 +20,10 @@
 package org.apache.smscserver.listener.nio;
 
 import org.apache.mina.core.session.IoSession;
+import org.apache.mina.core.write.WriteRequest;
 import org.apache.mina.filter.logging.LoggingFilter;
+import org.apache.smscserver.smsclet.BindRequest;
+import org.apache.smscserver.smsclet.SmscRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,13 +32,13 @@ import org.slf4j.LoggerFactory;
  * 
  * Specialized @see {@link LoggingFilter} that optionally masks SMSC passwords.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public class SmscLoggingFilter extends LoggingFilter {
 
     private boolean maskPassword = true;
 
-    private final Logger logger;
+    private final Logger LOG;
 
     /**
      * @see LoggingFilter#LoggingFilter()
@@ -57,7 +60,7 @@ public class SmscLoggingFilter extends LoggingFilter {
     public SmscLoggingFilter(String name) {
         super(name);
 
-        this.logger = LoggerFactory.getLogger(name);
+        this.LOG = LoggerFactory.getLogger(name);
     }
 
     /**
@@ -74,22 +77,32 @@ public class SmscLoggingFilter extends LoggingFilter {
      */
     @Override
     public void messageReceived(NextFilter nextFilter, IoSession session, Object message) throws Exception {
-        String request = (String) message;
+        try {
+            SmscRequest request = (SmscRequest) message;
 
-        String logMessage;
-        if (this.maskPassword) {
-
-            if (request.trim().toUpperCase().startsWith("PASS ")) {
-                logMessage = "PASS *****";
+            if (request instanceof BindRequest) {
+                BindRequest bindRequest = (BindRequest) request;
+                if (this.maskPassword) {
+                    this.LOG.trace("Bind Request - {} -systemId {}, systemType {}", new Object[] { bindRequest.getId(),
+                            bindRequest.getSystemId(), bindRequest.getSystemType() });
+                } else {
+                    this.LOG.trace("Bind Request - {} -systemId {}, password {}, systemType {}",
+                            new Object[] { bindRequest.getId(), bindRequest.getSystemId(), bindRequest.getPassword(),
+                                    bindRequest.getSystemType() });
+                }
             } else {
-                logMessage = request;
+                this.LOG.trace("Other Request - {}", request.getId());
             }
-        } else {
-            logMessage = request;
+        } catch (Exception e) {
+            // ignore
         }
 
-        this.logger.info("RECEIVED: {}", logMessage);
         nextFilter.messageReceived(session, message);
+    }
+
+    @Override
+    public void messageSent(NextFilter nextFilter, IoSession session, WriteRequest writeRequest) throws Exception {
+        super.messageSent(nextFilter, session, writeRequest);
     }
 
     /**

@@ -24,7 +24,7 @@ package org.apache.smscserver.util;
  * 
  * This is a simplified regular character mattching class. Supports *?^[]- pattern characters.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public class RegularExpr {
 

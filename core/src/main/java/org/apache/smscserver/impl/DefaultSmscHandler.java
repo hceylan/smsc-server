@@ -21,6 +21,9 @@ package org.apache.smscserver.impl;
 
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.write.WriteToClosedSessionException;
+import org.apache.smscserver.ServerSmscStatistics;
+import org.apache.smscserver.SmscHandler;
+import org.apache.smscserver.SmscServerContext;
 import org.apache.smscserver.command.Command;
 import org.apache.smscserver.command.CommandFactory;
 import org.apache.smscserver.listener.Listener;
@@ -33,7 +36,7 @@ import org.slf4j.LoggerFactory;
 /**
  * <strong>Internal class, do not use directly.</strong>
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  * 
  */
 public class DefaultSmscHandler implements SmscHandler {
@@ -44,7 +47,7 @@ public class DefaultSmscHandler implements SmscHandler {
 
     private Listener listener;
 
-    public void exceptionCaught(final SmscIoSession session, final Throwable cause) throws Exception {
+    public void exceptionCaught(final DefaultSmscIoSession session, final Throwable cause) throws Exception {
         if (cause instanceof WriteToClosedSessionException) {
             WriteToClosedSessionException writeToClosedSessionException = (WriteToClosedSessionException) cause;
             this.LOG.warn("Client closed connection before all replies could be sent, last reply was {}",
@@ -62,7 +65,7 @@ public class DefaultSmscHandler implements SmscHandler {
         this.listener = listener;
     }
 
-    public SmscReply messageReceived(final SmscIoSession session, final SmscRequest request) throws Exception {
+    public SmscReply messageReceived(final DefaultSmscIoSession session, final SmscRequest request) throws Exception {
         session.updateLastAccessTime();
 
         SmscReply reply = this.context.getSmscletContainer().onRequest(session.getSmscletSession(), request);
@@ -74,14 +77,18 @@ public class DefaultSmscHandler implements SmscHandler {
         CommandFactory commandFactory = this.context.getCommandFactory();
         Command command = commandFactory.getCommand(commandID);
 
-        return command.execute(session, this.context, request);
+        if (command != null) {
+            return command.execute(session, this.context, request);
+        }
+
+        return null;
     }
 
-    public void messageSent(final SmscIoSession session, final SmscReply reply) throws Exception {
+    public void messageSent(final DefaultSmscIoSession session, final SmscReply reply) throws Exception {
         // do nothing
     }
 
-    public void sessionClosed(final SmscIoSession session) throws Exception {
+    public void sessionClosed(final DefaultSmscIoSession session) throws Exception {
         this.LOG.debug("Closing session");
         try {
             this.context.getSmscletContainer().onDisconnect(session.getSmscletSession());
@@ -102,7 +109,7 @@ public class DefaultSmscHandler implements SmscHandler {
         this.LOG.debug("Session closed");
     }
 
-    public void sessionCreated(final SmscIoSession session) throws Exception {
+    public void sessionCreated(final DefaultSmscIoSession session) throws Exception {
         session.setListener(this.listener);
 
         ServerSmscStatistics stats = ((ServerSmscStatistics) this.context.getSmscStatistics());
@@ -112,12 +119,12 @@ public class DefaultSmscHandler implements SmscHandler {
         }
     }
 
-    public void sessionIdle(final SmscIoSession session, final IdleStatus status) throws Exception {
+    public void sessionIdle(final DefaultSmscIoSession session, final IdleStatus status) throws Exception {
         this.LOG.info("Session idle, closing");
         session.close(false).awaitUninterruptibly(10000);
     }
 
-    public void sessionOpened(final SmscIoSession session) throws Exception {
+    public void sessionOpened(final DefaultSmscIoSession session) throws Exception {
         SmscletContainer smsclets = this.context.getSmscletContainer();
 
         try {

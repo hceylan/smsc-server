@@ -19,7 +19,7 @@ package org.apache.smscserver.ssl;
 /**
  * Enumeration of possible levels of client authentication during an SSL session.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public enum ClientAuth {
 

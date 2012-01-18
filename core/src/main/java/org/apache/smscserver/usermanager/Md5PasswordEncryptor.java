@@ -25,7 +25,7 @@ import org.apache.smscserver.util.EncryptUtils;
  * Password encryptor that hashes the password using MD5. Please note that this form of encryption is sensitive to
  * lookup attacks.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public class Md5PasswordEncryptor implements PasswordEncryptor {
 

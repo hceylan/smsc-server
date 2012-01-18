@@ -29,7 +29,7 @@ import org.springframework.context.support.FileSystemXmlApplicationContext;
 /**
  * Invokes SmscServer as a daemon, running in the background. Used for example for the Windows service.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public class Daemon {
 

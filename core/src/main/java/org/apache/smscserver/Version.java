@@ -28,7 +28,7 @@ import org.apache.smscserver.util.IoUtils;
 /**
  * Provides the version of this release of SmscServer
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public class Version {
 

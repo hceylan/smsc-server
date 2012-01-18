@@ -22,7 +22,7 @@ package org.apache.smscserver.ipfilter;
 /**
  * Defines various types of IP Filters.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  * 
  */
 public enum IpFilterType {

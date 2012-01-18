@@ -35,13 +35,14 @@ import org.w3c.dom.Element;
 /**
  * Parses the SmscServer "commands" element into a Spring bean graph
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public class CommandFactoryBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("unchecked")
     @Override
     protected void doParse(final Element element, final ParserContext parserContext, final BeanDefinitionBuilder builder) {
 

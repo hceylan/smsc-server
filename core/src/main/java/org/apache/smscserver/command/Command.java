@@ -21,8 +21,8 @@ package org.apache.smscserver.command;
 
 import java.io.IOException;
 
-import org.apache.smscserver.impl.SmscIoSession;
-import org.apache.smscserver.impl.SmscServerContext;
+import org.apache.smscserver.SmscServerContext;
+import org.apache.smscserver.impl.DefaultSmscIoSession;
 import org.apache.smscserver.smsclet.SmscException;
 import org.apache.smscserver.smsclet.SmscReply;
 import org.apache.smscserver.smsclet.SmscRequest;
@@ -30,7 +30,7 @@ import org.apache.smscserver.smsclet.SmscRequest;
 /**
  * This interface encapsulates all the SMSC commands.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public interface Command {
 
@@ -38,7 +38,7 @@ public interface Command {
      * Execute command.
      * 
      * @param session
-     *            The current {@link SmscIoSession}
+     *            The current {@link DefaultSmscIoSession}
      * @param context
      *            The current {@link SmscServerContext}
      * @param request
@@ -47,7 +47,6 @@ public interface Command {
      * @throws IOException
      * @throws SmscException
      */
-    SmscReply execute(SmscIoSession session, SmscServerContext context, SmscRequest request) throws IOException,
-            SmscException;
+    SmscReply execute(DefaultSmscIoSession session, SmscServerContext context, SmscRequest request);
 
 }

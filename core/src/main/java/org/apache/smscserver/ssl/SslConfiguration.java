@@ -27,7 +27,7 @@ import javax.net.ssl.SSLSocketFactory;
 /**
  * SSL configuration
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public interface SslConfiguration {
 

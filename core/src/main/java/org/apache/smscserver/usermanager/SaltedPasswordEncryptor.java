@@ -29,7 +29,7 @@ import org.apache.smscserver.util.EncryptUtils;
  * 
  * The algorithm is based on the principles described in http://www.jasypt.org/howtoencryptuserpasswords.html
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public class SaltedPasswordEncryptor implements PasswordEncryptor {
 
@@ -62,6 +62,7 @@ public class SaltedPasswordEncryptor implements PasswordEncryptor {
         if (storedPassword == null) {
             throw new NullPointerException("storedPassword can not be null");
         }
+
         if (passwordToCheck == null) {
             throw new NullPointerException("passwordToCheck can not be null");
         }

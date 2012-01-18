@@ -27,7 +27,7 @@ import org.apache.smscserver.smsclet.Smsclet;
  * Interface describing an Smsclet container. Smsclet containers extend the {@link Smsclet} interface and forward any
  * events to the Smsclets hosted by the container.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public interface SmscletContainer extends Smsclet {
 

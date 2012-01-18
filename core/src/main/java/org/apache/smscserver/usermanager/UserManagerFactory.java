@@ -24,7 +24,7 @@ import org.apache.smscserver.smsclet.UserManager;
 /**
  * Interface for user manager factories
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public interface UserManagerFactory {
 

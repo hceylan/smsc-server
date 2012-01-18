@@ -35,7 +35,6 @@ import org.apache.smscserver.smsclet.AuthenticationFailedException;
 import org.apache.smscserver.smsclet.Authority;
 import org.apache.smscserver.smsclet.SmscException;
 import org.apache.smscserver.smsclet.User;
-import org.apache.smscserver.usermanager.AnonymousAuthentication;
 import org.apache.smscserver.usermanager.DbUserManagerFactory;
 import org.apache.smscserver.usermanager.PasswordEncryptor;
 import org.apache.smscserver.usermanager.UsernamePasswordAuthentication;
@@ -52,11 +51,11 @@ import org.slf4j.LoggerFactory;
  * All the user attributes are replaced during run-time. So we can use your database schema. Then you need to modify the
  * SQLs in the configuration file.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public class DbUserManager extends AbstractUserManager {
 
-    private final Logger LOG = LoggerFactory.getLogger(DbUserManager.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DbUserManager.class);
 
     private String insertUserStmt;
 
@@ -81,6 +80,7 @@ public class DbUserManager extends AbstractUserManager {
             String updateUserStmt, String deleteUserStmt, String authenticateStmt, String isAdminStmt,
             PasswordEncryptor passwordEncryptor, String adminName) {
         super(adminName, passwordEncryptor);
+
         this.dataSource = dataSource;
         this.selectAllStmt = selectAllStmt;
         this.selectUserStmt = selectUserStmt;
@@ -95,81 +95,12 @@ public class DbUserManager extends AbstractUserManager {
             // test the connection
             con = this.createConnection();
 
-            this.LOG.info("Database connection opened.");
+            DbUserManager.LOG.info("Database connection opened.");
         } catch (SQLException ex) {
-            this.LOG.error("Failed to open connection to user database", ex);
+            DbUserManager.LOG.error("Failed to open connection to user database", ex);
             throw new SmscServerConfigurationException("Failed to open connection to user database", ex);
         } finally {
             this.closeQuitely(con);
-        }
-    }
-
-    /**
-     * User authentication.
-     */
-    public User authenticate(Authentication authentication) throws AuthenticationFailedException {
-        if (authentication instanceof UsernamePasswordAuthentication) {
-            UsernamePasswordAuthentication upauth = (UsernamePasswordAuthentication) authentication;
-
-            String user = upauth.getUsername();
-            String password = upauth.getPassword();
-
-            if (user == null) {
-                throw new AuthenticationFailedException("Authentication failed");
-            }
-
-            if (password == null) {
-                password = "";
-            }
-
-            Statement stmt = null;
-            ResultSet rs = null;
-            try {
-
-                // create the sql query
-                HashMap<String, Object> map = new HashMap<String, Object>();
-                map.put(AbstractUserManager.ATTR_LOGIN, this.escapeString(user));
-                String sql = StringUtils.replaceString(this.authenticateStmt, map);
-                this.LOG.info(sql);
-
-                // execute query
-                stmt = this.createConnection().createStatement();
-                rs = stmt.executeQuery(sql);
-                if (rs.next()) {
-                    try {
-                        String storedPassword = rs.getString(AbstractUserManager.ATTR_PASSWORD);
-                        if (this.getPasswordEncryptor().matches(password, storedPassword)) {
-                            return this.getUserByName(user);
-                        } else {
-                            throw new AuthenticationFailedException("Authentication failed");
-                        }
-                    } catch (SmscException e) {
-                        throw new AuthenticationFailedException("Authentication failed", e);
-                    }
-                } else {
-                    throw new AuthenticationFailedException("Authentication failed");
-                }
-            } catch (SQLException ex) {
-                this.LOG.error("DbUserManager.authenticate()", ex);
-                throw new AuthenticationFailedException("Authentication failed", ex);
-            } finally {
-                this.closeQuitely(rs);
-                this.closeQuitely(stmt);
-            }
-        } else if (authentication instanceof AnonymousAuthentication) {
-            try {
-                if (this.doesExist("anonymous")) {
-                    return this.getUserByName("anonymous");
-                } else {
-                    throw new AuthenticationFailedException("Authentication failed");
-                }
-            } catch (AuthenticationFailedException e) {
-                throw e;
-            } catch (SmscException e) {
-                throw new AuthenticationFailedException("Authentication failed", e);
-            }
-        } else {
-            throw new IllegalArgumentException("Authentication not supported by this user manager");
         }
     }
 
@@ -227,7 +158,7 @@ public class DbUserManager extends AbstractUserManager {
         HashMap<String, Object> map = new HashMap<String, Object>();
         map.put(AbstractUserManager.ATTR_LOGIN, this.escapeString(name));
         String sql = StringUtils.replaceString(this.deleteUserStmt, map);
-        this.LOG.info(sql);
+        DbUserManager.LOG.info(sql);
 
         // execute query
         Statement stmt = null;
@@ -235,7 +166,7 @@ public class DbUserManager extends AbstractUserManager {
             stmt = this.createConnection().createStatement();
             stmt.executeUpdate(sql);
         } catch (SQLException ex) {
-            this.LOG.error("DbUserManager.delete()", ex);
+            DbUserManager.LOG.error("DbUserManager.delete()", ex);
             throw new SmscException("DbUserManager.delete()", ex);
         } finally {
             this.closeQuitely(stmt);
@@ -254,14 +185,14 @@ public class DbUserManager extends AbstractUserManager {
             HashMap<String, Object> map = new HashMap<String, Object>();
             map.put(AbstractUserManager.ATTR_LOGIN, this.escapeString(name));
             String sql = StringUtils.replaceString(this.selectUserStmt, map);
-            this.LOG.info(sql);
+            DbUserManager.LOG.info(sql);
 
             // execute query
             stmt = this.createConnection().createStatement();
             rs = stmt.executeQuery(sql);
             return rs.next();
         } catch (SQLException ex) {
-            this.LOG.error("DbUserManager.doesExist()", ex);
+            DbUserManager.LOG.error("DbUserManager.doesExist()", ex);
             throw new SmscException("DbUserManager.doesExist()", ex);
         } finally {
             this.closeQuitely(rs);
@@ -301,7 +232,7 @@ public class DbUserManager extends AbstractUserManager {
 
             // create sql query
             String sql = this.selectAllStmt;
-            this.LOG.info(sql);
+            DbUserManager.LOG.info(sql);
 
             // execute query
             stmt = this.createConnection().createStatement();
@@ -314,7 +245,7 @@ public class DbUserManager extends AbstractUserManager {
             }
             return names.toArray(new String[0]);
         } catch (SQLException ex) {
-            this.LOG.error("DbUserManager.getAllUserNames()", ex);
+            DbUserManager.LOG.error("DbUserManager.getAllUserNames()", ex);
             throw new SmscException("DbUserManager.getAllUserNames()", ex);
         } finally {
             this.closeQuitely(rs);
@@ -411,11 +342,69 @@ public class DbUserManager extends AbstractUserManager {
             return user;
 
         } catch (SQLException ex) {
-            this.LOG.error("DbUserManager.getUserByName()", ex);
+            DbUserManager.LOG.error("DbUserManager.getUserByName()", ex);
             throw new SmscException("DbUserManager.getUserByName()", ex);
         } finally {
             this.closeQuitely(rs);
             this.closeQuitely(stmt);
+        }
+    }
+
+    @Override
+    protected User internalAuthenticate(Authentication authentication) throws AuthenticationFailedException {
+        if (authentication instanceof UsernamePasswordAuthentication) {
+            UsernamePasswordAuthentication upauth = (UsernamePasswordAuthentication) authentication;
+
+            String username = upauth.getUsername();
+            String password = upauth.getPassword();
+
+            if (username == null) {
+                throw new AuthenticationFailedException("Authentication failed");
+            }
+
+            if (password == null) {
+                password = "";
+            }
+
+            Statement stmt = null;
+            ResultSet rs = null;
+            try {
+                // create the sql query
+                HashMap<String, Object> map = new HashMap<String, Object>();
+                map.put(AbstractUserManager.ATTR_LOGIN, this.escapeString(username));
+                String sql = StringUtils.replaceString(this.authenticateStmt, map);
+                DbUserManager.LOG.info(sql);
+
+                // execute query
+                stmt = this.createConnection().createStatement();
+                rs = stmt.executeQuery(sql);
+                if (rs.next()) {
+                    try {
+                        String storedPassword = rs.getString(AbstractUserManager.ATTR_PASSWORD);
+                        if (this.getPasswordEncryptor().matches(password, storedPassword)) {
+                            User user = this.getUserByName(username);
+
+                            this.authorizeConcurency(authentication, user);
+
+                            return user;
+                        } else {
+                            throw new AuthenticationFailedException("Authentication failed");
+                        }
+                    } catch (SmscException e) {
+                        throw new AuthenticationFailedException("Authentication failed", e);
+                    }
+                } else {
+                    throw new AuthenticationFailedException("Authentication failed");
+                }
+            } catch (SQLException ex) {
+                DbUserManager.LOG.error("DbUserManager.authenticate()", ex);
+                throw new AuthenticationFailedException("Authentication failed", ex);
+            } finally {
+                this.closeQuitely(rs);
+                this.closeQuitely(stmt);
+            }
+        } else {
+            throw new IllegalArgumentException("Authentication not supported by this user manager");
         }
     }
 
@@ -438,14 +427,14 @@ public class DbUserManager extends AbstractUserManager {
             HashMap<String, Object> map = new HashMap<String, Object>();
             map.put(AbstractUserManager.ATTR_LOGIN, this.escapeString(login));
             String sql = StringUtils.replaceString(this.isAdminStmt, map);
-            this.LOG.info(sql);
+            DbUserManager.LOG.info(sql);
 
             // execute query
             stmt = this.createConnection().createStatement();
             rs = stmt.executeQuery(sql);
             return rs.next();
         } catch (SQLException ex) {
-            this.LOG.error("DbUserManager.isAdmin()", ex);
+            DbUserManager.LOG.error("DbUserManager.isAdmin()", ex);
             throw new SmscException("DbUserManager.isAdmin()", ex);
         } finally {
             this.closeQuitely(rs);
@@ -489,36 +478,18 @@ public class DbUserManager extends AbstractUserManager {
                     this.closeQuitely(rs);
                 }
             }
+
             map.put(AbstractUserManager.ATTR_PASSWORD, this.escapeString(password));
-
-            String home = user.getHomeDirectory();
-            if (home == null) {
-                home = "/";
-            }
-            map.put(AbstractUserManager.ATTR_HOME, this.escapeString(home));
             map.put(AbstractUserManager.ATTR_ENABLE, String.valueOf(user.getEnabled()));
-
-            map.put(AbstractUserManager.ATTR_WRITE_PERM, String.valueOf(user.authorize(new WriteRequest()) != null));
             map.put(AbstractUserManager.ATTR_MAX_IDLE_TIME, user.getMaxIdleTime());
 
-            TransferRateRequest transferRateRequest = new TransferRateRequest();
-            transferRateRequest = (TransferRateRequest) user.authorize(transferRateRequest);
-
-            if (transferRateRequest != null) {
-                map.put(AbstractUserManager.ATTR_MAX_UPLOAD_RATE, transferRateRequest.getMaxUploadRate());
-                map.put(AbstractUserManager.ATTR_MAX_DOWNLOAD_RATE, transferRateRequest.getMaxDownloadRate());
-            } else {
-                map.put(AbstractUserManager.ATTR_MAX_UPLOAD_RATE, 0);
-                map.put(AbstractUserManager.ATTR_MAX_DOWNLOAD_RATE, 0);
-            }
-
             // request that always will succeed
-            ConcurrentLoginRequest concurrentLoginRequest = new ConcurrentLoginRequest(0, 0);
-            concurrentLoginRequest = (ConcurrentLoginRequest) user.authorize(concurrentLoginRequest);
+            ConcurrentBindRequest concurrentBindRequest = new ConcurrentBindRequest(0, 0);
+            concurrentBindRequest = (ConcurrentBindRequest) user.authorize(concurrentBindRequest);
 
-            if (concurrentLoginRequest != null) {
-                map.put(AbstractUserManager.ATTR_MAX_LOGIN_NUMBER, concurrentLoginRequest.getMaxConcurrentLogins());
-                map.put(AbstractUserManager.ATTR_MAX_LOGIN_PER_IP, concurrentLoginRequest.getMaxConcurrentLoginsPerIP());
+            if (concurrentBindRequest != null) {
+                map.put(AbstractUserManager.ATTR_MAX_LOGIN_NUMBER, concurrentBindRequest.getMaxConcurrentBinds());
+                map.put(AbstractUserManager.ATTR_MAX_LOGIN_PER_IP, concurrentBindRequest.getMaxConcurrentBindsPerIP());
             } else {
                 map.put(AbstractUserManager.ATTR_MAX_LOGIN_NUMBER, 0);
                 map.put(AbstractUserManager.ATTR_MAX_LOGIN_PER_IP, 0);
@@ -530,13 +501,13 @@ public class DbUserManager extends AbstractUserManager {
             } else {
                 sql = StringUtils.replaceString(this.updateUserStmt, map);
             }
-            this.LOG.info(sql);
+            DbUserManager.LOG.info(sql);
 
             // execute query
             stmt = this.createConnection().createStatement();
             stmt.executeUpdate(sql);
         } catch (SQLException ex) {
-            this.LOG.error("DbUserManager.save()", ex);
+            DbUserManager.LOG.error("DbUserManager.save()", ex);
             throw new SmscException("DbUserManager.save()", ex);
         } finally {
             this.closeQuitely(stmt);
@@ -548,7 +519,7 @@ public class DbUserManager extends AbstractUserManager {
         HashMap<String, Object> map = new HashMap<String, Object>();
         map.put(AbstractUserManager.ATTR_LOGIN, this.escapeString(name));
         String sql = StringUtils.replaceString(this.selectUserStmt, map);
-        this.LOG.info(sql);
+        DbUserManager.LOG.info(sql);
 
         Statement stmt = null;
         ResultSet rs = null;
@@ -563,19 +534,13 @@ public class DbUserManager extends AbstractUserManager {
                 thisUser = new BaseUser();
                 thisUser.setName(rs.getString(AbstractUserManager.ATTR_LOGIN));
                 thisUser.setPassword(rs.getString(AbstractUserManager.ATTR_PASSWORD));
-                thisUser.setHomeDirectory(rs.getString(AbstractUserManager.ATTR_HOME));
                 thisUser.setEnabled(rs.getBoolean(AbstractUserManager.ATTR_ENABLE));
                 thisUser.setMaxIdleTime(rs.getInt(AbstractUserManager.ATTR_MAX_IDLE_TIME));
 
                 List<Authority> authorities = new ArrayList<Authority>();
-                if (rs.getBoolean(AbstractUserManager.ATTR_WRITE_PERM)) {
-                    authorities.add(new WritePermission());
-                }
 
-                authorities.add(new ConcurrentLoginPermission(rs.getInt(AbstractUserManager.ATTR_MAX_LOGIN_NUMBER), rs
+                authorities.add(new ConcurrentBindPermission(rs.getInt(AbstractUserManager.ATTR_MAX_LOGIN_NUMBER), rs
                         .getInt(AbstractUserManager.ATTR_MAX_LOGIN_PER_IP)));
-                authorities.add(new TransferRatePermission(rs.getInt(AbstractUserManager.ATTR_MAX_DOWNLOAD_RATE), rs
-                        .getInt(AbstractUserManager.ATTR_MAX_UPLOAD_RATE)));
 
                 thisUser.setAuthorities(authorities);
             }
@@ -670,4 +635,5 @@ public class DbUserManager extends AbstractUserManager {
     public void setSqlUserUpdate(String sql) {
         this.updateUserStmt = sql;
     }
+
 }

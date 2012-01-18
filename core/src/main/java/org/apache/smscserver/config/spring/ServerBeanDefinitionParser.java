@@ -38,7 +38,7 @@ import org.w3c.dom.Element;
 /**
  * Parses the SmscServer "server" element into a Spring bean graph
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public class ServerBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 
@@ -93,12 +93,6 @@ public class ServerBeanDefinitionParser extends AbstractSingleBeanDefinitionPars
         }
         if (StringUtils.hasText(element.getAttribute("max-threads"))) {
             connectionConfig.setMaxThreads(SpringUtil.parseInt(element, "max-threads"));
-        }
-        if (StringUtils.hasText(element.getAttribute("max-anon-logins"))) {
-            connectionConfig.setMaxAnonymousLogins(SpringUtil.parseInt(element, "max-anon-logins"));
-        }
-        if (StringUtils.hasText(element.getAttribute("anon-enabled"))) {
-            connectionConfig.setAnonymousLoginEnabled(SpringUtil.parseBoolean(element, "anon-enabled", true));
         }
         if (StringUtils.hasText(element.getAttribute("max-login-failures"))) {
             connectionConfig.setMaxLoginFailures(SpringUtil.parseInt(element, "max-login-failures"));
@@ -162,6 +156,7 @@ public class ServerBeanDefinitionParser extends AbstractSingleBeanDefinitionPars
     /**
      * Parse the "smsclets" element
      */
+    @SuppressWarnings("unchecked")
     private Map<?, ?> parseSmsclets(final Element childElm, final ParserContext parserContext,
             final BeanDefinitionBuilder builder) {
 

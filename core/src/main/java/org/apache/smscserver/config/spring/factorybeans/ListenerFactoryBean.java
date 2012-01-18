@@ -27,7 +27,7 @@ import org.springframework.beans.factory.FactoryBean;
  * Spring {@link FactoryBean} which extends {@link ListenerFactory} making it easier to use Spring's standard
  * &lt;bean&gt; tag instead of SmscServer's custom XML tags to configure things.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  * @see ListenerFactory
  */
 public class ListenerFactoryBean extends ListenerFactory implements FactoryBean {

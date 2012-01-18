@@ -28,7 +28,7 @@ import org.apache.smscserver.usermanager.impl.PropertiesUserManager;
 /**
  * Factory for the properties file based <code>UserManager</code> implementation.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public class PropertiesUserManagerFactory implements UserManagerFactory {
 
@@ -40,6 +40,10 @@ public class PropertiesUserManagerFactory implements UserManagerFactory {
 
     private PasswordEncryptor passwordEncryptor = new Md5PasswordEncryptor();
 
+    public PropertiesUserManagerFactory() {
+        super();
+    }
+
     /**
      * Creates a {@link PropertiesUserManager} instance based on the provided configuration
      */
@@ -47,7 +51,6 @@ public class PropertiesUserManagerFactory implements UserManagerFactory {
         if (this.userDataURL != null) {
             return new PropertiesUserManager(this.passwordEncryptor, this.userDataURL, this.adminName);
         } else {
-
             return new PropertiesUserManager(this.passwordEncryptor, this.userDataFile, this.adminName);
         }
     }

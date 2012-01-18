@@ -19,35 +19,41 @@
 
 package org.apache.smscserver.usermanager.impl;
 
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+
+import org.apache.smscserver.ServerSmscStatistics;
+import org.apache.smscserver.smsclet.Authentication;
+import org.apache.smscserver.smsclet.AuthenticationFailedException;
 import org.apache.smscserver.smsclet.SmscException;
+import org.apache.smscserver.smsclet.SmscIoSession;
+import org.apache.smscserver.smsclet.SmscStatistics;
+import org.apache.smscserver.smsclet.SmscletContext;
+import org.apache.smscserver.smsclet.User;
 import org.apache.smscserver.smsclet.UserManager;
 import org.apache.smscserver.usermanager.Md5PasswordEncryptor;
 import org.apache.smscserver.usermanager.PasswordEncryptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <strong>Internal class, do not use directly.</strong>
  * 
  * Abstract common base type for {@link UserManager} implementations
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public abstract class AbstractUserManager implements UserManager {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PropertiesUserManager.class);
 
     public static final String ATTR_LOGIN = "userid";
 
     public static final String ATTR_PASSWORD = "userpassword";
 
-    public static final String ATTR_HOME = "homedirectory";
-
-    public static final String ATTR_WRITE_PERM = "writepermission";
-
     public static final String ATTR_ENABLE = "enableflag";
 
     public static final String ATTR_MAX_IDLE_TIME = "idletime";
-
-    public static final String ATTR_MAX_UPLOAD_RATE = "uploadrate";
-
-    public static final String ATTR_MAX_DOWNLOAD_RATE = "downloadrate";
 
     public static final String ATTR_MAX_LOGIN_NUMBER = "maxloginnumber";
 
@@ -56,6 +62,8 @@ public abstract class AbstractUserManager implements UserManager {
     private final String adminName;
 
     private final PasswordEncryptor passwordEncryptor;
+
+    protected SmscletContext context;
 
     public AbstractUserManager() {
         this(null, new Md5PasswordEncryptor());
@@ -67,6 +75,47 @@ public abstract class AbstractUserManager implements UserManager {
     public AbstractUserManager(String adminName, PasswordEncryptor passwordEncryptor) {
         this.adminName = adminName;
         this.passwordEncryptor = passwordEncryptor;
+    }
+
+    /**
+     * User authenticate method
+     */
+    public final User authenticate(Authentication authentication) throws AuthenticationFailedException {
+        try {
+            User internalAuthenticate = this.internalAuthenticate(authentication);
+            return internalAuthenticate;
+        } catch (AuthenticationFailedException e) {
+            if (this.context == null) {
+                AbstractUserManager.LOG.warn("Context is null bind statistics will not be updated!");
+            } else {
+                ServerSmscStatistics stat = (ServerSmscStatistics) this.context.getSmscStatistics();
+                stat.setBindFail(authentication.getSession());
+            }
+
+            throw e;
+        }
+    }
+
+    protected void authorizeConcurency(Authentication authentication, User user) throws AuthenticationFailedException {
+        // user login limit check
+        InetAddress address = null;
+        SmscIoSession session = authentication.getSession();
+        if ((session != null) && (this.context != null)) {
+            if (session.getRemoteAddress() instanceof InetSocketAddress) {
+                address = ((InetSocketAddress) session.getRemoteAddress()).getAddress();
+            }
+
+            SmscStatistics stats = this.context.getSmscStatistics();
+            ConcurrentBindRequest request = new ConcurrentBindRequest(stats.getCurrentUserBindNumber(user) + 1,
+                    stats.getCurrentUserBindNumber(user, address) + 1);
+
+            if (user.authorize(request) == null) {
+                AbstractUserManager.LOG.info("User logged in too many sessions, user will be disconnected");
+                throw new AuthenticationFailedException("Too many sessions");
+            }
+        } else {
+            AbstractUserManager.LOG.warn("Session or context is null. Concurrent bind status will not authorized!");
+        }
     }
 
     /**
@@ -85,10 +134,28 @@ public abstract class AbstractUserManager implements UserManager {
         return this.passwordEncryptor;
     }
 
+    protected abstract User internalAuthenticate(Authentication authentication) throws AuthenticationFailedException;
+
     /**
      * @return true if user with this login is administrator
      */
     public boolean isAdmin(String login) throws SmscException {
         return this.adminName.equals(login);
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     */
+    public void setContext(SmscletContext context) {
+        if (context == null) {
+            throw new NullPointerException("Context is null");
+        }
+
+        if (this.context != null) {
+            throw new IllegalStateException("Context is already assigned");
+        }
+
+        this.context = context;
     }
 }

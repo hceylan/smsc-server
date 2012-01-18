@@ -26,6 +26,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.smscserver.MessageObserver;
+import org.apache.smscserver.ServerSmscStatistics;
+import org.apache.smscserver.StatisticsObserver;
+import org.apache.smscserver.smsclet.SmscIoSession;
 import org.apache.smscserver.smsclet.SmscReply;
 import org.apache.smscserver.smsclet.SmscRequest;
 import org.apache.smscserver.smsclet.User;
@@ -37,7 +41,7 @@ import org.apache.smscserver.smsclet.User;
  * 
  * TODO revisit concurrency, right now we're a bit over zealous with both Atomic* counters and synchronization
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public class DefaultSmscStatistics implements ServerSmscStatistics {
 
@@ -381,7 +385,7 @@ public class DefaultSmscStatistics implements ServerSmscStatistics {
 
         }
 
-        this.notifyBind(session);
+        this.notifyUnbind(session);
     }
 
 }

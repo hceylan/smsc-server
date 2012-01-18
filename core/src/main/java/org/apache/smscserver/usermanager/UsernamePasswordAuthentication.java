@@ -20,12 +20,13 @@
 package org.apache.smscserver.usermanager;
 
 import org.apache.smscserver.smsclet.Authentication;
+import org.apache.smscserver.smsclet.SmscIoSession;
 import org.apache.smscserver.usermanager.impl.UserMetadata;
 
 /**
  * Class representing a normal authentication attempt using username and password
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public class UsernamePasswordAuthentication implements Authentication {
 
@@ -35,6 +36,8 @@ public class UsernamePasswordAuthentication implements Authentication {
 
     private UserMetadata userMetadata;
 
+    private final SmscIoSession session;
+
     /**
      * Constructor with the minimal data for an authentication
      * 
@@ -43,7 +46,8 @@ public class UsernamePasswordAuthentication implements Authentication {
      * @param password
      *            The password, can be null
      */
-    public UsernamePasswordAuthentication(final String username, final String password) {
+    public UsernamePasswordAuthentication(SmscIoSession session, final String username, final String password) {
+        this.session = session;
         this.username = username;
         this.password = password;
     }
@@ -58,8 +62,9 @@ public class UsernamePasswordAuthentication implements Authentication {
      * @param userMetadata
      *            The user metadata
      */
-    public UsernamePasswordAuthentication(final String username, final String password, final UserMetadata userMetadata) {
-        this(username, password);
+    public UsernamePasswordAuthentication(SmscIoSession session, final String username, final String password,
+            final UserMetadata userMetadata) {
+        this(session, username, password);
         this.userMetadata = userMetadata;
     }
 
@@ -70,6 +75,14 @@ public class UsernamePasswordAuthentication implements Authentication {
      */
     public String getPassword() {
         return this.password;
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     */
+    public SmscIoSession getSession() {
+        return this.session;
     }
 
     /**

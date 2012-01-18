@@ -24,7 +24,7 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 /**
  * Registration point for SmscServer bean defintion parsers
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public class SmscServerNamespaceHandler extends NamespaceHandlerSupport {
 

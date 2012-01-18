@@ -36,7 +36,7 @@ import org.apache.smscserver.smsclet.SmscException;
  * 
  * This class encapsulates <code>java.util.Properties</code> to add java primitives and some other java classes.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public class BaseProperties extends Properties {
 
@@ -55,9 +55,6 @@ public class BaseProperties extends Properties {
         super(prop);
     }
 
-    // ////////////////////////////////////////
-    // ////// Properties Get Methods ////////
-    // ////////////////////////////////////////
     /**
      * Get boolean value.
      */

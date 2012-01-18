@@ -34,16 +34,16 @@ import org.apache.smscserver.smsclet.User;
  * 
  * SMSC session
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public class DefaultSmscSession implements SmscSession {
 
-    private final SmscIoSession ioSession;
+    private final DefaultSmscIoSession ioSession;
 
     /**
      * Default constructor.
      */
-    public DefaultSmscSession(final SmscIoSession ioSession) {
+    public DefaultSmscSession(final DefaultSmscIoSession ioSession) {
         this.ioSession = ioSession;
     }
 
@@ -51,7 +51,7 @@ public class DefaultSmscSession implements SmscSession {
      * Get attribute
      */
     public Object getAttribute(final String name) {
-        if (name.startsWith(SmscIoSession.ATTRIBUTE_PREFIX)) {
+        if (name.startsWith(DefaultSmscIoSession.ATTRIBUTE_PREFIX)) {
             throw new IllegalArgumentException("Illegal lookup of internal attribute");
         }
 
@@ -157,7 +157,7 @@ public class DefaultSmscSession implements SmscSession {
     }
 
     public void removeAttribute(final String name) {
-        if (name.startsWith(SmscIoSession.ATTRIBUTE_PREFIX)) {
+        if (name.startsWith(DefaultSmscIoSession.ATTRIBUTE_PREFIX)) {
             throw new IllegalArgumentException("Illegal removal of internal attribute");
         }
 
@@ -168,7 +168,7 @@ public class DefaultSmscSession implements SmscSession {
      * Set attribute.
      */
     public void setAttribute(final String name, final Object value) {
-        if (name.startsWith(SmscIoSession.ATTRIBUTE_PREFIX)) {
+        if (name.startsWith(DefaultSmscIoSession.ATTRIBUTE_PREFIX)) {
             throw new IllegalArgumentException("Illegal setting of internal attribute");
         }
 

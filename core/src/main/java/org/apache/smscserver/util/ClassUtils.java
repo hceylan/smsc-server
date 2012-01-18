@@ -22,7 +22,7 @@ package org.apache.smscserver.util;
 /**
  * <strong>Internal class, do not use directly.</strong>
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  * 
  */
 public class ClassUtils {

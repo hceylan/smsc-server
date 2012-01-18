@@ -29,7 +29,7 @@ import org.apache.smscserver.usermanager.impl.BaseUser;
 /**
  * Factory for {@link User} instances.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public class UserFactory {
 
@@ -38,8 +38,6 @@ public class UserFactory {
     private String password = null;
 
     private int maxIdleTimeSec = 0; // no limit
-
-    private String homeDir = null;
 
     private boolean isEnabled = true;
 
@@ -54,7 +52,6 @@ public class UserFactory {
         BaseUser user = new BaseUser();
         user.setName(this.name);
         user.setPassword(this.password);
-        user.setHomeDirectory(this.homeDir);
         user.setEnabled(this.isEnabled);
         user.setAuthorities(this.authorities);
         user.setMaxIdleTime(this.maxIdleTimeSec);
@@ -69,15 +66,6 @@ public class UserFactory {
      */
     public List<? extends Authority> getAuthorities() {
         return this.authorities;
-    }
-
-    /**
-     * Get the home directory for users created by this factory
-     * 
-     * @return The home directory path
-     */
-    public String getHomeDirectory() {
-        return this.homeDir;
     }
 
     /**
@@ -134,16 +122,6 @@ public class UserFactory {
      */
     public void setEnabled(boolean isEnabled) {
         this.isEnabled = isEnabled;
-    }
-
-    /**
-     * Set the user name for users created by this factory
-     * 
-     * @param homeDir
-     *            The home directory path
-     */
-    public void setHomeDirectory(String homeDir) {
-        this.homeDir = homeDir;
     }
 
     /**

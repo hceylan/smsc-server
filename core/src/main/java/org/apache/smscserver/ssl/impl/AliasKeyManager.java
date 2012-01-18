@@ -35,7 +35,7 @@ import javax.net.ssl.X509KeyManager;
  * 
  * Based of org.apache.tomcat.util.net.jsse.JSSEKeyManager.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public final class AliasKeyManager implements X509KeyManager {
 

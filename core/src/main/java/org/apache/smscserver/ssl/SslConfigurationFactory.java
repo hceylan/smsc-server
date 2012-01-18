@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Used to configure the SSL settings for the control channel or the data channel.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public class SslConfigurationFactory {
 

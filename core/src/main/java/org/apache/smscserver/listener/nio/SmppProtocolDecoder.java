@@ -28,22 +28,20 @@ import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.CumulativeProtocolDecoder;
 import org.apache.mina.filter.codec.ProtocolDecoderOutput;
-import org.apache.smscserver.packet.impl.SmscBindReceiverRequest;
-import org.apache.smscserver.packet.impl.SmscBindTranceiverRequest;
-import org.apache.smscserver.packet.impl.SmscBindTransmitterRequest;
-import org.apache.smscserver.packet.impl.SmscCancelSMRequest;
-import org.apache.smscserver.packet.impl.SmscDataSMRequest;
-import org.apache.smscserver.packet.impl.SmscDeliverSMRequest;
-import org.apache.smscserver.packet.impl.SmscEnquireLinkRequest;
-import org.apache.smscserver.packet.impl.SmscMsgDetailsRequest;
-import org.apache.smscserver.packet.impl.SmscOutbindRequest;
-import org.apache.smscserver.packet.impl.SmscParamRetrieveRequest;
-import org.apache.smscserver.packet.impl.SmscQueryLastMsgsRequest;
-import org.apache.smscserver.packet.impl.SmscQuerySMRequest;
-import org.apache.smscserver.packet.impl.SmscReplaceSMRequest;
-import org.apache.smscserver.packet.impl.SmscSubmitMultiRequest;
-import org.apache.smscserver.packet.impl.SmscSubmitSMRequest;
-import org.apache.smscserver.packet.impl.SmscUnbindRequest;
+import org.apache.smscserver.packet.impl.SmscBindRequestImpl;
+import org.apache.smscserver.packet.impl.SmscCancelSMRequestImpl;
+import org.apache.smscserver.packet.impl.SmscDataSMRequestImpl;
+import org.apache.smscserver.packet.impl.SmscDeliverSMRequestImpl;
+import org.apache.smscserver.packet.impl.SmscEnquireLinkRequestImpl;
+import org.apache.smscserver.packet.impl.SmscMsgDetailsRequestImpl;
+import org.apache.smscserver.packet.impl.SmscOutbindRequestImpl;
+import org.apache.smscserver.packet.impl.SmscParamRetrieveRequestImpl;
+import org.apache.smscserver.packet.impl.SmscQueryLastMsgsRequestImpl;
+import org.apache.smscserver.packet.impl.SmscQuerySMRequestImpl;
+import org.apache.smscserver.packet.impl.SmscReplaceSMRequestImpl;
+import org.apache.smscserver.packet.impl.SmscSubmitMultiRequestImpl;
+import org.apache.smscserver.packet.impl.SmscSubmitSMRequestImpl;
+import org.apache.smscserver.packet.impl.SmscUnbindRequestImpl;
 import org.apache.smscserver.smsclet.SmscRequest;
 
 /**
@@ -51,7 +49,7 @@ import org.apache.smscserver.smsclet.SmscRequest;
  * 
  * Common base class for listener implementations
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public class SmppProtocolDecoder extends CumulativeProtocolDecoder {
 
@@ -77,7 +75,7 @@ public class SmppProtocolDecoder extends CumulativeProtocolDecoder {
         }
 
         int id = SMPPIO.readInt(is, 4);
-        int commandStatus = SMPPIO.readInt(is, 4);
+        SMPPIO.readInt(is, 4);
         int sequenceNum = SMPPIO.readInt(is, 4);
 
         byte[] body = this.readBody(is, length - 16);
@@ -85,52 +83,52 @@ public class SmppProtocolDecoder extends CumulativeProtocolDecoder {
         SmscRequest request = null;
         switch (id) {
         case SMPPPacket.BIND_RECEIVER:
-            request = new SmscBindReceiverRequest(commandStatus, sequenceNum, body);
+            request = new SmscBindRequestImpl(SMPPPacket.BIND_RECEIVER, sequenceNum, body);
             break;
         case SMPPPacket.BIND_TRANSCEIVER:
-            request = new SmscBindTranceiverRequest(commandStatus, sequenceNum, body);
+            request = new SmscBindRequestImpl(SMPPPacket.BIND_TRANSCEIVER, sequenceNum, body);
             break;
         case SMPPPacket.BIND_TRANSMITTER:
-            request = new SmscBindTransmitterRequest(commandStatus, sequenceNum, body);
+            request = new SmscBindRequestImpl(SMPPPacket.BIND_TRANSMITTER, sequenceNum, body);
             break;
         case SMPPPacket.CANCEL_SM:
-            request = new SmscCancelSMRequest(commandStatus, sequenceNum, body);
+            request = new SmscCancelSMRequestImpl(sequenceNum, body);
             break;
         case SMPPPacket.DATA_SM:
-            request = new SmscDataSMRequest(commandStatus, sequenceNum, body);
+            request = new SmscDataSMRequestImpl(sequenceNum, body);
             break;
         case SMPPPacket.DELIVER_SM:
-            request = new SmscDeliverSMRequest(commandStatus, sequenceNum, body);
+            request = new SmscDeliverSMRequestImpl(sequenceNum, body);
             break;
         case SMPPPacket.ENQUIRE_LINK:
-            request = new SmscEnquireLinkRequest(commandStatus, sequenceNum, body);
+            request = new SmscEnquireLinkRequestImpl(sequenceNum, body);
             break;
         case SMPPPacket.OUTBIND:
-            request = new SmscOutbindRequest(commandStatus, sequenceNum, body);
+            request = new SmscOutbindRequestImpl(sequenceNum, body);
             break;
         case SMPPPacket.PARAM_RETRIEVE:
-            request = new SmscParamRetrieveRequest(commandStatus, sequenceNum, body);
+            request = new SmscParamRetrieveRequestImpl(sequenceNum, body);
             break;
         case SMPPPacket.QUERY_LAST_MSGS:
-            request = new SmscQueryLastMsgsRequest(commandStatus, sequenceNum, body);
+            request = new SmscQueryLastMsgsRequestImpl(sequenceNum, body);
             break;
         case SMPPPacket.QUERY_MSG_DETAILS:
-            request = new SmscMsgDetailsRequest(commandStatus, sequenceNum, body);
+            request = new SmscMsgDetailsRequestImpl(sequenceNum, body);
             break;
         case SMPPPacket.QUERY_SM:
-            request = new SmscQuerySMRequest(commandStatus, sequenceNum, body);
+            request = new SmscQuerySMRequestImpl(sequenceNum, body);
             break;
         case SMPPPacket.REPLACE_SM:
-            request = new SmscReplaceSMRequest(commandStatus, sequenceNum, body);
+            request = new SmscReplaceSMRequestImpl(sequenceNum, body);
             break;
         case SMPPPacket.SUBMIT_MULTI:
-            request = new SmscSubmitMultiRequest(commandStatus, sequenceNum, body);
+            request = new SmscSubmitMultiRequestImpl(sequenceNum, body);
             break;
         case SMPPPacket.SUBMIT_SM:
-            request = new SmscSubmitSMRequest(commandStatus, sequenceNum, body);
+            request = new SmscSubmitSMRequestImpl(sequenceNum, body);
             break;
         case SMPPPacket.UNBIND:
-            request = new SmscUnbindRequest(commandStatus, sequenceNum, body);
+            request = new SmscUnbindRequestImpl(sequenceNum, body);
             break;
         default:
             break;

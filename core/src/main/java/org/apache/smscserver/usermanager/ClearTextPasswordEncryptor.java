@@ -22,7 +22,7 @@ package org.apache.smscserver.usermanager;
 /**
  * Password encryptor that does no encryption, that is, keps the password in clear text
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public class ClearTextPasswordEncryptor implements PasswordEncryptor {
 

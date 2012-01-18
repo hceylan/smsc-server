@@ -31,15 +31,13 @@ import org.apache.smscserver.impl.DefaultSmscServer;
 import org.apache.smscserver.smsclet.Authority;
 import org.apache.smscserver.smsclet.UserManager;
 import org.apache.smscserver.usermanager.impl.BaseUser;
-import org.apache.smscserver.usermanager.impl.ConcurrentLoginPermission;
+import org.apache.smscserver.usermanager.impl.ConcurrentBindPermission;
 import org.apache.smscserver.usermanager.impl.PropertiesUserManager;
-import org.apache.smscserver.usermanager.impl.TransferRatePermission;
-import org.apache.smscserver.usermanager.impl.WritePermission;
 
 /**
  * Used to add users to the user manager for a particular SmscServer configuration
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public class AddUser extends CommandLine {
 
@@ -112,32 +110,17 @@ public class AddUser extends CommandLine {
 
             user.setPassword(AddUser.askForString(in, "Password:"));
 
-            String home = AddUser.askForString(in, "Home directory:", "Home directory is mandatory");
-            if (home == null) {
-                return;
-            }
-            user.setHomeDirectory(home);
-
             user.setEnabled(AddUser.askForBoolean(in, "Enabled (Y/N):"));
 
             user.setMaxIdleTime(AddUser.askForInt(in, "Max idle time in seconds (0 for none):"));
 
             List<Authority> authorities = new ArrayList<Authority>();
 
-            if (AddUser.askForBoolean(in, "Write permission (Y/N):")) {
-                authorities.add(new WritePermission());
-            }
-
             int maxLogins = AddUser.askForInt(in, "Maximum number of concurrent logins (0 for no restriction)");
             int maxLoginsPerIp = AddUser.askForInt(in,
                     "Maximum number of concurrent logins per IP (0 for no restriction)");
 
-            authorities.add(new ConcurrentLoginPermission(maxLogins, maxLoginsPerIp));
-
-            int downloadRate = AddUser.askForInt(in, "Maximum download rate (0 for no restriction)");
-            int uploadRate = AddUser.askForInt(in, "Maximum upload rate (0 for no restriction)");
-
-            authorities.add(new TransferRatePermission(downloadRate, uploadRate));
+            authorities.add(new ConcurrentBindPermission(maxLogins, maxLoginsPerIp));
 
             user.setAuthorities(authorities);
 

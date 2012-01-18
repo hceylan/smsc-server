@@ -25,7 +25,7 @@ import org.apache.smscserver.smsclet.SmscException;
  * This is the starting point of all the servers. It invokes a new listener thread. <code>Server</code> implementation
  * is used to create the server socket and handle client connection.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public interface SmscServer {
 

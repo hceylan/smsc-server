@@ -42,7 +42,7 @@ import org.apache.smscserver.smsclet.User;
  * <li>downloadrate</li>
  * </ul>
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 
 public class BaseUser implements User {
@@ -52,8 +52,6 @@ public class BaseUser implements User {
     private String password = null;
 
     private int maxIdleTimeSec = 0; // no limit
-
-    private String homeDir = null;
 
     private boolean isEnabled = true;
 
@@ -73,7 +71,6 @@ public class BaseUser implements User {
         this.password = user.getPassword();
         this.authorities = user.getAuthorities();
         this.maxIdleTimeSec = user.getMaxIdleTime();
-        this.homeDir = user.getHomeDirectory();
         this.isEnabled = user.getEnabled();
     }
 
@@ -139,13 +136,6 @@ public class BaseUser implements User {
     }
 
     /**
-     * Get the user home directory.
-     */
-    public String getHomeDirectory() {
-        return this.homeDir;
-    }
-
-    /**
      * Get the maximum idle time in second.
      */
     public int getMaxIdleTime() {
@@ -179,13 +169,6 @@ public class BaseUser implements User {
      */
     public void setEnabled(boolean enb) {
         this.isEnabled = enb;
-    }
-
-    /**
-     * Set the user home directory.
-     */
-    public void setHomeDirectory(String home) {
-        this.homeDir = home;
     }
 
     /**

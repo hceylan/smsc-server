@@ -23,7 +23,7 @@ package org.apache.smscserver.usermanager;
  * Strategy used for encrypting and matching encrypted passwords. The purpose is to make the password encryption
  * possible to extend.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public interface PasswordEncryptor {
 

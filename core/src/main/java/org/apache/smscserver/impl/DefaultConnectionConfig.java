@@ -25,16 +25,12 @@ import org.apache.smscserver.ConnectionConfigFactory;
 /**
  * <strong>Internal class, do not use directly.</strong>
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  * 
  */
 public class DefaultConnectionConfig implements ConnectionConfig {
 
     private final int maxLogins;
-
-    private final boolean anonymousLoginEnabled;
-
-    private final int maxAnonymousLogins;
 
     private final int maxLoginFailures;
 
@@ -43,28 +39,21 @@ public class DefaultConnectionConfig implements ConnectionConfig {
     private final int maxThreads;
 
     public DefaultConnectionConfig() {
-        this(true, 500, 10, 10, 3, 0);
+        this(500, 10, 3, 0);
     }
 
     /**
      * Internal constructor, do not use directly. Use {@link ConnectionConfigFactory} instead
      */
-    public DefaultConnectionConfig(boolean anonymousLoginEnabled, int loginFailureDelay, int maxLogins,
-            int maxAnonymousLogins, int maxLoginFailures, int maxThreads) {
-        this.anonymousLoginEnabled = anonymousLoginEnabled;
+    public DefaultConnectionConfig(int loginFailureDelay, int maxLogins, int maxLoginFailures, int maxThreads) {
         this.loginFailureDelay = loginFailureDelay;
         this.maxLogins = maxLogins;
-        this.maxAnonymousLogins = maxAnonymousLogins;
         this.maxLoginFailures = maxLoginFailures;
         this.maxThreads = maxThreads;
     }
 
     public int getBindFailureDelay() {
         return this.loginFailureDelay;
-    }
-
-    public int getMaxAnonymousLogins() {
-        return this.maxAnonymousLogins;
     }
 
     public int getMaxBindFailures() {
@@ -77,10 +66,6 @@ public class DefaultConnectionConfig implements ConnectionConfig {
 
     public int getMaxThreads() {
         return this.maxThreads;
-    }
-
-    public boolean isAnonymousLoginEnabled() {
-        return this.anonymousLoginEnabled;
     }
 
 }

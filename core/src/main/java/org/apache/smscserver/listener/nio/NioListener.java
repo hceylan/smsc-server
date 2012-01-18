@@ -19,6 +19,8 @@
 
 package org.apache.smscserver.listener.nio;
 
+import ie.omk.smpp.net.TcpLink;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -37,11 +39,11 @@ import org.apache.mina.filter.logging.MdcInjectionFilter;
 import org.apache.mina.filter.ssl.SslFilter;
 import org.apache.mina.transport.socket.SocketAcceptor;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
+import org.apache.smscserver.SmscHandler;
 import org.apache.smscserver.SmscServerConfigurationException;
+import org.apache.smscserver.SmscServerContext;
 import org.apache.smscserver.impl.DefaultSmscHandler;
-import org.apache.smscserver.impl.SmscHandler;
-import org.apache.smscserver.impl.SmscIoSession;
-import org.apache.smscserver.impl.SmscServerContext;
+import org.apache.smscserver.impl.DefaultSmscIoSession;
 import org.apache.smscserver.ipfilter.MinaSessionFilter;
 import org.apache.smscserver.ipfilter.SessionFilter;
 import org.apache.smscserver.listener.Listener;
@@ -56,7 +58,7 @@ import org.slf4j.LoggerFactory;
  * 
  * The default {@link Listener} implementation.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public class NioListener extends AbstractListener {
 
@@ -94,15 +96,24 @@ public class NioListener extends AbstractListener {
      * {@inheritDoc}
      * 
      */
-    public synchronized Set<SmscIoSession> getActiveSessions() {
+    public synchronized Set<DefaultSmscIoSession> getActiveSessions() {
         Map<Long, IoSession> sessions = this.acceptor.getManagedSessions();
 
-        Set<SmscIoSession> smscSessions = new HashSet<SmscIoSession>();
+        Set<DefaultSmscIoSession> smscSessions = new HashSet<DefaultSmscIoSession>();
         for (IoSession session : sessions.values()) {
-            smscSessions.add(new SmscIoSession(session, this.context));
+            smscSessions.add(new DefaultSmscIoSession(session, this.context));
         }
 
         return smscSessions;
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     */
+    @Override
+    public int getPort() {
+        return TcpLink.DEFAULT_PORT;
     }
 
     /**

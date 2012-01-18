@@ -40,7 +40,7 @@ import org.w3c.dom.Element;
 /**
  * Parses the SmscServer "nio-listener" element into a Spring bean graph
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public class ListenerBeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
 

@@ -40,7 +40,7 @@ import org.apache.smscserver.util.ClassUtils;
  * 
  * <strong><strong>Internal class, do not use directly.</strong></strong>
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public class DefaultSslConfiguration implements SslConfiguration {
 

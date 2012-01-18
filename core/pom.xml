@@ -1,21 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-	<!--
-		Licensed to the Apache Software Foundation (ASF) under one or more
-		contributor license agreements. See the NOTICE file distributed with
-		this work for additional information regarding copyright ownership.
-		The ASF licenses this file to you under the Apache License, Version
-		2.0 (the "License"); you may not use this file except in compliance
-		with the License. You may obtain a copy of the License at
-		http://www.apache.org/licenses/LICENSE-2.0 Unless required by
-		applicable law or agreed to in writing, software distributed under the
-		License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-		CONDITIONS OF ANY KIND, either express or implied. See the License for
-		the specific language governing permissions and limitations under the
-		License.
-	-->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor 
+	license agreements. See the NOTICE file distributed with this work for additional 
+	information regarding copyright ownership. The ASF licenses this file to 
+	you under the Apache License, Version 2.0 (the "License"); you may not use 
+	this file except in compliance with the License. You may obtain a copy of 
+	the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required 
+	by applicable law or agreed to in writing, software distributed under the 
+	License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS 
+	OF ANY KIND, either express or implied. See the License for the specific 
+	language governing permissions and limitations under the License. -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
 		<artifactId>smscserver-parent</artifactId>
@@ -23,10 +18,8 @@
 		<version>1.1.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.apache.smscserver</groupId>
 	<artifactId>smscserver-core</artifactId>
 	<name>Apache SmscServer Core</name>
-	<version>1.1.0-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 	<scm>
 		<connection>
@@ -84,7 +77,8 @@
 							org.apache.smscserver.filesystem.nativefs.impl,
 							org.apache.smscserver.smscletcontainer.impl,
 							org.apache.smscserver.impl, org.apache.smscserver.listener.nio,
-							org.apache.smscserver.message.impl, org.apache.smscserver.ssl.impl,
+							org.apache.smscserver.message.impl,
+							org.apache.smscserver.ssl.impl,
 							org.apache.smscserver.usermanager.impl,
 							org.apache.smscserver.util,
 							org.apache.smscserver.*
@@ -130,52 +124,54 @@
 		</plugins>
 	</build>
 	<dependencies>
+		<!-- Internal -->
 		<dependency>
 			<groupId>org.apache.smscserver</groupId>
 			<artifactId>smsclet-api</artifactId>
 		</dependency>
 		
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-		</dependency>
+		<!-- MINA -->
 		<dependency>
 			<groupId>org.apache.mina</groupId>
 			<artifactId>mina-core</artifactId>
 		</dependency>
+		
+		<!-- SMPP -->
 		<dependency>
 			<groupId>com.adenki</groupId>
 			<artifactId>smppapi</artifactId>
 		</dependency>
 
+		<!-- Spring -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
 			<optional>true</optional>
 		</dependency>
 
+		<!-- Logging -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>jcl-over-slf4j</artifactId>
 			<optional>true</optional>
 		</dependency>
-
-		<!-- Test dependencies -->
-		<dependency>
-			<groupId>commons-net</groupId>
-			<artifactId>commons-net</artifactId>
-			<scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-			<scope>test</scope>
+			<optional>true</optional>
 		</dependency>
+
+		<!-- Apache Commons -->
 		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<scope>test</scope>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
 		</dependency>
+		
+		<!-- Test dependencies -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

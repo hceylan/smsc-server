@@ -19,17 +19,30 @@
 
 package org.apache.smscserver.command;
 
+import ie.omk.smpp.message.SMPPPacket;
+
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.smscserver.command.impl.BindCommand;
 import org.apache.smscserver.command.impl.DefaultCommandFactory;
+import org.apache.smscserver.command.impl.UnbindCommand;
 
 /**
  * Factory for {@link CommandFactory} instances
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public class CommandFactoryFactory {
+    private static final HashMap<Integer, Command> DEFAULT_COMMAND_MAP = new HashMap<Integer, Command>();
+
+    static {
+        // first populate the default command list
+        CommandFactoryFactory.DEFAULT_COMMAND_MAP.put(SMPPPacket.BIND_RECEIVER, BindCommand.SINGLETON);
+        CommandFactoryFactory.DEFAULT_COMMAND_MAP.put(SMPPPacket.BIND_TRANSCEIVER, BindCommand.SINGLETON);
+        CommandFactoryFactory.DEFAULT_COMMAND_MAP.put(SMPPPacket.BIND_TRANSMITTER, BindCommand.SINGLETON);
+        CommandFactoryFactory.DEFAULT_COMMAND_MAP.put(SMPPPacket.UNBIND, UnbindCommand.SINGLETON);
+    }
 
     private final Map<Integer, Command> commandMap = new HashMap<Integer, Command>();
 
@@ -60,7 +73,14 @@ public class CommandFactoryFactory {
      * @return The {@link CommandFactory}
      */
     public CommandFactory createCommandFactory() {
-        return new DefaultCommandFactory(this.commandMap);
+        Map<Integer, Command> mergedCommands = new HashMap<Integer, Command>();
+        if (this.useDefaultCommands) {
+            mergedCommands.putAll(CommandFactoryFactory.DEFAULT_COMMAND_MAP);
+        }
+
+        mergedCommands.putAll(this.commandMap);
+
+        return new DefaultCommandFactory(mergedCommands);
     }
 
     /**

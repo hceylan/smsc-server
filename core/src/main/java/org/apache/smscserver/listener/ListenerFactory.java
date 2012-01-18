@@ -32,7 +32,7 @@ import org.apache.smscserver.ssl.SslConfiguration;
 /**
  * Factory for listeners. Listeners themselves are immutable and must be created using this factory.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public class ListenerFactory {
 

@@ -26,7 +26,7 @@ import org.springframework.context.support.FileSystemXmlApplicationContext;
 /**
  * This class is the starting point for the SmscServer when it is started using the command line mode.
  * 
- * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author hceylan
  */
 public class CommandLine {
 
