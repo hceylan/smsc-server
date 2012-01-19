@@ -22,11 +22,6 @@
 				<keystore file="src/test/resources/smscserver.jks"
 					password="password" />
 			</ssl>
-
-			<data-connection idle-timeout="100" implicit-ssl="true">
-				<active enabled="true" local-address="1.2.3.4" />
-				<passive ports="123-125" />
-			</data-connection>
 			<blacklist>1.2.3.0/16, 1.2.4.0/16, 1.2.3.4</blacklist>
 		</nio-listener>
 		<listener name="listener1">
@@ -46,7 +41,7 @@
 	<smsclets>
 		<smsclet name="smsclet1">
 			<beans:bean class="org.apache.smscserver.test.spring.TestSmsclet">
-				<beans:property name="foo" value="123" />
+				<beans:property name="foo" value="123" />	
 			</beans:bean>
 		</smsclet>
 		<smsclet name="smsclet2">
@@ -59,6 +54,11 @@
 	<user-manager>
 		<beans:bean class="org.apache.smscserver.test.spring.MockUserManager" />
 	</user-manager>
+
+	<message-manager>
+		<embedded-profile>h2</embedded-profile>
+		<url>jdbc:h2:${SMSC_HOME}/db/smsc</url>
+	</message-manager>
 
 	<commands use-default="false">
 		<command protocol-id="9">

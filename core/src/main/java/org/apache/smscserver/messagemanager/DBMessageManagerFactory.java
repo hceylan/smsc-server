@@ -42,14 +42,20 @@ public class DBMessageManagerFactory implements MessageManagerFactory {
     private static final Logger LOG = LoggerFactory.getLogger(DBMessageManagerFactory.class);
 
     private DataSource datasource;
-    private String sqlCreateTable;
-    private String sqlInsertMessage;
-    private String sqlSelectMessage;
-    private String sqlUpdateMessage;
-    private String sqlSelectLatestReplacableMessage;
 
     private String embeddedProfile;
+
+    private String sqlCreateTable;
+    private String sqlInsertMessage;
+    private String sqlSelectLatestReplacableMessage;
+    private String sqlSelectMessage;
+    private String sqlUpdateMessage;
+
     private String url;
+
+    public DBMessageManagerFactory() {
+        super();
+    }
 
     public DBMessageManagerFactory(String embeddedProfile, String url) {
         super();
@@ -69,6 +75,42 @@ public class DBMessageManagerFactory implements MessageManagerFactory {
         }
     }
 
+    private void configureEmbeddedMode() {
+        if (this.datasource == null) {
+            if (StringUtils.isEmpty(this.url)) {
+                throw new SmscServerConfigurationException(
+                        "When using embedded mode and no datasource provided, URL paramater is required!");
+            }
+
+            JdbcDataSource ds = new JdbcDataSource();
+            ds.setURL(this.url);
+            ds.setUser("sa");
+            ds.setPassword("");
+
+            this.datasource = ds;
+        }
+
+        if (this.sqlCreateTable == null) {
+            this.sqlCreateTable = this.getProfileSQL("createtable");
+        }
+
+        if (this.sqlInsertMessage == null) {
+            this.sqlInsertMessage = this.getProfileSQL("insert");
+        }
+
+        if (this.sqlUpdateMessage == null) {
+            this.sqlUpdateMessage = this.getProfileSQL("update");
+        }
+
+        if (this.sqlSelectMessage == null) {
+            this.sqlSelectMessage = this.getProfileSQL("select");
+        }
+
+        if (this.sqlSelectLatestReplacableMessage == null) {
+            this.sqlSelectLatestReplacableMessage = this.getProfileSQL("selectlatestreplacable");
+        }
+    }
+
     /**
      * {@inheritDoc}
      * 
@@ -77,7 +119,7 @@ public class DBMessageManagerFactory implements MessageManagerFactory {
         if (this.embeddedProfile != null) {
             DBMessageManagerFactory.LOG.info("Using embedded profile {}", this.embeddedProfile);
 
-            this.startEmbeddedMode();
+            this.configureEmbeddedMode();
         }
 
         return this.createMessageManagerImpl();
@@ -121,7 +163,7 @@ public class DBMessageManagerFactory implements MessageManagerFactory {
      * @param embeddedProfile
      *            the embeddedProfile to set
      */
-    public void setEmbedded(String embeddedProfile) {
+    public void setEmbeddedProfile(String embeddedProfile) {
         this.embeddedProfile = embeddedProfile;
     }
 
@@ -171,41 +213,5 @@ public class DBMessageManagerFactory implements MessageManagerFactory {
      */
     public void setURL(String url) {
         this.url = url;
-    }
-
-    private void startEmbeddedMode() {
-        if (this.datasource == null) {
-            if (StringUtils.isEmpty(this.url)) {
-                throw new SmscServerConfigurationException(
-                        "When using embedded mode and no datasource provided, URL paramater is required!");
-            }
-
-            JdbcDataSource ds = new JdbcDataSource();
-            ds.setURL(this.url);
-            ds.setUser("sa");
-            ds.setPassword("");
-
-            this.datasource = ds;
-        }
-
-        if (this.sqlCreateTable == null) {
-            this.sqlCreateTable = this.getProfileSQL("createtable");
-        }
-
-        if (this.sqlInsertMessage == null) {
-            this.sqlInsertMessage = this.getProfileSQL("insert");
-        }
-
-        if (this.sqlUpdateMessage == null) {
-            this.sqlUpdateMessage = this.getProfileSQL("update");
-        }
-
-        if (this.sqlSelectMessage == null) {
-            this.sqlSelectMessage = this.getProfileSQL("select");
-        }
-
-        if (this.sqlSelectLatestReplacableMessage == null) {
-            this.sqlSelectLatestReplacableMessage = this.getProfileSQL("selectlatestreplacable");
-        }
     }
 }

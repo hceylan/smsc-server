@@ -33,13 +33,14 @@ import org.springframework.core.io.ByteArrayResource;
 public abstract class SpringConfigTestTemplate extends TestCase {
 
     protected SmscServer createServer(String config) {
-        String completeConfig = "<server id=\"server\" xmlns=\"http://mina.apache.org/smscserver/spring/v1\" "
-                + "xmlns:beans=\"http://www.springframework.org/schema/beans\" "
-                + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
-                + "xsi:schemaLocation=\" "
-                + "http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd "
-                + "http://mina.apache.org/smscserver/spring/v1 http://mina.apache.org/smscserver/smscserver-1.0.xsd "
-                + "\">" + config + "</server>";
+        String completeConfig = "<server id=\"server\" xmlns=\"http://mina.apache.org/smscserver/spring/v1\" " //
+                + "xmlns:beans=\"http://www.springframework.org/schema/beans\" " //
+                + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " //
+                + "xsi:schemaLocation=\" " //
+                + "http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd " //
+                + "http://mina.apache.org/smscserver/spring/v1 http://mina.apache.org/smscserver/smscserver-1.0.xsd " //
+                + "\">" //
+                + config + "</server>";
 
         XmlBeanFactory factory = new XmlBeanFactory(new ByteArrayResource(completeConfig.getBytes()));
 

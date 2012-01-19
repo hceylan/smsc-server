@@ -40,9 +40,9 @@ public class SmscServerNamespaceHandler extends NamespaceHandlerSupport {
         this.registerBeanDefinitionParser("server", new ServerBeanDefinitionParser());
         this.registerBeanDefinitionParser("nio-listener", new ListenerBeanDefinitionParser());
         this.registerBeanDefinitionParser("file-user-manager", new UserManagerBeanDefinitionParser());
+        this.registerBeanDefinitionParser("message-manager", new MessageManagerBeanDefinitionParser());
         this.registerBeanDefinitionParser("db-user-manager", new UserManagerBeanDefinitionParser());
         this.registerBeanDefinitionParser("commands", new CommandFactoryBeanDefinitionParser());
-
     }
 
     /**

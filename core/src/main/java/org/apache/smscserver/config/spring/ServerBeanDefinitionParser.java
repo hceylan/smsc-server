@@ -63,6 +63,10 @@ public class ServerBeanDefinitionParser extends AbstractSingleBeanDefinitionPars
             } else if ("smsclets".equals(childName)) {
                 Map<?, ?> smsclets = this.parseSmsclets(childElm, parserContext, builder);
                 factoryBuilder.addPropertyValue("smsclets", smsclets);
+            } else if ("message-manager".equals(childName)) {
+                Object userManager = parserContext.getDelegate().parseCustomElement(childElm,
+                        builder.getBeanDefinition());
+                factoryBuilder.addPropertyValue("messageManager", userManager);
             } else if ("file-user-manager".equals(childName) || "db-user-manager".equals(childName)) {
                 Object userManager = parserContext.getDelegate().parseCustomElement(childElm,
                         builder.getBeanDefinition());

@@ -26,6 +26,7 @@ import org.apache.smscserver.command.CommandFactory;
 import org.apache.smscserver.impl.DefaultSmscServer;
 import org.apache.smscserver.impl.DefaultSmscServerContext;
 import org.apache.smscserver.listener.Listener;
+import org.apache.smscserver.smsclet.MessageManager;
 import org.apache.smscserver.smsclet.Smsclet;
 import org.apache.smscserver.smsclet.UserManager;
 import org.apache.smscserver.smscletcontainer.impl.DefaultSmscletContainer;
@@ -77,59 +78,10 @@ public class SmscServerFactory {
     }
 
     /**
-     * Retrieve the command factory used by servers created by this factory
-     * 
-     * @return The {@link CommandFactory}
+     * @return the serverContext
      */
-    public CommandFactory getCommandFactory() {
-        return this.serverContext.getCommandFactory();
-    }
-
-    /**
-     * Retrieve the connection configuration this server
-     * 
-     * @return The {@link MessageResource}
-     */
-    public ConnectionConfig getConnectionConfig() {
-        return this.serverContext.getConnectionConfig();
-    }
-
-    /**
-     * Get a specific {@link Listener} identified by its name
-     * 
-     * @param name
-     *            The name of the listener
-     * @return The {@link Listener} matching the provided name
-     */
-    public Listener getListener(final String name) {
-        return this.serverContext.getListener(name);
-    }
-
-    /**
-     * Get all listeners available on servers created by this factory
-     * 
-     * @return The current listeners
-     */
-    public Map<String, Listener> getListeners() {
-        return this.serverContext.getListeners();
-    }
-
-    /**
-     * Get all {@link Smsclet}s registered by servers created by this factory
-     * 
-     * @return All {@link Smsclet}s
-     */
-    public Map<String, Smsclet> getSmsclets() {
-        return this.serverContext.getSmscletContainer().getSmsclets();
-    }
-
-    /**
-     * Retrieve the user manager used by servers created by this factory
-     * 
-     * @return The user manager
-     */
-    public UserManager getUserManager() {
-        return this.serverContext.getUserManager();
+    public SmscServerContext getServerContext() {
+        return this.serverContext;
     }
 
     /**
@@ -164,6 +116,16 @@ public class SmscServerFactory {
      */
     public void setListeners(final Map<String, Listener> listeners) {
         this.serverContext.setListeners(listeners);
+    }
+
+    /**
+     * Sets the message manager to be used by servers created by this factory
+     * 
+     * @param messageManager
+     *            the {@link MessageManager}
+     */
+    public void setMessageManager(MessageManager messageManager) {
+        this.serverContext.setMessageManager(messageManager);
     }
 
     /**

@@ -42,7 +42,7 @@ public class IpFilterTest extends ClientTestTemplate {
     protected SmscServerFactory createServer() throws Exception {
         SmscServerFactory server = super.createServer();
 
-        ListenerFactory factory = new ListenerFactory(server.getListener("default"));
+        ListenerFactory factory = new ListenerFactory(server.getServerContext().getListener("default"));
 
         factory.setSessionFilter(this.filter);
         server.addListener("default", factory.createListener());

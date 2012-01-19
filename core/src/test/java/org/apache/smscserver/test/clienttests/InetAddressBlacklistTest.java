@@ -38,7 +38,7 @@ public class InetAddressBlacklistTest extends ClientTestTemplate {
     protected SmscServerFactory createServer() throws Exception {
         SmscServerFactory server = super.createServer();
 
-        ListenerFactory factory = new ListenerFactory(server.getListener("default"));
+        ListenerFactory factory = new ListenerFactory(server.getServerContext().getListener("default"));
 
         List<InetAddress> blockedAddresses = new ArrayList<InetAddress>();
         blockedAddresses.add(InetAddress.getByName("localhost"));

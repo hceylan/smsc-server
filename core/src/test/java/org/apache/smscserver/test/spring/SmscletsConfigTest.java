@@ -40,18 +40,24 @@ public class SmscletsConfigTest extends SpringConfigTestTemplate {
     }
 
     public void testSmsclet() throws Throwable {
-        Map<String, Smsclet> smsclets = this.createSmsclets("<smsclet name=\"foo\">" + "<beans:bean class=\""
-                + TestSmsclet.class.getName() + "\">" + "<beans:property name=\"foo\" value=\"123\" />"
-                + "</beans:bean></smsclet>");
+        Map<String, Smsclet> smsclets = this.createSmsclets(//
+                "<smsclet name=\"foo\">" //
+                        + "<beans:bean class=\"" //
+                        + TestSmsclet.class.getName() //
+                        + "\">" + "<beans:property name=\"foo\" value=\"123\" />" //
+                        + "</beans:bean></smsclet>");
 
         Assert.assertEquals(1, smsclets.size());
         Assert.assertEquals(123, ((TestSmsclet) smsclets.get("foo")).getFoo());
     }
 
     public void testSmscletMap() throws Throwable {
-        Map<String, Smsclet> smsclets = this.createSmsclets("<beans:map>" + "<beans:entry key=\"foo\">"
-                + "<beans:bean class=\"" + TestSmsclet.class.getName() + "\">"
-                + "<beans:property name=\"foo\" value=\"123\" />" + "</beans:bean>" + "</beans:entry></beans:map>");
+        Map<String, Smsclet> smsclets = this.createSmsclets( //
+                "<beans:map>" + "<beans:entry key=\"foo\">" //
+                        + "<beans:bean class=\"" + TestSmsclet.class.getName() + "\">" //
+                        + "<beans:property name=\"foo\" value=\"123\" />" //
+                        + "</beans:bean>" //
+                        + "</beans:entry></beans:map>");
 
         Assert.assertEquals(1, smsclets.size());
         Assert.assertEquals(123, ((TestSmsclet) smsclets.get("foo")).getFoo());
