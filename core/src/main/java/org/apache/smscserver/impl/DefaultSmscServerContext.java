@@ -187,7 +187,7 @@ public class DefaultSmscServerContext implements SmscServerContext {
     public MessageManager getMessageManager() {
         if (this.messageManager == null) {
             this.messageManager = new DBMessageManagerFactory("h2", "jdbc:h2:" + DefaultSmscServerContext.SMSC_HOME
-                    + "/db").createMessageManager();
+                    + "/db/smsc").createMessageManager();
         }
 
         return this.messageManager;

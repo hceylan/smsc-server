@@ -177,7 +177,7 @@ public class DBMessageManagerFactory implements MessageManagerFactory {
         if (this.datasource == null) {
             if (StringUtils.isEmpty(this.url)) {
                 throw new SmscServerConfigurationException(
-                        "Ehen using embedded mode and no datasource, URL paramater is required!");
+                        "When using embedded mode and no datasource provided, URL paramater is required!");
             }
 
             JdbcDataSource ds = new JdbcDataSource();
