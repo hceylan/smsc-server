@@ -40,7 +40,7 @@ public class PropertyPlaceholderTest extends TestCase {
 
         DefaultSmscServer server = (DefaultSmscServer) ctx.getBean("server");
 
-        Assert.assertEquals(2222, server.getListener("listener0").getPort());
-        Assert.assertEquals(3333, server.getListener("listener1").getPort());
+        Assert.assertEquals(2222, server.getServerContext().getListener("listener0").getPort());
+        Assert.assertEquals(3333, server.getServerContext().getListener("listener1").getPort());
     }
 }

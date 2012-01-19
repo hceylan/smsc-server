@@ -70,35 +70,6 @@ public class DefaultSmscServer implements SmscServer {
     }
 
     /**
-     * Retrieve the connection configuration this server
-     * 
-     * @return The {@link MessageResource}
-     */
-    public ConnectionConfig getConnectionConfig() {
-        return this.getServerContext().getConnectionConfig();
-    }
-
-    /**
-     * Get a specific listener identified by its name
-     * 
-     * @param name
-     *            The name of the listener
-     * @return The {@link Listener} matching the provided name
-     */
-    public Listener getListener(final String name) {
-        return this.getServerContext().getListener(name);
-    }
-
-    /**
-     * Get all listeners available one this server
-     * 
-     * @return The current listeners
-     */
-    public Map<String, Listener> getListeners() {
-        return this.getServerContext().getListeners();
-    }
-
-    /**
      * Get the root server context.
      */
     public SmscServerContext getServerContext() {

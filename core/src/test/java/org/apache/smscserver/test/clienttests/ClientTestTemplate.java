@@ -37,7 +37,6 @@ import junit.framework.TestCase;
 import org.apache.smscserver.ConnectionConfigFactory;
 import org.apache.smscserver.SmscServer;
 import org.apache.smscserver.SmscServerFactory;
-import org.apache.smscserver.impl.DefaultSmscServer;
 import org.apache.smscserver.listener.ListenerFactory;
 import org.apache.smscserver.smsclet.SmscIoSession;
 import org.apache.smscserver.test.TestUtil;
@@ -192,11 +191,11 @@ public abstract class ClientTestTemplate extends TestCase {
     }
 
     protected SmscIoSession getActiveSession() {
-        return ((DefaultSmscServer) this.server).getListener("default").getActiveSessions().iterator().next();
+        return this.server.getServerContext().getListener("default").getActiveSessions().iterator().next();
     }
 
     protected int getListenerPort() {
-        return ((DefaultSmscServer) this.server).getListener("default").getPort();
+        return this.server.getServerContext().getListener("default").getPort();
     }
 
     /**

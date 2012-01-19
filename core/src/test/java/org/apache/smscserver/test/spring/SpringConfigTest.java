@@ -45,9 +45,9 @@ public class SpringConfigTest extends TestCase {
 
         DefaultSmscServer server = (DefaultSmscServer) factory.getBean("server");
 
-        Assert.assertEquals(500, server.getConnectionConfig().getMaxBinds());
-        Assert.assertEquals(124, server.getConnectionConfig().getMaxBindFailures());
-        Assert.assertEquals(125, server.getConnectionConfig().getBindFailureDelay());
+        Assert.assertEquals(500, server.getServerContext().getConnectionConfig().getMaxBinds());
+        Assert.assertEquals(124, server.getServerContext().getConnectionConfig().getMaxBindFailures());
+        Assert.assertEquals(125, server.getServerContext().getConnectionConfig().getBindFailureDelay());
 
         Map<String, Listener> listeners = server.getServerContext().getListeners();
         Assert.assertEquals(3, listeners.size());
@@ -69,5 +69,7 @@ public class SpringConfigTest extends TestCase {
         Assert.assertEquals(2, server.getSmsclets().size());
         Assert.assertEquals(123, ((TestSmsclet) server.getSmsclets().get("smsclet1")).getFoo());
         Assert.assertEquals(223, ((TestSmsclet) server.getSmsclets().get("smsclet2")).getFoo());
+
+        Assert.assertNotNull(server.getServerContext().getMessageManager());
     }
 }
