@@ -40,15 +40,15 @@ public class DbUserManagerTest extends UserManagerTestTemplate {
 
     private JdbcDataSource ds;
 
-    private Connection conn;
+    private Connection connection;
 
     private void createDatabase() throws Exception {
-        this.conn = this.ds.getConnection();
-        this.conn.setAutoCommit(true);
+        this.connection = this.ds.getConnection();
+        this.connection.setAutoCommit(true);
 
         String ddl = IoUtils.readFully(new FileReader(this.getInitSqlScript()));
 
-        Statement stm = this.conn.createStatement();
+        Statement stm = this.connection.createStatement();
         stm.execute(ddl);
     }
 
@@ -66,7 +66,6 @@ public class DbUserManagerTest extends UserManagerTestTemplate {
         manager.setSqlUserAdmin("SELECT systemid FROM SMSC_USER WHERE systemid='{systemid}' AND systemid='admin'");
 
         return manager;
-
     }
 
     protected File getInitSqlScript() {
@@ -92,7 +91,7 @@ public class DbUserManagerTest extends UserManagerTestTemplate {
 
     @Override
     protected void tearDown() throws Exception {
-        Statement stm = this.conn.createStatement();
+        Statement stm = this.connection.createStatement();
         stm.execute("SHUTDOWN");
 
         super.tearDown();

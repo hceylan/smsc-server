@@ -25,7 +25,11 @@ public class DBUtils {
     private static final Logger LOG = LoggerFactory.getLogger(DBUtils.class);
 
     public static Object asString(Date date) {
-        return new SimpleDateFormat("yyyy-MM-dd' 'HH:mm:ss.SSS").format(date);
+        if (date == null) {
+            return "null";
+        }
+
+        return "'" + new SimpleDateFormat("yyyy-MM-dd' 'HH:mm:ss").format(date) + "'";
     }
 
     /**

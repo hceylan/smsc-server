@@ -100,10 +100,6 @@ public class DBMessageManager implements MessageManager {
         this.sqlUpdateMessage = sqlUpdateMessage;
         this.sqlSelectLatestReplacableMessage = sqlSelectLatestReplacableMessage;
 
-        if (datasource == null) {
-            this.initializeDefault();
-        }
-
         Connection con = null;
         Statement stmt = null;
 
@@ -126,10 +122,6 @@ public class DBMessageManager implements MessageManager {
 
     private Connection createConnection() throws SQLException {
         return DBUtils.createConnection(this.datasource);
-    }
-
-    private void initializeDefault() {
-
     }
 
     private Map<String, Object> populateFrom(ShortMessageImpl shortMessage) throws SmscException {
@@ -184,10 +176,10 @@ public class DBMessageManager implements MessageManager {
         shortMessage.setEsmClass(rs.getInt(DBMessageManager.ATTR_ESM_CLASS));
         shortMessage.setId(rs.getString(DBMessageManager.ATTR_ID));
         shortMessage.setMessageLength(rs.getInt(DBMessageManager.ATTR_MESSAGE_LENGTH));
-        shortMessage.setNextTryDeliverTime(rs.getTime(DBMessageManager.ATTR_NEXT_TRY_DELIVERY_TIME));
+        shortMessage.setNextTryDeliverTime(rs.getTimestamp(DBMessageManager.ATTR_NEXT_TRY_DELIVERY_TIME));
         shortMessage.setPriorityFlag(rs.getInt(DBMessageManager.ATTR_PRIORITY_FLAG));
         shortMessage.setProtocolId(rs.getInt(DBMessageManager.ATTR_PROTOCOL_ID));
-        shortMessage.setReceived(rs.getTime(DBMessageManager.ATTR_RECEIVED));
+        shortMessage.setReceived(rs.getTimestamp(DBMessageManager.ATTR_RECEIVED));
         shortMessage.setReplaced(rs.getString(DBMessageManager.ATTR_REPLACED));
         shortMessage.setReplacedBy(rs.getString(DBMessageManager.ATTR_REPLACED_BY));
         shortMessage.setScheduleDeliveryTime(rs.getDate(DBMessageManager.ATTR_SCHEDULE_DATE));
@@ -332,6 +324,8 @@ public class DBMessageManager implements MessageManager {
      */
     public void storeShortMessage(ShortMessage _shortMessage) throws SmscException {
         ShortMessageImpl shortMessage = (ShortMessageImpl) _shortMessage;
+
+        shortMessage.setStatus(ShortMessageStatus.PENDING);
 
         if (shortMessage.isReplaceIfPresent()) {
             DBMessageManager.LOG.debug("Falling back to replace...");

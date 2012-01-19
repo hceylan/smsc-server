@@ -15,7 +15,7 @@
 -- specific language governing permissions and limitations
 -- under the License.
 
-CREATE TABLE IF NOT EXISTS SMSC_MESSAGE (      
+CREATE MEMORY TABLE IF NOT EXISTS SMSC_MESSAGE (      
 	id VARCHAR(37) NOT NULL PRIMARY KEY,
 	datacoding TINYINT,
 	defaultmessage TINYINT,

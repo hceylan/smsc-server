@@ -40,6 +40,9 @@ import org.springframework.core.io.FileSystemResource;
 public class SpringConfigTest extends TestCase {
 
     public void test() throws Throwable {
+        // FIXME: Hasan variable not expanded
+        System.setProperty("SMSC_HOME", "./target/");
+
         XmlBeanFactory factory = new XmlBeanFactory(new FileSystemResource(
                 "src/test/resources/spring-config/config-spring-1.xml"));
 
