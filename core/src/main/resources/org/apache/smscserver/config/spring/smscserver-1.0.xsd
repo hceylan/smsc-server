@@ -46,6 +46,7 @@
 			<xs:attribute name="max-bind-failures" type="xs:int" />
 			<xs:attribute name="bind-failure-delay" type="xs:int" />
 			<xs:attribute name="max-threads" type="xs:int" />
+			<xs:attribute name="min-threads" type="xs:int" />
 		</xs:complexType>
 	</xs:element>
 

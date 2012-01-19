@@ -52,7 +52,14 @@ public interface ConnectionConfig {
     /**
      * Returns the maximum number of threads the server is allowed to create for processing client requests.
      * 
-     * @return the maximum number of threads the server is allowed to create for processing client requests.
+     * @return the maximum number of threads the server is allowed to create for processing client requests
      */
     int getMaxThreads();
+
+    /**
+     * Returns the minimum number of threads the server is required tkeep for processing client requests.
+     * 
+     * @return the minimum number of threads the server is required tkeep for processing client requests
+     */
+    int getMinThreads();
 }

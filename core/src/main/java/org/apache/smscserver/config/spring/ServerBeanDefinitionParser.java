@@ -70,13 +70,6 @@ public class ServerBeanDefinitionParser extends AbstractSingleBeanDefinitionPars
             } else if ("user-manager".equals(childName)) {
                 factoryBuilder.addPropertyValue("userManager",
                         SpringUtil.parseSpringChildElement(childElm, parserContext, builder));
-            } else if ("native-filesystem".equals(childName)) {
-                Object fileSystem = parserContext.getDelegate().parseCustomElement(childElm,
-                        builder.getBeanDefinition());
-                factoryBuilder.addPropertyValue("fileSystem", fileSystem);
-            } else if ("filesystem".equals(childName)) {
-                factoryBuilder.addPropertyValue("fileSystem",
-                        SpringUtil.parseSpringChildElement(childElm, parserContext, builder));
             } else if ("commands".equals(childName)) {
                 Object commandFactory = parserContext.getDelegate().parseCustomElement(childElm,
                         builder.getBeanDefinition());
@@ -91,11 +84,14 @@ public class ServerBeanDefinitionParser extends AbstractSingleBeanDefinitionPars
         if (StringUtils.hasText(element.getAttribute("max-binds"))) {
             connectionConfig.setMaxBinds(SpringUtil.parseInt(element, "max-binds"));
         }
+        if (StringUtils.hasText(element.getAttribute("min-threads"))) {
+            connectionConfig.setMaxThreads(SpringUtil.parseInt(element, "min-threads"));
+        }
         if (StringUtils.hasText(element.getAttribute("max-threads"))) {
             connectionConfig.setMaxThreads(SpringUtil.parseInt(element, "max-threads"));
         }
         if (StringUtils.hasText(element.getAttribute("max-bind-failures"))) {
-            connectionConfig.setMaxBindFailures(SpringUtil.parseInt(element, "max-b-failures"));
+            connectionConfig.setMaxBindFailures(SpringUtil.parseInt(element, "max-bind-failures"));
         }
         if (StringUtils.hasText(element.getAttribute("bind-failure-delay"))) {
             connectionConfig.setBindFailureDelay(SpringUtil.parseInt(element, "bind-failure-delay"));

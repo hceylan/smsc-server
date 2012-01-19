@@ -30,12 +30,10 @@ import org.apache.smscserver.impl.DefaultConnectionConfig;
 public class ConnectionConfigFactory {
 
     private int maxBinds = 10;
-
     private int maxBindFailures = 3;
-
     private int bindFailureDelay = 500;
-
-    private int maxThreads = 0;
+    private int maxThreads = 8;
+    private int minThreads = 2;
 
     /**
      * Create a connection configuration instances based on the configuration on this factory
@@ -43,7 +41,8 @@ public class ConnectionConfigFactory {
      * @return The {@link ConnectionConfig} instance
      */
     public ConnectionConfig createConnectionConfig() {
-        return new DefaultConnectionConfig(this.bindFailureDelay, this.maxBinds, this.maxBindFailures, this.maxThreads);
+        return new DefaultConnectionConfig(this.bindFailureDelay, this.maxBinds, this.maxBindFailures, this.minThreads,
+                this.maxThreads);
     }
 
     /**
@@ -117,10 +116,19 @@ public class ConnectionConfigFactory {
      * Sets the maximum number of threads the server is allowed to create for processing client requests.
      * 
      * @param maxThreads
-     *            the maximum number of threads the server is allowed to create for processing client requests.
+     *            the maximum number of threads the server is allowed to create for processing client requests
      */
     public void setMaxThreads(int maxThreads) {
         this.maxThreads = maxThreads;
     }
 
+    /**
+     * Sets the minimum number of threads the server is required to keep for processing client requests.
+     * 
+     * @param maxThreads
+     *            the minimum number of threads the server is required to keep for processing client requests.
+     */
+    public void setMinThreads(int minThreads) {
+        this.minThreads = minThreads;
+    }
 }

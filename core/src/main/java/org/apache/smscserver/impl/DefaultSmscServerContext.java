@@ -197,7 +197,9 @@ public class DefaultSmscServerContext implements SmscServerContext {
      */
     public synchronized ThreadPoolExecutor getThreadPoolExecutor() {
         if (this.threadPoolExecutor == null) {
+            int minThreads = this.connectionConfig.getMinThreads();
             int maxThreads = this.connectionConfig.getMaxThreads();
+
             if (maxThreads < 1) {
                 int maxBinds = this.connectionConfig.getMaxBinds();
                 if (maxBinds > 0) {
@@ -206,9 +208,16 @@ public class DefaultSmscServerContext implements SmscServerContext {
                     maxThreads = 16;
                 }
             }
-            this.LOG.debug("Intializing shared thread pool executor with max threads of {}", maxThreads);
-            this.threadPoolExecutor = new OrderedThreadPoolExecutor(maxThreads);
+
+            if (minThreads < 1) {
+                minThreads = maxThreads / 4;
+            }
+
+            this.LOG.debug("Intializing shared thread pool executor with min/max threads of {}/{}", minThreads,
+                    maxThreads);
+            this.threadPoolExecutor = new OrderedThreadPoolExecutor(minThreads, maxThreads);
         }
+
         return this.threadPoolExecutor;
     }
 

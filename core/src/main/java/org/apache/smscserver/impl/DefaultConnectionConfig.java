@@ -38,34 +38,58 @@ public class DefaultConnectionConfig implements ConnectionConfig {
 
     private final int maxThreads;
 
+    private final int minThreads;
+
     public DefaultConnectionConfig() {
-        this(500, 10, 3, 0);
+        this(500, 10, 3, 2, 8);
     }
 
     /**
      * Internal constructor, do not use directly. Use {@link ConnectionConfigFactory} instead
      */
-    public DefaultConnectionConfig(int nindFailureDelay, int maxBinds, int maxBindFailures, int maxThreads) {
+    public DefaultConnectionConfig(int nindFailureDelay, int maxBinds, int maxBindFailures, int minThreads,
+            int maxThreads) {
         this.bindFailureDelay = nindFailureDelay;
         this.maxBinds = maxBinds;
         this.maxBindFailures = maxBindFailures;
+        this.minThreads = minThreads;
         this.maxThreads = maxThreads;
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     */
     public int getBindFailureDelay() {
         return this.bindFailureDelay;
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     */
     public int getMaxBindFailures() {
         return this.maxBindFailures;
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     */
     public int getMaxBinds() {
         return this.maxBinds;
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     */
     public int getMaxThreads() {
         return this.maxThreads;
+    }
+
+    public int getMinThreads() {
+        return this.minThreads;
     }
 
 }
