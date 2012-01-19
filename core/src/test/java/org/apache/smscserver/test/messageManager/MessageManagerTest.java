@@ -6,27 +6,15 @@ import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.apache.smscserver.messagemanager.DBMessageManagerFactory;
-import org.apache.smscserver.smsclet.SmscException;
-import org.hsqldb.jdbc.jdbcDataSource;
+import org.h2.jdbcx.JdbcDataSource;
 
 public class MessageManagerTest extends TestCase {
 
-    private jdbcDataSource datasource;
+    private JdbcDataSource datasource;
 
     private Connection connection;
 
-    protected DBMessageManagerFactory createMessageManagerFactory() throws SmscException {
-        DBMessageManagerFactory manager = new DBMessageManagerFactory();
-
-        manager.setDataSource(this.datasource);
-        manager.setSqlCreateTable("INSERT INTO SMSC_USER (systemid, userpassword, enableflag, idletime, maxbindnumber, maxbindperip) VALUES ('{systemid}', '{userpassword}', {enableflag}, {idletime}, {maxbindnumber}, {maxbindperip})");
-        manager.setSqlInsertMessage("UPDATE SMSC_USER SET userpassword='{userpassword}',enableflag={enableflag},idletime={idletime},maxbindnumber={maxbindnumber}, maxbindperip={maxbindperip} WHERE systemid='{systemid}'");
-        manager.setSqlUpdateMessage("DELETE FROM SMSC_USER WHERE systemid = '{systemid}'");
-        manager.setSqlUpdateMessage("SELECT * FROM SMSC_USER WHERE systemid = '{systemid}'");
-        manager.setSqlSelectLatestReplacableMessage("SELECT systemid FROM SMSC_USER ORDER BY systemid");
-
-        return manager;
-    }
+    private DBMessageManagerFactory dbMessageManagerFactory;
 
     /*
      * (non-Javadoc)
@@ -35,8 +23,10 @@ public class MessageManagerTest extends TestCase {
      */
     @Override
     protected void setUp() throws Exception {
-        this.datasource = new jdbcDataSource();
-        this.datasource.setDatabase("jdbc:hsqldb:mem:smscd");
+        this.dbMessageManagerFactory = new DBMessageManagerFactory("h2", "jdbc:h2:mem:smscd");
+
+        this.datasource = new JdbcDataSource();
+        this.datasource.setURL("jdbc:h2:mem:smscd");
         this.datasource.setUser("sa");
         this.datasource.setPassword("");
 

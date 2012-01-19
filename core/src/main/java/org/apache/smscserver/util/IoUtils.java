@@ -24,6 +24,8 @@ import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -274,4 +276,15 @@ public class IoUtils {
         IoUtils.copy(reader, writer, 1024);
         return writer.toString();
     }
+
+    /**
+     * Read fully from string
+     * 
+     * @throws IOException
+     * @throws FileNotFoundException
+     */
+    public final static String readFully(String filename) throws FileNotFoundException, IOException {
+        return IoUtils.readFully(new FileReader(filename));
+    }
+
 }

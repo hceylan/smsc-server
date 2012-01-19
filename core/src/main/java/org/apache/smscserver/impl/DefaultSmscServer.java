@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultSmscServer implements SmscServer {
 
-    private final Logger LOG = LoggerFactory.getLogger(DefaultSmscServer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultSmscServer.class);
 
     private SmscServerContext serverContext;
 
@@ -145,14 +145,14 @@ public class DefaultSmscServer implements SmscServer {
             return;
         }
 
-        this.LOG.debug("Resuming server");
+        DefaultSmscServer.LOG.debug("Resuming server");
         Map<String, Listener> listeners = this.serverContext.getListeners();
         for (Listener listener : listeners.values()) {
             listener.resume();
         }
 
         this.suspended = false;
-        this.LOG.debug("Server resumed");
+        DefaultSmscServer.LOG.debug("Server resumed");
     }
 
     /**
@@ -180,7 +180,7 @@ public class DefaultSmscServer implements SmscServer {
 
             this.started = true;
 
-            this.LOG.info("SMSC server started");
+            DefaultSmscServer.LOG.info("SMSC server started");
         } catch (Exception e) {
             // must close listeners that we were able to start
             for (Listener listener : startedListeners) {
@@ -232,7 +232,7 @@ public class DefaultSmscServer implements SmscServer {
             return;
         }
 
-        this.LOG.debug("Suspending server");
+        DefaultSmscServer.LOG.debug("Suspending server");
         // stop all listeners
         Map<String, Listener> listeners = this.serverContext.getListeners();
         for (Listener listener : listeners.values()) {
@@ -240,6 +240,6 @@ public class DefaultSmscServer implements SmscServer {
         }
 
         this.suspended = true;
-        this.LOG.debug("Server suspended");
+        DefaultSmscServer.LOG.debug("Server suspended");
     }
 }

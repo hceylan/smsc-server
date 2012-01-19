@@ -45,6 +45,6 @@ public class ClearTextDbUserManagerTest extends DbUserManagerTest {
 
     @Override
     protected File getInitSqlScript() {
-        return new File(TestUtil.getBaseDir(), "src/test/resources/dbusermanagertest-cleartext-hsql.sql");
+        return new File(TestUtil.getBaseDir(), "src/test/resources/dbusermanagertest-cleartext-h2.sql");
     }
 }

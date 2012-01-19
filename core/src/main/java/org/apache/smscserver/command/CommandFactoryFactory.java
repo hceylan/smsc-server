@@ -120,14 +120,14 @@ public class CommandFactoryFactory {
 
     private void logCommands(Map<Integer, Command> map, String type) {
         if (map.isEmpty()) {
-            CommandFactoryFactory.LOG.info("No {} command found.", type);
+            CommandFactoryFactory.LOG.debug("No {} command found.", type);
         } else {
             List<Integer> ids = new ArrayList<Integer>(map.keySet());
 
             Collections.sort(ids);
 
             for (Integer id : ids) {
-                CommandFactoryFactory.LOG.info("Adding " + type + " command {} - {}", id, map.get(id).getClass()
+                CommandFactoryFactory.LOG.debug("Adding " + type + " command {} - {}", id, map.get(id).getClass()
                         .getCanonicalName());
             }
         }

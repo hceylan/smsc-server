@@ -29,11 +29,13 @@ import java.util.concurrent.TimeUnit;
 import org.apache.mina.filter.executor.OrderedThreadPoolExecutor;
 import org.apache.smscserver.ConnectionConfig;
 import org.apache.smscserver.ConnectionConfigFactory;
+import org.apache.smscserver.SmscServerConfigurationException;
 import org.apache.smscserver.SmscServerContext;
 import org.apache.smscserver.command.CommandFactory;
 import org.apache.smscserver.command.CommandFactoryFactory;
 import org.apache.smscserver.listener.Listener;
 import org.apache.smscserver.listener.ListenerFactory;
+import org.apache.smscserver.messagemanager.DBMessageManagerFactory;
 import org.apache.smscserver.smsclet.Authority;
 import org.apache.smscserver.smsclet.MessageManager;
 import org.apache.smscserver.smsclet.SmscStatistics;
@@ -44,6 +46,7 @@ import org.apache.smscserver.smscletcontainer.impl.DefaultSmscletContainer;
 import org.apache.smscserver.usermanager.PropertiesUserManagerFactory;
 import org.apache.smscserver.usermanager.impl.BaseUser;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <strong>Internal class, do not use directly.</strong>
@@ -54,22 +57,41 @@ import org.slf4j.Logger;
  */
 public class DefaultSmscServerContext implements SmscServerContext {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultSmscServer.class);
+
     private static final List<Authority> ADMIN_AUTHORITIES = new ArrayList<Authority>();
 
-    private MessageManager messageManager = null;// new DBMessageManagerFactory().createMessageManager();
+    private final static String SMSC_HOME = DefaultSmscServerContext.getSmscHome();
+
+    private static String getSmscHome() {
+        try {
+            String smscHome = System.getProperty("SMSC_HOME");
+            if (smscHome != null) {
+                return smscHome;
+            }
+
+            smscHome = new java.io.File(".").getCanonicalPath();
+            DefaultSmscServerContext.LOG.warn("SMSC_HOME is not provided, using " + smscHome);
+
+            return smscHome;
+        } catch (Exception e) {
+            throw new SmscServerConfigurationException("Error determining SMSC_HOME", e);
+        }
+    }
+
+    private MessageManager messageManager = null;
     private UserManager userManager = new PropertiesUserManagerFactory().createUserManager();
     private SmscletContainer smscletContainer = new DefaultSmscletContainer();
     private SmscStatistics statistics = new DefaultSmscStatistics();
     private CommandFactory commandFactory = null;
     private ConnectionConfig connectionConfig = new ConnectionConfigFactory().createConnectionConfig();
+
     private Map<String, Listener> listeners = new HashMap<String, Listener>();
 
     /**
      * The thread pool executor to be used by the server using this context
      */
     private ThreadPoolExecutor threadPoolExecutor = null;
-
-    private Logger LOG;
 
     public DefaultSmscServerContext() {
         this.listeners.put("default", new ListenerFactory().createListener());
@@ -88,7 +110,7 @@ public class DefaultSmscServerContext implements SmscServerContext {
         // create admin user
         String adminName = userManager.getAdminName();
         if (!userManager.doesExist(adminName)) {
-            this.LOG.info("Creating user : " + adminName);
+            DefaultSmscServerContext.LOG.info("Creating user : " + adminName);
             BaseUser adminUser = new BaseUser();
             adminUser.setName(adminName);
             adminUser.setPassword(adminName);
@@ -108,14 +130,14 @@ public class DefaultSmscServerContext implements SmscServerContext {
         this.listeners.clear();
         this.smscletContainer.getSmsclets().clear();
         if (this.threadPoolExecutor != null) {
-            this.LOG.debug("Shutting down the thread pool executor");
+            DefaultSmscServerContext.LOG.debug("Shutting down the thread pool executor");
             this.threadPoolExecutor.shutdown();
             try {
                 this.threadPoolExecutor.awaitTermination(5000, TimeUnit.MILLISECONDS);
             } catch (InterruptedException e) {
             } finally {
                 if (!this.threadPoolExecutor.isTerminated()) {
-                    this.LOG.warn("Forcing shutdown on thread pool...");
+                    DefaultSmscServerContext.LOG.warn("Forcing shutdown on thread pool...");
                     this.threadPoolExecutor.shutdownNow();
                 }
             }
@@ -163,6 +185,11 @@ public class DefaultSmscServerContext implements SmscServerContext {
      * 
      */
     public MessageManager getMessageManager() {
+        if (this.messageManager == null) {
+            this.messageManager = new DBMessageManagerFactory("h2", "jdbc:h2:" + DefaultSmscServerContext.SMSC_HOME
+                    + "/db").createMessageManager();
+        }
+
         return this.messageManager;
     }
 
@@ -212,8 +239,8 @@ public class DefaultSmscServerContext implements SmscServerContext {
                 minThreads = maxThreads / 4;
             }
 
-            this.LOG.debug("Intializing shared thread pool executor with min/max threads of {}/{}", minThreads,
-                    maxThreads);
+            DefaultSmscServerContext.LOG.debug("Intializing shared thread pool executor with min/max threads of {}/{}",
+                    minThreads, maxThreads);
             this.threadPoolExecutor = new OrderedThreadPoolExecutor(minThreads, maxThreads);
         }
 
@@ -228,16 +255,17 @@ public class DefaultSmscServerContext implements SmscServerContext {
         return this.userManager;
     }
 
-    public void info(Logger LOG) {
-        this.LOG = LOG;
-
-        this.LOG.info("Using {} as the connection configuration", this.getConnectionConfig().getClass()
+    public void info() {
+        DefaultSmscServerContext.LOG.info("Using {} as the connection configuration", this.getConnectionConfig()
+                .getClass().getCanonicalName());
+        DefaultSmscServerContext.LOG.info("Using {} as the message manager", this.getMessageManager().getClass()
                 .getCanonicalName());
-        // FIXME: Enable when fully implemented
-        // this.LOG.info("Using {} as the message manager", this.getMessageManager().getClass().getCanonicalName());
-        this.LOG.info("Using {} as the SMSCLet Container", this.getSmscletContainer().getClass().getCanonicalName());
-        this.LOG.info("Using {} as the statistics provider", this.getSmscStatistics().getClass().getCanonicalName());
-        this.LOG.info("Using {} as the command factory", this.getCommandFactory().getClass().getCanonicalName());
+        DefaultSmscServerContext.LOG.info("Using {} as the SMSCLet Container", this.getSmscletContainer().getClass()
+                .getCanonicalName());
+        DefaultSmscServerContext.LOG.info("Using {} as the statistics provider", this.getSmscStatistics().getClass()
+                .getCanonicalName());
+        DefaultSmscServerContext.LOG.info("Using {} as the command factory", this.getCommandFactory().getClass()
+                .getCanonicalName());
     }
 
     public Listener removeListener(String name) {

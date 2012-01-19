@@ -100,6 +100,10 @@ public class DBMessageManager implements MessageManager {
         this.sqlUpdateMessage = sqlUpdateMessage;
         this.sqlSelectLatestReplacableMessage = sqlSelectLatestReplacableMessage;
 
+        if (datasource == null) {
+            this.initializeDefault();
+        }
+
         Connection con = null;
         Statement stmt = null;
 
@@ -122,6 +126,10 @@ public class DBMessageManager implements MessageManager {
 
     private Connection createConnection() throws SQLException {
         return DBUtils.createConnection(this.datasource);
+    }
+
+    private void initializeDefault() {
+
     }
 
     private Map<String, Object> populateFrom(ShortMessageImpl shortMessage) throws SmscException {

@@ -19,11 +19,16 @@
 
 package org.apache.smscserver.messagemanager;
 
+import java.io.InputStream;
+
 import javax.sql.DataSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.smscserver.SmscServerConfigurationException;
 import org.apache.smscserver.messagemanager.impl.DBMessageManager;
 import org.apache.smscserver.smsclet.MessageManager;
+import org.apache.smscserver.util.IoUtils;
+import org.h2.jdbcx.JdbcDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,10 +48,20 @@ public class DBMessageManagerFactory implements MessageManagerFactory {
     private String sqlUpdateMessage;
     private String sqlSelectLatestReplacableMessage;
 
+    private String embeddedProfile;
+    private String url;
+
+    public DBMessageManagerFactory(String embeddedProfile, String url) {
+        super();
+
+        this.embeddedProfile = embeddedProfile;
+        this.url = url;
+    }
+
     private void check(Object field, boolean required, String errorMessage) {
         if (field == null) {
             if (required) {
-                //FIXME: Hasan for now
+                // FIXME: Hasan for now
                 throw new SmscServerConfigurationException("Required " + errorMessage);
             } else {
                 DBMessageManagerFactory.LOG.warn("Optional parameter {}", errorMessage);
@@ -59,6 +74,16 @@ public class DBMessageManagerFactory implements MessageManagerFactory {
      * 
      */
     public MessageManager createMessageManager() {
+        if (this.embeddedProfile != null) {
+            DBMessageManagerFactory.LOG.info("Using embedded profile {}", this.embeddedProfile);
+
+            this.startEmbeddedMode();
+        }
+
+        return this.createMessageManagerImpl();
+    }
+
+    private MessageManager createMessageManagerImpl() {
         this.check(this.datasource, true, "datasource not provided");
         this.check(this.sqlCreateTable, false,
                 "create table exist SQL statement not provided. Table should be manually created if doesn't exist");
@@ -70,12 +95,18 @@ public class DBMessageManagerFactory implements MessageManagerFactory {
                 this.sqlUpdateMessage, this.sqlSelectLatestReplacableMessage);
     }
 
-    /**
-     * @param datasource
-     *            the datasource to set
-     */
-    public void setDatasource(DataSource datasource) {
-        this.datasource = datasource;
+    private String getProfileSQL(String qualifier) {
+        try {
+            String sqlFile = "/org/apache/smscserver/config/db/messages-" + qualifier + "-" + this.embeddedProfile
+                    + ".sql";
+            DBMessageManagerFactory.LOG.debug("SQL File to read: {}", sqlFile);
+
+            InputStream is = this.getClass().getResourceAsStream(sqlFile);
+
+            return IoUtils.readFully(is);
+        } catch (Exception e) {
+            throw new SmscServerConfigurationException("Error reading SQL resource", e);
+        }
     }
 
     /**
@@ -84,6 +115,14 @@ public class DBMessageManagerFactory implements MessageManagerFactory {
      */
     public void setDataSource(DataSource datasource) {
         this.datasource = datasource;
+    }
+
+    /**
+     * @param embeddedProfile
+     *            the embeddedProfile to set
+     */
+    public void setEmbedded(String embeddedProfile) {
+        this.embeddedProfile = embeddedProfile;
     }
 
     /**
@@ -126,4 +165,47 @@ public class DBMessageManagerFactory implements MessageManagerFactory {
         this.sqlUpdateMessage = sqlUpdateMessage;
     }
 
+    /**
+     * @param url
+     *            the url to set
+     */
+    public void setURL(String url) {
+        this.url = url;
+    }
+
+    private void startEmbeddedMode() {
+        if (this.datasource == null) {
+            if (StringUtils.isEmpty(this.url)) {
+                throw new SmscServerConfigurationException(
+                        "Ehen using embedded mode and no datasource, URL paramater is required!");
+            }
+
+            JdbcDataSource ds = new JdbcDataSource();
+            ds.setURL(this.url);
+            ds.setUser("sa");
+            ds.setPassword("");
+
+            this.datasource = ds;
+        }
+
+        if (this.sqlCreateTable == null) {
+            this.sqlCreateTable = this.getProfileSQL("createtable");
+        }
+
+        if (this.sqlInsertMessage == null) {
+            this.sqlInsertMessage = this.getProfileSQL("insert");
+        }
+
+        if (this.sqlUpdateMessage == null) {
+            this.sqlUpdateMessage = this.getProfileSQL("update");
+        }
+
+        if (this.sqlSelectMessage == null) {
+            this.sqlSelectMessage = this.getProfileSQL("select");
+        }
+
+        if (this.sqlSelectLatestReplacableMessage == null) {
+            this.sqlSelectLatestReplacableMessage = this.getProfileSQL("selectlatestreplacable");
+        }
+    }
 }

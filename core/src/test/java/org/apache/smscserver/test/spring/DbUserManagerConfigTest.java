@@ -24,7 +24,7 @@ import junit.framework.Assert;
 import org.apache.smscserver.impl.DefaultSmscServer;
 import org.apache.smscserver.usermanager.SaltedPasswordEncryptor;
 import org.apache.smscserver.usermanager.impl.DbUserManager;
-import org.hsqldb.jdbc.jdbcDataSource;
+import org.h2.jdbcx.JdbcDataSource;
 
 /**
  * 
@@ -36,8 +36,8 @@ public class DbUserManagerConfigTest extends SpringConfigTestTemplate {
     public void test() throws Throwable {
         DefaultSmscServer server = (DefaultSmscServer) this
                 .createServer("<db-user-manager  encrypt-passwords=\"salted\">" + "<data-source>"
-                        + "    <beans:bean class=\"org.hsqldb.jdbc.jdbcDataSource\">"
-                        + "        <beans:property name=\"database\" value=\"jdbc:hsqldb:mem:foo\" />"
+                        + "    <beans:bean class=\"org.h2.jdbcx.JdbcDataSource\">"
+                        + "        <beans:property name=\"URL\" value=\"jdbc:h2:mem:foo\" />"
                         + "        <beans:property name=\"user\" value=\"sa\" />"
                         + "        <beans:property name=\"password\" value=\"\" />" + "    </beans:bean>"
                         + "</data-source>" + "<insert-user>INSERT USER</insert-user>"
@@ -47,7 +47,7 @@ public class DbUserManagerConfigTest extends SpringConfigTestTemplate {
                         + "<authenticate>AUTHENTICATE</authenticate>" + "</db-user-manager>");
 
         DbUserManager um = (DbUserManager) server.getUserManager();
-        Assert.assertTrue(um.getDataSource() instanceof jdbcDataSource);
+        Assert.assertTrue(um.getDataSource() instanceof JdbcDataSource);
         Assert.assertTrue(um.getPasswordEncryptor() instanceof SaltedPasswordEncryptor);
 
         Assert.assertEquals("INSERT USER", um.getSqlUserInsert());

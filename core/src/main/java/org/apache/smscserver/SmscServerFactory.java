@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SmscServerFactory {
 
-    private final Logger LOG = LoggerFactory.getLogger(SmscServerFactory.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SmscServerFactory.class);
 
     private final DefaultSmscServerContext serverContext;
 
@@ -68,8 +68,10 @@ public class SmscServerFactory {
      * @return The {@link DefaultSmscServer} instance
      */
     public SmscServer createServer() {
-        this.LOG.info("SMSC Server is starting with the context {}", DefaultSmscServerContext.class.getCanonicalName());
-        this.serverContext.info(this.LOG);
+        SmscServerFactory.LOG.info("SMSC Server is starting with the context {}",
+                DefaultSmscServerContext.class.getCanonicalName());
+
+        this.serverContext.info();
 
         return new DefaultSmscServer(this.serverContext);
     }

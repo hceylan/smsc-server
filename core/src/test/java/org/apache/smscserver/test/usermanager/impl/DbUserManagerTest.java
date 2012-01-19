@@ -29,7 +29,7 @@ import org.apache.smscserver.test.TestUtil;
 import org.apache.smscserver.usermanager.DbUserManagerFactory;
 import org.apache.smscserver.usermanager.UserManagerFactory;
 import org.apache.smscserver.util.IoUtils;
-import org.hsqldb.jdbc.jdbcDataSource;
+import org.h2.jdbcx.JdbcDataSource;
 
 /**
  * 
@@ -38,7 +38,7 @@ import org.hsqldb.jdbc.jdbcDataSource;
  */
 public class DbUserManagerTest extends UserManagerTestTemplate {
 
-    private jdbcDataSource ds;
+    private JdbcDataSource ds;
 
     private Connection conn;
 
@@ -70,7 +70,7 @@ public class DbUserManagerTest extends UserManagerTestTemplate {
     }
 
     protected File getInitSqlScript() {
-        return new File(TestUtil.getBaseDir(), "src/test/resources/dbusermanagertest-hsql.sql");
+        return new File(TestUtil.getBaseDir(), "src/test/resources/dbusermanagertest-h2.sql");
     }
 
     /*
@@ -80,8 +80,8 @@ public class DbUserManagerTest extends UserManagerTestTemplate {
      */
     @Override
     protected void setUp() throws Exception {
-        this.ds = new jdbcDataSource();
-        this.ds.setDatabase("jdbc:hsqldb:mem:smscd");
+        this.ds = new JdbcDataSource();
+        this.ds.setURL("jdbc:h2:mem:smscd");
         this.ds.setUser("sa");
         this.ds.setPassword("");
 

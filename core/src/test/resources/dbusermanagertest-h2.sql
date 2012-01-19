@@ -15,7 +15,7 @@
 -- specific language governing permissions and limitations
 -- under the License.
 
-CREATE TABLE SMSC_USER (      
+CREATE TABLE IF NOT EXISTS SMSC_USER (      
    systemid VARCHAR(64) NOT NULL PRIMARY KEY,       
    userpassword VARCHAR(64),      
    enableflag BOOLEAN DEFAULT TRUE,    
