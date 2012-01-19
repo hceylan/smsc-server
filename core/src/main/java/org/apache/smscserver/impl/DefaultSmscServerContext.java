@@ -199,9 +199,9 @@ public class DefaultSmscServerContext implements SmscServerContext {
         if (this.threadPoolExecutor == null) {
             int maxThreads = this.connectionConfig.getMaxThreads();
             if (maxThreads < 1) {
-                int maxLogins = this.connectionConfig.getMaxBinds();
-                if (maxLogins > 0) {
-                    maxThreads = maxLogins;
+                int maxBinds = this.connectionConfig.getMaxBinds();
+                if (maxBinds > 0) {
+                    maxThreads = maxBinds;
                 } else {
                     maxThreads = 16;
                 }

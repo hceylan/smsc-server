@@ -55,23 +55,23 @@ public abstract class UserManagerTestTemplate extends TestCase {
 
     protected abstract UserManagerFactory createUserManagerFactory() throws Exception;
 
-    private int getMaxLoginNumber(User user) {
-        ConcurrentBindRequest concurrentLoginRequest = new ConcurrentBindRequest(0, 0);
-        concurrentLoginRequest = (ConcurrentBindRequest) user.authorize(concurrentLoginRequest);
+    private int getMaxBindNumber(User user) {
+        ConcurrentBindRequest concurrentBindRequest = new ConcurrentBindRequest(0, 0);
+        concurrentBindRequest = (ConcurrentBindRequest) user.authorize(concurrentBindRequest);
 
-        if (concurrentLoginRequest != null) {
-            return concurrentLoginRequest.getMaxConcurrentBinds();
+        if (concurrentBindRequest != null) {
+            return concurrentBindRequest.getMaxConcurrentBinds();
         } else {
             return 0;
         }
     }
 
-    private int getMaxLoginPerIP(User user) {
-        ConcurrentBindRequest concurrentLoginRequest = new ConcurrentBindRequest(0, 0);
-        concurrentLoginRequest = (ConcurrentBindRequest) user.authorize(concurrentLoginRequest);
+    private int getMaxBindPerIP(User user) {
+        ConcurrentBindRequest concurrentBindRequest = new ConcurrentBindRequest(0, 0);
+        concurrentBindRequest = (ConcurrentBindRequest) user.authorize(concurrentBindRequest);
 
-        if (concurrentLoginRequest != null) {
-            return concurrentLoginRequest.getMaxConcurrentBindsPerIP();
+        if (concurrentBindRequest != null) {
+            return concurrentBindRequest.getMaxConcurrentBindsPerIP();
         } else {
             return 0;
         }
@@ -167,8 +167,8 @@ public abstract class UserManagerTestTemplate extends TestCase {
         Assert.assertEquals("user2", user.getName());
         Assert.assertNull("Password must not be set", user.getPassword());
         Assert.assertEquals(2, user.getMaxIdleTime());
-        Assert.assertEquals(3, this.getMaxLoginNumber(user));
-        Assert.assertEquals(4, this.getMaxLoginPerIP(user));
+        Assert.assertEquals(3, this.getMaxBindNumber(user));
+        Assert.assertEquals(4, this.getMaxBindPerIP(user));
         Assert.assertFalse(user.getEnabled());
     }
 
@@ -178,8 +178,8 @@ public abstract class UserManagerTestTemplate extends TestCase {
         Assert.assertEquals("user1", user.getName());
         Assert.assertNull("Password must not be set", user.getPassword());
         Assert.assertEquals(0, user.getMaxIdleTime());
-        Assert.assertEquals(0, this.getMaxLoginNumber(user));
-        Assert.assertEquals(0, this.getMaxLoginPerIP(user));
+        Assert.assertEquals(0, this.getMaxBindNumber(user));
+        Assert.assertEquals(0, this.getMaxBindPerIP(user));
         Assert.assertTrue(user.getEnabled());
     }
 
@@ -212,8 +212,8 @@ public abstract class UserManagerTestTemplate extends TestCase {
         Assert.assertNull(actualUser.getPassword());
         Assert.assertEquals(user.getEnabled(), actualUser.getEnabled());
         Assert.assertEquals(user.getMaxIdleTime(), actualUser.getMaxIdleTime());
-        Assert.assertEquals(this.getMaxLoginNumber(user), this.getMaxLoginNumber(actualUser));
-        Assert.assertEquals(this.getMaxLoginPerIP(user), this.getMaxLoginPerIP(actualUser));
+        Assert.assertEquals(this.getMaxBindNumber(user), this.getMaxBindNumber(actualUser));
+        Assert.assertEquals(this.getMaxBindPerIP(user), this.getMaxBindPerIP(actualUser));
 
         // verify the password
         Assert.assertNotNull(this.userManager
@@ -275,8 +275,8 @@ public abstract class UserManagerTestTemplate extends TestCase {
         Assert.assertNull(actualUser.getPassword());
         Assert.assertEquals(user.getEnabled(), actualUser.getEnabled());
         Assert.assertEquals(user.getMaxIdleTime(), actualUser.getMaxIdleTime());
-        Assert.assertEquals(this.getMaxLoginNumber(user), this.getMaxLoginNumber(actualUser));
-        Assert.assertEquals(this.getMaxLoginPerIP(user), this.getMaxLoginPerIP(actualUser));
+        Assert.assertEquals(this.getMaxBindNumber(user), this.getMaxBindNumber(actualUser));
+        Assert.assertEquals(this.getMaxBindPerIP(user), this.getMaxBindPerIP(actualUser));
 
         // verify the password
         Assert.assertNotNull(newUserManager.authenticate(new UsernamePasswordAuthentication(null, "newuser", "newpw")));
@@ -329,8 +329,8 @@ public abstract class UserManagerTestTemplate extends TestCase {
         Assert.assertNull(actualUser.getPassword());
         Assert.assertEquals(true, actualUser.getEnabled());
         Assert.assertEquals(0, actualUser.getMaxIdleTime());
-        Assert.assertEquals(0, this.getMaxLoginNumber(actualUser));
-        Assert.assertEquals(0, this.getMaxLoginPerIP(actualUser));
+        Assert.assertEquals(0, this.getMaxBindNumber(actualUser));
+        Assert.assertEquals(0, this.getMaxBindPerIP(actualUser));
     }
 
     public void testSaveWithExistingUser() throws Exception {
@@ -343,8 +343,8 @@ public abstract class UserManagerTestTemplate extends TestCase {
         Assert.assertEquals("user2", actualUser.getName());
         Assert.assertNull(actualUser.getPassword());
         Assert.assertEquals(0, actualUser.getMaxIdleTime());
-        Assert.assertEquals(0, this.getMaxLoginNumber(actualUser));
-        Assert.assertEquals(0, this.getMaxLoginPerIP(actualUser));
+        Assert.assertEquals(0, this.getMaxBindNumber(actualUser));
+        Assert.assertEquals(0, this.getMaxBindPerIP(actualUser));
         Assert.assertTrue(actualUser.getEnabled());
     }
 }

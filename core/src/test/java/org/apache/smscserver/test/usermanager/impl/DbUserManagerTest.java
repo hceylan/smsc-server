@@ -57,13 +57,13 @@ public class DbUserManagerTest extends UserManagerTestTemplate {
         DbUserManagerFactory manager = new DbUserManagerFactory();
 
         manager.setDataSource(this.ds);
-        manager.setSqlUserInsert("INSERT INTO SMSC_USER (userid, userpassword, enableflag, idletime, maxloginnumber, maxloginperip) VALUES ('{userid}', '{userpassword}', {enableflag}, {idletime}, {maxloginnumber}, {maxloginperip})");
-        manager.setSqlUserUpdate("UPDATE SMSC_USER SET userpassword='{userpassword}',enableflag={enableflag},idletime={idletime},maxloginnumber={maxloginnumber}, maxloginperip={maxloginperip} WHERE userid='{userid}'");
-        manager.setSqlUserDelete("DELETE FROM SMSC_USER WHERE userid = '{userid}'");
-        manager.setSqlUserSelect("SELECT * FROM SMSC_USER WHERE userid = '{userid}'");
-        manager.setSqlUserSelectAll("SELECT userid FROM SMSC_USER ORDER BY userid");
-        manager.setSqlUserAuthenticate("SELECT userid, userpassword FROM SMSC_USER WHERE userid='{userid}'");
-        manager.setSqlUserAdmin("SELECT userid FROM SMSC_USER WHERE userid='{userid}' AND userid='admin'");
+        manager.setSqlUserInsert("INSERT INTO SMSC_USER (systemid, userpassword, enableflag, idletime, maxbindnumber, maxbindperip) VALUES ('{systemid}', '{userpassword}', {enableflag}, {idletime}, {maxbindnumber}, {maxbindperip})");
+        manager.setSqlUserUpdate("UPDATE SMSC_USER SET userpassword='{userpassword}',enableflag={enableflag},idletime={idletime},maxbindnumber={maxbindnumber}, maxbindperip={maxbindperip} WHERE systemid='{systemid}'");
+        manager.setSqlUserDelete("DELETE FROM SMSC_USER WHERE systemid = '{systemid}'");
+        manager.setSqlUserSelect("SELECT * FROM SMSC_USER WHERE systemid = '{systemid}'");
+        manager.setSqlUserSelectAll("SELECT systemid FROM SMSC_USER ORDER BY systemid");
+        manager.setSqlUserAuthenticate("SELECT systemid, userpassword FROM SMSC_USER WHERE systemid='{systemid}'");
+        manager.setSqlUserAdmin("SELECT systemid FROM SMSC_USER WHERE systemid='{systemid}' AND systemid='admin'");
 
         return manager;
 

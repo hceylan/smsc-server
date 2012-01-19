@@ -59,25 +59,25 @@ import org.slf4j.LoggerFactory;
  * <th>Property</th>
  * <th>Documentation</th>
  * <tr>
- * <td>smscserver.user.{username}.userpassword</td>
+ * <td>smscserver.user.{systemid}.userpassword</td>
  * <td>The password for the user. Can be in clear text, MD5 hash or salted SHA hash based on the configuration on the
  * user manager</td>
  * </tr>
  * <tr>
- * <td>smscserver.user.{username}.enableflag</td>
+ * <td>smscserver.user.{systemid}.enableflag</td>
  * <td>true if the user is enabled, false otherwise</td>
  * </tr>
  * <tr>
- * <td>smscserver.user.{username}.idletime</td>
+ * <td>smscserver.user.{systemid}.idletime</td>
  * <td>The number of seconds the user is allowed to be idle before disconnected. 0 disables the idle timeout</td>
  * </tr>
  * <tr>
- * <td>smscserver.user.{username}.maxloginnumber</td>
- * <td>The maximum number of concurrent logins by the user. 0 disables the check.</td>
+ * <td>smscserver.user.{systemid}.maxbindnumber</td>
+ * <td>The maximum number of concurrent binds by the user. 0 disables the check.</td>
  * </tr>
  * <tr>
- * <td>smscserver.user.{username}.maxloginperip</td>
- * <td>The maximum number of concurrent logins from the same IP address by the user. 0 disables the check.</td>
+ * <td>smscserver.user.{systemid}.maxbindperip</td>
+ * <td>The maximum number of concurrent binds from the same IP address by the user. 0 disables the check.</td>
  * </tr>
  * </table>
  * 
@@ -89,8 +89,8 @@ import org.slf4j.LoggerFactory;
  * smscserver.user.admin.userpassword=admin
  * smscserver.user.admin.enableflag=true
  * smscserver.user.admin.idletime=0
- * smscserver.user.admin.maxloginnumber=0
- * smscserver.user.admin.maxloginperip=0
+ * smscserver.user.admin.maxbindnumber=0
+ * smscserver.user.admin.maxbindperip=0
  * </pre>
  * 
  * @author hceylan
@@ -171,7 +171,7 @@ public class PropertiesUserManager extends AbstractUserManager {
      */
     public String[] getAllUserNames() {
         // get all user names
-        String suffix = '.' + AbstractUserManager.ATTR_LOGIN;
+        String suffix = '.' + AbstractUserManager.ATTR_SYSTEM_ID;
         ArrayList<String> ulst = new ArrayList<String>();
         Enumeration<?> allKeys = this.userDataProp.propertyNames();
         int prefixlen = PropertiesUserManager.PREFIX.length();
@@ -246,10 +246,10 @@ public class PropertiesUserManager extends AbstractUserManager {
 
         List<Authority> authorities = new ArrayList<Authority>();
 
-        int maxLogin = this.userDataProp.getInteger(baseKey + AbstractUserManager.ATTR_MAX_LOGIN_NUMBER, 0);
-        int maxLoginPerIP = this.userDataProp.getInteger(baseKey + AbstractUserManager.ATTR_MAX_LOGIN_PER_IP, 0);
+        int maxBind = this.userDataProp.getInteger(baseKey + AbstractUserManager.ATTR_MAX_BIND_NUMBER, 0);
+        int maxBindPerIP = this.userDataProp.getInteger(baseKey + AbstractUserManager.ATTR_MAX_BIND_PER_IP, 0);
 
-        authorities.add(new ConcurrentBindPermission(maxLogin, maxLoginPerIP));
+        authorities.add(new ConcurrentBindPermission(maxBind, maxBindPerIP));
 
         user.setAuthorities(authorities);
 
@@ -425,17 +425,17 @@ public class PropertiesUserManager extends AbstractUserManager {
         this.userDataProp.setProperty(thisPrefix + AbstractUserManager.ATTR_MAX_IDLE_TIME, usr.getMaxIdleTime());
 
         // request that always will succeed
-        ConcurrentBindRequest concurrentLoginRequest = new ConcurrentBindRequest(0, 0);
-        concurrentLoginRequest = (ConcurrentBindRequest) usr.authorize(concurrentLoginRequest);
+        ConcurrentBindRequest concurrentBindRequest = new ConcurrentBindRequest(0, 0);
+        concurrentBindRequest = (ConcurrentBindRequest) usr.authorize(concurrentBindRequest);
 
-        if (concurrentLoginRequest != null) {
-            this.userDataProp.setProperty(thisPrefix + AbstractUserManager.ATTR_MAX_LOGIN_NUMBER,
-                    concurrentLoginRequest.getMaxConcurrentBinds());
-            this.userDataProp.setProperty(thisPrefix + AbstractUserManager.ATTR_MAX_LOGIN_PER_IP,
-                    concurrentLoginRequest.getMaxConcurrentBindsPerIP());
+        if (concurrentBindRequest != null) {
+            this.userDataProp.setProperty(thisPrefix + AbstractUserManager.ATTR_MAX_BIND_NUMBER,
+                    concurrentBindRequest.getMaxConcurrentBinds());
+            this.userDataProp.setProperty(thisPrefix + AbstractUserManager.ATTR_MAX_BIND_PER_IP,
+                    concurrentBindRequest.getMaxConcurrentBindsPerIP());
         } else {
-            this.userDataProp.remove(thisPrefix + AbstractUserManager.ATTR_MAX_LOGIN_NUMBER);
-            this.userDataProp.remove(thisPrefix + AbstractUserManager.ATTR_MAX_LOGIN_PER_IP);
+            this.userDataProp.remove(thisPrefix + AbstractUserManager.ATTR_MAX_BIND_NUMBER);
+            this.userDataProp.remove(thisPrefix + AbstractUserManager.ATTR_MAX_BIND_PER_IP);
         }
 
         this.saveUserData();

@@ -26,7 +26,6 @@ import java.util.UUID;
 
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
-import javax.swing.filechooser.FileSystemView;
 
 import org.apache.mina.core.filterchain.IoFilterChain;
 import org.apache.mina.core.future.CloseFuture;
@@ -65,8 +64,8 @@ public class DefaultSmscIoSession implements SmscIoSession, IoSession {
     private static final String ATTRIBUTE_SESSION_ID = DefaultSmscIoSession.ATTRIBUTE_PREFIX + "session-id";
     private static final String ATTRIBUTE_USER = DefaultSmscIoSession.ATTRIBUTE_PREFIX + "user";
     private static final String ATTRIBUTE_LANGUAGE = DefaultSmscIoSession.ATTRIBUTE_PREFIX + "language";
-    private static final String ATTRIBUTE_LOGIN_TIME = DefaultSmscIoSession.ATTRIBUTE_PREFIX + "login-time";
-    private static final String ATTRIBUTE_FAILED_LOGINS = DefaultSmscIoSession.ATTRIBUTE_PREFIX + "failed-logins";
+    private static final String ATTRIBUTE_BIND_TIME = DefaultSmscIoSession.ATTRIBUTE_PREFIX + "bind-time";
+    private static final String ATTRIBUTE_FAILED_BINDS = DefaultSmscIoSession.ATTRIBUTE_PREFIX + "failed-binds";
     private static final String ATTRIBUTE_LISTENER = DefaultSmscIoSession.ATTRIBUTE_PREFIX + "listener";
     private static final String ATTRIBUTE_MAX_IDLE_TIME = DefaultSmscIoSession.ATTRIBUTE_PREFIX + "max-idle-time";
     private static final String ATTRIBUTE_LAST_ACCESS_TIME = DefaultSmscIoSession.ATTRIBUTE_PREFIX + "last-access-time";
@@ -136,6 +135,10 @@ public class DefaultSmscIoSession implements SmscIoSession, IoSession {
         return this.wrappedSession.getAttributeKeys();
     }
 
+    public Date getBindTime() {
+        return (Date) this.getAttribute(DefaultSmscIoSession.ATTRIBUTE_BIND_TIME);
+    }
+
     /**
      * @see IoSession#getBothIdleCount()
      */
@@ -199,8 +202,8 @@ public class DefaultSmscIoSession implements SmscIoSession, IoSession {
         return this.wrappedSession.getCurrentWriteRequest();
     }
 
-    public int getFailedLogins() {
-        return (Integer) this.getAttribute(DefaultSmscIoSession.ATTRIBUTE_FAILED_LOGINS, 0);
+    public int getFailedBinds() {
+        return (Integer) this.getAttribute(DefaultSmscIoSession.ATTRIBUTE_FAILED_BINDS, 0);
     }
 
     /**
@@ -293,10 +296,6 @@ public class DefaultSmscIoSession implements SmscIoSession, IoSession {
      */
     public SocketAddress getLocalAddress() {
         return this.wrappedSession.getLocalAddress();
-    }
-
-    public Date getLoginTime() {
-        return (Date) this.getAttribute(DefaultSmscIoSession.ATTRIBUTE_LOGIN_TIME);
     }
 
     public int getMaxIdleTime() {
@@ -451,10 +450,10 @@ public class DefaultSmscIoSession implements SmscIoSession, IoSession {
         return this.wrappedSession.getWrittenMessagesThroughput();
     }
 
-    public synchronized void increaseFailedLogins() {
-        int failedLogins = (Integer) this.getAttribute(DefaultSmscIoSession.ATTRIBUTE_FAILED_LOGINS, 0);
-        failedLogins++;
-        this.setAttribute(DefaultSmscIoSession.ATTRIBUTE_FAILED_LOGINS, failedLogins);
+    public synchronized void increaseFailedBinds() {
+        int failedBinds = (Integer) this.getAttribute(DefaultSmscIoSession.ATTRIBUTE_FAILED_BINDS, 0);
+        failedBinds++;
+        this.setAttribute(DefaultSmscIoSession.ATTRIBUTE_FAILED_BINDS, failedBinds);
     }
 
     /**
@@ -490,6 +489,13 @@ public class DefaultSmscIoSession implements SmscIoSession, IoSession {
     }
 
     /**
+     * Is bound
+     */
+    public boolean isBound() {
+        return this.containsAttribute(DefaultSmscIoSession.ATTRIBUTE_USER);
+    }
+
+    /**
      * @see IoSession#isClosing()
      */
     public boolean isClosing() {
@@ -508,13 +514,6 @@ public class DefaultSmscIoSession implements SmscIoSession, IoSession {
      */
     public boolean isIdle(IdleStatus status) {
         return this.wrappedSession.isIdle(status);
-    }
-
-    /**
-     * Is logged-in
-     */
-    public boolean isLoggedIn() {
-        return this.containsAttribute(DefaultSmscIoSession.ATTRIBUTE_USER);
     }
 
     /**
@@ -564,7 +563,7 @@ public class DefaultSmscIoSession implements SmscIoSession, IoSession {
     public void reinitialize() {
         this.unbindUser();
         this.removeAttribute(DefaultSmscIoSession.ATTRIBUTE_USER);
-        this.removeAttribute(DefaultSmscIoSession.ATTRIBUTE_LOGIN_TIME);
+        this.removeAttribute(DefaultSmscIoSession.ATTRIBUTE_BIND_TIME);
     }
 
     /**
@@ -652,10 +651,6 @@ public class DefaultSmscIoSession implements SmscIoSession, IoSession {
 
     public void setListener(Listener listener) {
         this.setAttribute(DefaultSmscIoSession.ATTRIBUTE_LISTENER, listener);
-    }
-
-    public void setLogin(FileSystemView fsview) {
-        this.setAttribute(DefaultSmscIoSession.ATTRIBUTE_LOGIN_TIME, new Date());
     }
 
     public void setMaxIdleTime(int maxIdleTime) {

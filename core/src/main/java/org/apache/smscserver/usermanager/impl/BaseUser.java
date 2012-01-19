@@ -32,7 +32,7 @@ import org.apache.smscserver.smsclet.User;
  * 
  * Generic user class. The user attributes are:
  * <ul>
- * <li>userid</li>
+ * <li>systemid</li>
  * <li>userpassword</li>
  * <li>enableflag</li>
  * <li>idletime</li>

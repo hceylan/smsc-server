@@ -45,24 +45,24 @@ import org.apache.smscserver.smsclet.User;
  */
 public class DefaultSmscStatistics implements ServerSmscStatistics {
 
-    private static class UserLogins {
+    private static class UserBindss {
         private final Map<InetAddress, AtomicInteger> perAddress = new ConcurrentHashMap<InetAddress, AtomicInteger>();
 
         public AtomicInteger totalBinds;
 
-        public UserLogins(InetAddress address) {
+        public UserBindss(InetAddress address) {
             // init with the first connection
             this.totalBinds = new AtomicInteger(1);
             this.perAddress.put(address, new AtomicInteger(1));
         }
 
         public AtomicInteger bindsFromInetAddress(InetAddress address) {
-            AtomicInteger logins = this.perAddress.get(address);
-            if (logins == null) {
-                logins = new AtomicInteger(0);
-                this.perAddress.put(address, logins);
+            AtomicInteger binds = this.perAddress.get(address);
+            if (binds == null) {
+                binds = new AtomicInteger(0);
+                this.perAddress.put(address, binds);
             }
-            return logins;
+            return binds;
         }
     }
 
@@ -89,7 +89,7 @@ public class DefaultSmscStatistics implements ServerSmscStatistics {
     /**
      * The user bind information.
      */
-    private final Map<String, UserLogins> userBindTable = new ConcurrentHashMap<String, UserLogins>();
+    private final Map<String, UserBindss> userBindTable = new ConcurrentHashMap<String, UserBindss>();
 
     public static final String BIND_NUMBER = "bind_number";
 
@@ -111,7 +111,7 @@ public class DefaultSmscStatistics implements ServerSmscStatistics {
      * Get the bind number for the specific user
      */
     public synchronized int getCurrentUserBindNumber(final User user) {
-        if (this.userBindTable.get(user.getName()) == null) {// not found the login user's statistics info
+        if (this.userBindTable.get(user.getName()) == null) {// not found the bind user's statistics info
             return 0;
         } else {
             return this.userBindTable.get(user.getName()).totalBinds.get();
@@ -122,12 +122,12 @@ public class DefaultSmscStatistics implements ServerSmscStatistics {
      * Get the bind number for the specific user from the ipAddress
      * 
      * @param user
-     *            login user account
+     *            bind user account
      * @param ipAddress
      *            the ip address of the remote user
      */
     public synchronized int getCurrentUserBindNumber(final User user, final InetAddress ipAddress) {
-        if (this.userBindTable.get(user.getName()) == null) {// not found the login user's statistics info
+        if (this.userBindTable.get(user.getName()) == null) {// not found the bind user's statistics info
             return 0;
         } else {
             return this.userBindTable.get(user.getName()).bindsFromInetAddress(ipAddress).get();
@@ -270,25 +270,25 @@ public class DefaultSmscStatistics implements ServerSmscStatistics {
     }
 
     /**
-     * New login.
+     * New bind.
      */
     public synchronized void setBind(final SmscIoSession session) {
         this.currBinds.incrementAndGet();
         this.totalBinds.incrementAndGet();
         User user = session.getUser();
 
-        synchronized (user) {// thread safety is needed. Since the login occurrs
+        synchronized (user) {// thread safety is needed. Since the bind occurs
             // at low frequency, this overhead is endurable
-            UserLogins statisticsTable = this.userBindTable.get(user.getName());
+            UserBindss statisticsTable = this.userBindTable.get(user.getName());
             if (statisticsTable == null) {
-                // the hash table that records the login information of the user
+                // the hash table that records the bind information of the user
                 // and its ip address.
 
                 InetAddress address = null;
                 if (session.getRemoteAddress() instanceof InetSocketAddress) {
                     address = ((InetSocketAddress) session.getRemoteAddress()).getAddress();
                 }
-                statisticsTable = new UserLogins(address);
+                statisticsTable = new UserBindss(address);
                 this.userBindTable.put(user.getName(), statisticsTable);
             } else {
                 statisticsTable.totalBinds.incrementAndGet();
@@ -373,13 +373,13 @@ public class DefaultSmscStatistics implements ServerSmscStatistics {
         this.currBinds.decrementAndGet();
 
         synchronized (user) {
-            UserLogins userLogins = this.userBindTable.get(user.getName());
+            UserBindss userBinds = this.userBindTable.get(user.getName());
 
-            if (userLogins != null) {
-                userLogins.totalBinds.decrementAndGet();
+            if (userBinds != null) {
+                userBinds.totalBinds.decrementAndGet();
                 if (session.getRemoteAddress() instanceof InetSocketAddress) {
                     InetAddress address = ((InetSocketAddress) session.getRemoteAddress()).getAddress();
-                    userLogins.bindsFromInetAddress(address).decrementAndGet();
+                    userBinds.bindsFromInetAddress(address).decrementAndGet();
                 }
             }
 

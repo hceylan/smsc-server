@@ -116,11 +116,11 @@ public class AddUser extends CommandLine {
 
             List<Authority> authorities = new ArrayList<Authority>();
 
-            int maxLogins = AddUser.askForInt(in, "Maximum number of concurrent logins (0 for no restriction)");
-            int maxLoginsPerIp = AddUser.askForInt(in,
-                    "Maximum number of concurrent logins per IP (0 for no restriction)");
+            int maxBinds = AddUser.askForInt(in, "Maximum number of concurrent binds (0 for no restriction)");
+            int maxBindsPerIp = AddUser.askForInt(in,
+                    "Maximum number of concurrent binds per IP (0 for no restriction)");
 
-            authorities.add(new ConcurrentBindPermission(maxLogins, maxLoginsPerIp));
+            authorities.add(new ConcurrentBindPermission(maxBinds, maxBindsPerIp));
 
             user.setAuthorities(authorities);
 
@@ -144,7 +144,7 @@ public class AddUser extends CommandLine {
     }
 
     /**
-     * Instance methods only used internaly
+     * Instance methods only used internally
      */
     protected AddUser() {
     }

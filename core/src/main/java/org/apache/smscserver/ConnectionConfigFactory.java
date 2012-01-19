@@ -29,11 +29,11 @@ import org.apache.smscserver.impl.DefaultConnectionConfig;
  */
 public class ConnectionConfigFactory {
 
-    private int maxLogins = 10;
+    private int maxBinds = 10;
 
-    private int maxLoginFailures = 3;
+    private int maxBindFailures = 3;
 
-    private int loginFailureDelay = 500;
+    private int bindFailureDelay = 500;
 
     private int maxThreads = 0;
 
@@ -43,35 +43,34 @@ public class ConnectionConfigFactory {
      * @return The {@link ConnectionConfig} instance
      */
     public ConnectionConfig createConnectionConfig() {
-        return new DefaultConnectionConfig(this.loginFailureDelay, this.maxLogins, this.maxLoginFailures,
-                this.maxThreads);
+        return new DefaultConnectionConfig(this.bindFailureDelay, this.maxBinds, this.maxBindFailures, this.maxThreads);
     }
 
     /**
-     * The delay in number of milliseconds between login failures. Important to make brute force attacks harder.
+     * The delay in number of milliseconds between bind failures. Important to make brute force attacks harder.
      * 
      * @return The delay time in milliseconds
      */
-    public int getLoginFailureDelay() {
-        return this.loginFailureDelay;
+    public int getBindFailureDelay() {
+        return this.bindFailureDelay;
     }
 
     /**
-     * The maximum number of time an user can fail to login before getting disconnected
+     * The maximum number of time an user can fail to bind before getting disconnected
      * 
-     * @return The maximum number of failure login attempts
+     * @return The maximum number of failure bind attempts
      */
-    public int getMaxLoginFailures() {
-        return this.maxLoginFailures;
+    public int getMaxBindFailures() {
+        return this.maxBindFailures;
     }
 
     /**
-     * The maximum number of concurrently logged in users
+     * The maximum number of concurrently bound users
      * 
      * @return The maximum number of users
      */
-    public int getMaxLogins() {
-        return this.maxLogins;
+    public int getMaxBinds() {
+        return this.maxBinds;
     }
 
     /**
@@ -84,34 +83,34 @@ public class ConnectionConfigFactory {
     }
 
     /**
-     * Set the delay in number of milliseconds between login failures. Important to make brute force attacks harder.
+     * Set the delay in number of milliseconds between bind failures. Important to make brute force attacks harder.
      * 
-     * @param loginFailureDelay
+     * @param bindFailureDelay
      *            The delay time in milliseconds
      */
-    public void setLoginFailureDelay(final int loginFailureDelay) {
-        this.loginFailureDelay = loginFailureDelay;
+    public void setBindFailureDelay(final int bindFailureDelay) {
+        this.bindFailureDelay = bindFailureDelay;
     }
 
     /**
-     * Set the maximum number of time an user can fail to login before getting disconnected
+     * Set the maximum number of time an user can fail to bind before getting disconnected
      * 
-     * @param maxLoginFailures
-     *            The maximum number of failure login attempts
+     * @param maxBindFailures
+     *            The maximum number of failure bind attempts
      */
-    public void setMaxLoginFailures(final int maxLoginFailures) {
-        this.maxLoginFailures = maxLoginFailures;
+    public void setMaxBindFailures(final int maxBindFailures) {
+        this.maxBindFailures = maxBindFailures;
     }
 
     /**
      * Set she maximum number of concurrently logged in users
      * 
-     * @param maxLogins
+     * @param maxBinds
      *            The maximum number of users
      */
 
-    public void setMaxLogins(final int maxLogins) {
-        this.maxLogins = maxLogins;
+    public void setMaxBinds(final int maxBinds) {
+        this.maxBinds = maxBinds;
     }
 
     /**

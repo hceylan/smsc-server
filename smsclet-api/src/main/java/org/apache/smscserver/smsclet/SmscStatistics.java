@@ -71,9 +71,9 @@ public interface SmscStatistics {
     Date getStartTime();
 
     /**
-     * Get total login number.
+     * Get total bind number.
      * 
-     * @return The total number of logins
+     * @return The total number of binds
      */
     int getTotalBindNumber();
 

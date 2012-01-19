@@ -20,7 +20,7 @@
 package org.apache.smscserver.smsclet;
 
 /**
- * Interface for an authority granted to the user, typical example is write access or the number of concurrent logins
+ * Interface for an authority granted to the user, typical example is write access or the number of concurrent binds
  * 
  * @author hceylan
  */

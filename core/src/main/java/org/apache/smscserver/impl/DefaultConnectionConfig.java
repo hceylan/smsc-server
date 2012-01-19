@@ -30,11 +30,11 @@ import org.apache.smscserver.ConnectionConfigFactory;
  */
 public class DefaultConnectionConfig implements ConnectionConfig {
 
-    private final int maxLogins;
+    private final int maxBinds;
 
-    private final int maxLoginFailures;
+    private final int maxBindFailures;
 
-    private final int loginFailureDelay;
+    private final int bindFailureDelay;
 
     private final int maxThreads;
 
@@ -45,23 +45,23 @@ public class DefaultConnectionConfig implements ConnectionConfig {
     /**
      * Internal constructor, do not use directly. Use {@link ConnectionConfigFactory} instead
      */
-    public DefaultConnectionConfig(int loginFailureDelay, int maxLogins, int maxLoginFailures, int maxThreads) {
-        this.loginFailureDelay = loginFailureDelay;
-        this.maxLogins = maxLogins;
-        this.maxLoginFailures = maxLoginFailures;
+    public DefaultConnectionConfig(int nindFailureDelay, int maxBinds, int maxBindFailures, int maxThreads) {
+        this.bindFailureDelay = nindFailureDelay;
+        this.maxBinds = maxBinds;
+        this.maxBindFailures = maxBindFailures;
         this.maxThreads = maxThreads;
     }
 
     public int getBindFailureDelay() {
-        return this.loginFailureDelay;
+        return this.bindFailureDelay;
     }
 
     public int getMaxBindFailures() {
-        return this.maxLoginFailures;
+        return this.maxBindFailures;
     }
 
     public int getMaxBinds() {
-        return this.maxLogins;
+        return this.maxBinds;
     }
 
     public int getMaxThreads() {

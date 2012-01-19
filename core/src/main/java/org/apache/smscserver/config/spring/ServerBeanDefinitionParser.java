@@ -86,19 +86,19 @@ public class ServerBeanDefinitionParser extends AbstractSingleBeanDefinitionPars
             }
         }
 
-        // Configure login limits
+        // Configure bind limits
         ConnectionConfigFactory connectionConfig = new ConnectionConfigFactory();
-        if (StringUtils.hasText(element.getAttribute("max-logins"))) {
-            connectionConfig.setMaxLogins(SpringUtil.parseInt(element, "max-logins"));
+        if (StringUtils.hasText(element.getAttribute("max-binds"))) {
+            connectionConfig.setMaxBinds(SpringUtil.parseInt(element, "max-binds"));
         }
         if (StringUtils.hasText(element.getAttribute("max-threads"))) {
             connectionConfig.setMaxThreads(SpringUtil.parseInt(element, "max-threads"));
         }
-        if (StringUtils.hasText(element.getAttribute("max-login-failures"))) {
-            connectionConfig.setMaxLoginFailures(SpringUtil.parseInt(element, "max-login-failures"));
+        if (StringUtils.hasText(element.getAttribute("max-bind-failures"))) {
+            connectionConfig.setMaxBindFailures(SpringUtil.parseInt(element, "max-b-failures"));
         }
-        if (StringUtils.hasText(element.getAttribute("login-failure-delay"))) {
-            connectionConfig.setLoginFailureDelay(SpringUtil.parseInt(element, "login-failure-delay"));
+        if (StringUtils.hasText(element.getAttribute("bind-failure-delay"))) {
+            connectionConfig.setBindFailureDelay(SpringUtil.parseInt(element, "bind-failure-delay"));
         }
 
         factoryBuilder.addPropertyValue("connectionConfig", connectionConfig.createConnectionConfig());

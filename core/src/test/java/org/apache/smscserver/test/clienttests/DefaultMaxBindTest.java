@@ -27,9 +27,9 @@ import junit.framework.Assert;
  * @author hceylan
  * 
  */
-public class DefaultMaxLoginTest extends ClientTestTemplate {
+public class DefaultMaxBindTest extends ClientTestTemplate {
 
-    public void testLogin() throws Exception {
+    public void testBind() throws Exception {
         Connection connection1 = null;
         Connection connection2 = null;
         Connection connection3 = null;

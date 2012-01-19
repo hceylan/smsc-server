@@ -102,9 +102,9 @@ public class DefaultSmscHandler implements SmscHandler {
         if (stats != null) {
             stats.setUnbind(session);
             stats.setCloseConnection(session);
-            this.LOG.debug("Statistics login and connection count decreased due to session close");
+            this.LOG.debug("Statistics bind and connection count decreased due to session close");
         } else {
-            this.LOG.warn("Statistics not available in session, can not decrease login and connection count");
+            this.LOG.warn("Statistics not available in session, can not decrease bind and connection count");
         }
         this.LOG.debug("Session closed");
     }

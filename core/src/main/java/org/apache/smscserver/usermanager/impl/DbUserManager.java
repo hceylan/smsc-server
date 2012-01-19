@@ -120,7 +120,7 @@ public class DbUserManager extends AbstractUserManager {
         try {
             // create sql query
             Map<String, Object> map = new HashMap<String, Object>();
-            map.put(AbstractUserManager.ATTR_LOGIN, DBUtils.escapeString(name));
+            map.put(AbstractUserManager.ATTR_SYSTEM_ID, DBUtils.escapeString(name));
             sql = StringUtils.replaceString(this.deleteUserStmt, map);
             DbUserManager.LOG.debug(sql);
 
@@ -145,7 +145,7 @@ public class DbUserManager extends AbstractUserManager {
         try {
             // create the sql
             Map<String, Object> map = new HashMap<String, Object>();
-            map.put(AbstractUserManager.ATTR_LOGIN, DBUtils.escapeString(name));
+            map.put(AbstractUserManager.ATTR_SYSTEM_ID, DBUtils.escapeString(name));
             sql = StringUtils.replaceString(this.selectUserStmt, map);
             DbUserManager.LOG.debug(sql);
 
@@ -181,7 +181,7 @@ public class DbUserManager extends AbstractUserManager {
             // populate list
             ArrayList<String> names = new ArrayList<String>();
             while (rs.next()) {
-                names.add(rs.getString(AbstractUserManager.ATTR_LOGIN));
+                names.add(rs.getString(AbstractUserManager.ATTR_SYSTEM_ID));
             }
             return names.toArray(new String[0]);
         } catch (Exception e) {
@@ -228,7 +228,7 @@ public class DbUserManager extends AbstractUserManager {
             try {
                 // create the sql query
                 Map<String, Object> map = new HashMap<String, Object>();
-                map.put(AbstractUserManager.ATTR_LOGIN, DBUtils.escapeString(username));
+                map.put(AbstractUserManager.ATTR_SYSTEM_ID, DBUtils.escapeString(username));
                 sql = StringUtils.replaceString(this.authenticateStmt, map);
                 DbUserManager.LOG.debug(sql);
 
@@ -267,12 +267,12 @@ public class DbUserManager extends AbstractUserManager {
     }
 
     /**
-     * @return true if user with this login is administrator
+     * @return true if user with this bind is administrator
      */
     @Override
-    public boolean isAdmin(String login) throws SmscException {
+    public boolean isAdmin(String bind) throws SmscException {
         // check input
-        if (login == null) {
+        if (bind == null) {
             return false;
         }
 
@@ -283,7 +283,7 @@ public class DbUserManager extends AbstractUserManager {
         try {
             // create the sql query
             Map<String, Object> map = new HashMap<String, Object>();
-            map.put(AbstractUserManager.ATTR_LOGIN, DBUtils.escapeString(login));
+            map.put(AbstractUserManager.ATTR_SYSTEM_ID, DBUtils.escapeString(bind));
             sql = StringUtils.replaceString(this.isAdminStmt, map);
             DbUserManager.LOG.debug(sql);
 
@@ -313,7 +313,7 @@ public class DbUserManager extends AbstractUserManager {
         try {
             // create sql query
             Map<String, Object> map = new HashMap<String, Object>();
-            map.put(AbstractUserManager.ATTR_LOGIN, DBUtils.escapeString(user.getName()));
+            map.put(AbstractUserManager.ATTR_SYSTEM_ID, DBUtils.escapeString(user.getName()));
 
             String password = null;
             if (user.getPassword() != null) {
@@ -345,11 +345,11 @@ public class DbUserManager extends AbstractUserManager {
             concurrentBindRequest = (ConcurrentBindRequest) user.authorize(concurrentBindRequest);
 
             if (concurrentBindRequest != null) {
-                map.put(AbstractUserManager.ATTR_MAX_LOGIN_NUMBER, concurrentBindRequest.getMaxConcurrentBinds());
-                map.put(AbstractUserManager.ATTR_MAX_LOGIN_PER_IP, concurrentBindRequest.getMaxConcurrentBindsPerIP());
+                map.put(AbstractUserManager.ATTR_MAX_BIND_NUMBER, concurrentBindRequest.getMaxConcurrentBinds());
+                map.put(AbstractUserManager.ATTR_MAX_BIND_PER_IP, concurrentBindRequest.getMaxConcurrentBindsPerIP());
             } else {
-                map.put(AbstractUserManager.ATTR_MAX_LOGIN_NUMBER, 0);
-                map.put(AbstractUserManager.ATTR_MAX_LOGIN_PER_IP, 0);
+                map.put(AbstractUserManager.ATTR_MAX_BIND_NUMBER, 0);
+                map.put(AbstractUserManager.ATTR_MAX_BIND_PER_IP, 0);
             }
 
             if (!this.doesExist(user.getName())) {
@@ -377,7 +377,7 @@ public class DbUserManager extends AbstractUserManager {
         try {
             // create sql query
             Map<String, Object> map = new HashMap<String, Object>();
-            map.put(AbstractUserManager.ATTR_LOGIN, DBUtils.escapeString(name));
+            map.put(AbstractUserManager.ATTR_SYSTEM_ID, DBUtils.escapeString(name));
             sql = StringUtils.replaceString(this.selectUserStmt, map);
             DbUserManager.LOG.debug(sql);
 
@@ -389,15 +389,15 @@ public class DbUserManager extends AbstractUserManager {
             BaseUser thisUser = null;
             if (rs.next()) {
                 thisUser = new BaseUser();
-                thisUser.setName(rs.getString(AbstractUserManager.ATTR_LOGIN));
+                thisUser.setName(rs.getString(AbstractUserManager.ATTR_SYSTEM_ID));
                 thisUser.setPassword(rs.getString(AbstractUserManager.ATTR_PASSWORD));
                 thisUser.setEnabled(rs.getBoolean(AbstractUserManager.ATTR_ENABLE));
                 thisUser.setMaxIdleTime(rs.getInt(AbstractUserManager.ATTR_MAX_IDLE_TIME));
 
                 List<Authority> authorities = new ArrayList<Authority>();
 
-                authorities.add(new ConcurrentBindPermission(rs.getInt(AbstractUserManager.ATTR_MAX_LOGIN_NUMBER), rs
-                        .getInt(AbstractUserManager.ATTR_MAX_LOGIN_PER_IP)));
+                authorities.add(new ConcurrentBindPermission(rs.getInt(AbstractUserManager.ATTR_MAX_BIND_NUMBER), rs
+                        .getInt(AbstractUserManager.ATTR_MAX_BIND_PER_IP)));
 
                 thisUser.setAuthorities(authorities);
             }

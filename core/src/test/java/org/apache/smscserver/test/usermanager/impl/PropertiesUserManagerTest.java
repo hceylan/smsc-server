@@ -54,8 +54,8 @@ public class PropertiesUserManagerTest extends UserManagerTestTemplate {
         users.setProperty("smscserver.user.user2.userpassword", "pw2");
         users.setProperty("smscserver.user.user2.enableflag", "false");
         users.setProperty("smscserver.user.user2.idletime", "2");
-        users.setProperty("smscserver.user.user2.maxloginnumber", "3");
-        users.setProperty("smscserver.user.user2.maxloginperip", "4");
+        users.setProperty("smscserver.user.user2.maxbindnumber", "3");
+        users.setProperty("smscserver.user.user2.maxbindperip", "4");
 
         users.setProperty("smscserver.user.user3.userpassword", "");
 

@@ -70,7 +70,7 @@ public interface User {
     /**
      * Get the user name.
      * 
-     * @return The user name, the same used for login
+     * @return The systemid, the same used for bind
      */
     String getName();
 

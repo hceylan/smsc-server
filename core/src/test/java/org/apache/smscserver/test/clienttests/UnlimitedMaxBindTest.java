@@ -29,7 +29,7 @@ import org.apache.smscserver.SmscServerFactory;
  * @author hceylan
  * 
  */
-public class UnlimitedMaxLoginTest extends ClientTestTemplate {
+public class UnlimitedMaxBindTest extends ClientTestTemplate {
     private static final String UNKNOWN_USERNAME = "foo";
 
     private static final String UNKNOWN_PASSWORD = "bar";
@@ -40,31 +40,31 @@ public class UnlimitedMaxLoginTest extends ClientTestTemplate {
 
         ConnectionConfigFactory ccFactory = new ConnectionConfigFactory();
 
-        ccFactory.setMaxLoginFailures(0);
+        ccFactory.setMaxBindFailures(0);
 
         server.setConnectionConfig(ccFactory.createConnectionConfig());
         return server;
     }
 
-    public void testLogin() throws Exception {
+    public void testBind() throws Exception {
         // must never be disconnected
-        Assert.assertFalse(this.bind(UnlimitedMaxLoginTest.UNKNOWN_USERNAME, UnlimitedMaxLoginTest.UNKNOWN_PASSWORD)
+        Assert.assertFalse(this.bind(UnlimitedMaxBindTest.UNKNOWN_USERNAME, UnlimitedMaxBindTest.UNKNOWN_PASSWORD)
                 .getCommandStatus() == 0);
-        Assert.assertFalse(this.bind(UnlimitedMaxLoginTest.UNKNOWN_USERNAME, UnlimitedMaxLoginTest.UNKNOWN_PASSWORD)
+        Assert.assertFalse(this.bind(UnlimitedMaxBindTest.UNKNOWN_USERNAME, UnlimitedMaxBindTest.UNKNOWN_PASSWORD)
                 .getCommandStatus() == 0);
-        Assert.assertFalse(this.bind(UnlimitedMaxLoginTest.UNKNOWN_USERNAME, UnlimitedMaxLoginTest.UNKNOWN_PASSWORD)
+        Assert.assertFalse(this.bind(UnlimitedMaxBindTest.UNKNOWN_USERNAME, UnlimitedMaxBindTest.UNKNOWN_PASSWORD)
                 .getCommandStatus() == 0);
-        Assert.assertFalse(this.bind(UnlimitedMaxLoginTest.UNKNOWN_USERNAME, UnlimitedMaxLoginTest.UNKNOWN_PASSWORD)
+        Assert.assertFalse(this.bind(UnlimitedMaxBindTest.UNKNOWN_USERNAME, UnlimitedMaxBindTest.UNKNOWN_PASSWORD)
                 .getCommandStatus() == 0);
-        Assert.assertFalse(this.bind(UnlimitedMaxLoginTest.UNKNOWN_USERNAME, UnlimitedMaxLoginTest.UNKNOWN_PASSWORD)
+        Assert.assertFalse(this.bind(UnlimitedMaxBindTest.UNKNOWN_USERNAME, UnlimitedMaxBindTest.UNKNOWN_PASSWORD)
                 .getCommandStatus() == 0);
-        Assert.assertFalse(this.bind(UnlimitedMaxLoginTest.UNKNOWN_USERNAME, UnlimitedMaxLoginTest.UNKNOWN_PASSWORD)
+        Assert.assertFalse(this.bind(UnlimitedMaxBindTest.UNKNOWN_USERNAME, UnlimitedMaxBindTest.UNKNOWN_PASSWORD)
                 .getCommandStatus() == 0);
-        Assert.assertFalse(this.bind(UnlimitedMaxLoginTest.UNKNOWN_USERNAME, UnlimitedMaxLoginTest.UNKNOWN_PASSWORD)
+        Assert.assertFalse(this.bind(UnlimitedMaxBindTest.UNKNOWN_USERNAME, UnlimitedMaxBindTest.UNKNOWN_PASSWORD)
                 .getCommandStatus() == 0);
-        Assert.assertFalse(this.bind(UnlimitedMaxLoginTest.UNKNOWN_USERNAME, UnlimitedMaxLoginTest.UNKNOWN_PASSWORD)
+        Assert.assertFalse(this.bind(UnlimitedMaxBindTest.UNKNOWN_USERNAME, UnlimitedMaxBindTest.UNKNOWN_PASSWORD)
                 .getCommandStatus() == 0);
-        Assert.assertFalse(this.bind(UnlimitedMaxLoginTest.UNKNOWN_USERNAME, UnlimitedMaxLoginTest.UNKNOWN_PASSWORD)
+        Assert.assertFalse(this.bind(UnlimitedMaxBindTest.UNKNOWN_USERNAME, UnlimitedMaxBindTest.UNKNOWN_PASSWORD)
                 .getCommandStatus() == 0);
     }
 }

@@ -97,7 +97,7 @@ public interface UserManager {
      * 
      * @param username
      *            The name of the {@link User} to check
-     * @return true if user with this login is administrator
+     * @return true if user with this bind is administrator
      * @throws SmscException
      *             when the UserManager can't fulfill the request.
      */

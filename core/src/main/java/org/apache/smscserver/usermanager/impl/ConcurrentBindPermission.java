@@ -31,13 +31,13 @@ import org.apache.smscserver.smsclet.AuthorizationRequest;
  */
 public class ConcurrentBindPermission implements Authority {
 
-    private final int maxConcurrentLogins;
+    private final int maxConcurrentBinds;
 
-    private final int maxConcurrentLoginsPerIP;
+    private final int maxConcurrentBindsPerIP;
 
-    public ConcurrentBindPermission(int maxConcurrentLogins, int maxConcurrentLoginsPerIP) {
-        this.maxConcurrentLogins = maxConcurrentLogins;
-        this.maxConcurrentLoginsPerIP = maxConcurrentLoginsPerIP;
+    public ConcurrentBindPermission(int maxConcurrentBinds, int maxConcurrentBindsPerIP) {
+        this.maxConcurrentBinds = maxConcurrentBinds;
+        this.maxConcurrentBindsPerIP = maxConcurrentBindsPerIP;
     }
 
     /**
@@ -45,19 +45,19 @@ public class ConcurrentBindPermission implements Authority {
      */
     public AuthorizationRequest authorize(AuthorizationRequest request) {
         if (request instanceof ConcurrentBindRequest) {
-            ConcurrentBindRequest concurrentLoginRequest = (ConcurrentBindRequest) request;
+            ConcurrentBindRequest concurrentBindRequest = (ConcurrentBindRequest) request;
 
-            if ((this.maxConcurrentLogins != 0)
-                    && (this.maxConcurrentLogins < concurrentLoginRequest.getConcurrentLogins())) {
+            if ((this.maxConcurrentBinds != 0)
+                    && (this.maxConcurrentBinds < concurrentBindRequest.getConcurrentBinds())) {
                 return null;
-            } else if ((this.maxConcurrentLoginsPerIP != 0)
-                    && (this.maxConcurrentLoginsPerIP < concurrentLoginRequest.getConcurrentLoginsFromThisIP())) {
+            } else if ((this.maxConcurrentBindsPerIP != 0)
+                    && (this.maxConcurrentBindsPerIP < concurrentBindRequest.getConcurrentBindsFromThisIP())) {
                 return null;
             } else {
-                concurrentLoginRequest.setMaxConcurrentBinds(this.maxConcurrentLogins);
-                concurrentLoginRequest.setMaxConcurrentBindsPerIP(this.maxConcurrentLoginsPerIP);
+                concurrentBindRequest.setMaxConcurrentBinds(this.maxConcurrentBinds);
+                concurrentBindRequest.setMaxConcurrentBindsPerIP(this.maxConcurrentBindsPerIP);
 
-                return concurrentLoginRequest;
+                return concurrentBindRequest;
             }
         } else {
             return null;

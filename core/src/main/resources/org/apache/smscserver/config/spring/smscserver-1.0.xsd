@@ -42,9 +42,9 @@
 				<xs:element minOccurs="0" ref="commands" />
 			</xs:sequence>
 			<xs:attribute name="id" type="xs:ID" />
-			<xs:attribute name="max-logins" type="xs:int" />
-			<xs:attribute name="max-login-failures" type="xs:int" />
-			<xs:attribute name="login-failure-delay" type="xs:int" />
+			<xs:attribute name="max-binds" type="xs:int" />
+			<xs:attribute name="max-bind-failures" type="xs:int" />
+			<xs:attribute name="bind-failure-delay" type="xs:int" />
 			<xs:attribute name="max-threads" type="xs:int" />
 		</xs:complexType>
 	</xs:element>

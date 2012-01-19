@@ -47,7 +47,7 @@ public abstract class AbstractUserManager implements UserManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(PropertiesUserManager.class);
 
-    public static final String ATTR_LOGIN = "userid";
+    public static final String ATTR_SYSTEM_ID = "systemid";
 
     public static final String ATTR_PASSWORD = "userpassword";
 
@@ -55,9 +55,9 @@ public abstract class AbstractUserManager implements UserManager {
 
     public static final String ATTR_MAX_IDLE_TIME = "idletime";
 
-    public static final String ATTR_MAX_LOGIN_NUMBER = "maxloginnumber";
+    public static final String ATTR_MAX_BIND_NUMBER = "maxbindnumber";
 
-    public static final String ATTR_MAX_LOGIN_PER_IP = "maxloginperip";
+    public static final String ATTR_MAX_BIND_PER_IP = "maxbindperip";
 
     private final String adminName;
 
@@ -103,7 +103,7 @@ public abstract class AbstractUserManager implements UserManager {
             throw new AuthenticationFailedException("User account is disabled by administrator");
         }
 
-        // user login limit check
+        // user bind limit check
         InetAddress address = null;
         SmscIoSession session = authentication.getSession();
         if ((session != null) && (this.context != null)) {
@@ -144,10 +144,10 @@ public abstract class AbstractUserManager implements UserManager {
             SmscException;
 
     /**
-     * @return true if user with this login is administrator
+     * @return true if user with this bind is administrator
      */
-    public boolean isAdmin(String login) throws SmscException {
-        return this.adminName.equals(login);
+    public boolean isAdmin(String bind) throws SmscException {
+        return this.adminName.equals(bind);
     }
 
     /**

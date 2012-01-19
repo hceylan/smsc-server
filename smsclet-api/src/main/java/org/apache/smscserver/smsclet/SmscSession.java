@@ -45,6 +45,13 @@ public interface SmscSession {
     Object getAttribute(String name);
 
     /**
+     * Get the bind time.
+     * 
+     * @return Time when the client bound into the server
+     */
+    Date getBindTime();
+
+    /**
      * Returns the IP address of the client that sent the request.
      * 
      * @return The client {@link InetAddress}
@@ -66,11 +73,11 @@ public interface SmscSession {
     Date getConnectionTime();
 
     /**
-     * Get the number of failed logins.
+     * Get the number of failed binds.
      * 
-     * @return The number of failed logins. When login succeeds, this will return 0.
+     * @return The number of failed binds. When bind succeeds, this will return 0.
      */
-    int getFailedLogins();
+    int getFailedBinds();
 
     /**
      * Get last access time.
@@ -80,15 +87,8 @@ public interface SmscSession {
     Date getLastAccessTime();
 
     /**
-     * Get the login time.
-     * 
-     * @return Time when the client logged into the server
-     */
-    Date getLoginTime();
-
-    /**
-     * Returns maximum idle time. This time equals to {@link ConnectionManagerImpl#getDefaultIdleSec()} until user
-     * login, and {@link User#getMaxIdleTime()} after user login.
+     * Returns maximum idle time. This time equals to {@link ConnectionManagerImpl#getDefaultIdleSec()} until user bind,
+     * and {@link User#getMaxIdleTime()} after user bind.
      * 
      * @return The number of seconds the client is allowed to be idle before disconnected.
      */
@@ -117,11 +117,11 @@ public interface SmscSession {
     User getUser();
 
     /**
-     * Is the user logged in?
+     * Is the user bound in?
      * 
-     * @return true if the user is logged in
+     * @return true if the user is bound
      */
-    boolean isLoggedIn();
+    boolean isBound();
 
     /**
      * Indicates whether the control socket for this session is secure, that is, running over SSL/TLS
@@ -150,7 +150,7 @@ public interface SmscSession {
 
     /**
      * Set maximum idle time in seconds. This time equals to {@link ConnectionManagerImpl#getDefaultIdleSec()} until
-     * user login, and {@link User#getMaxIdleTime()} after user login.
+     * user bind, and {@link User#getMaxIdleTime()} after user bind.
      * 
      * @param maxIdleTimeSec
      *            The number of seconds the client is allowed to be idle before disconnected.

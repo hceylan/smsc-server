@@ -16,23 +16,23 @@
 -- under the License.
 
 CREATE TABLE SMSC_USER (      
-   userid VARCHAR(64) NOT NULL PRIMARY KEY,       
+   systemid VARCHAR(64) NOT NULL PRIMARY KEY,       
    userpassword VARCHAR(64),      
    enableflag BOOLEAN DEFAULT TRUE,    
    idletime INT DEFAULT 0,             
-   maxloginnumber INT DEFAULT 0,
-   maxloginperip INT DEFAULT 0
+   maxbindnumber INT DEFAULT 0,
+   maxbindperip INT DEFAULT 0
 );
 
 -- password="pw1"
-INSERT INTO SMSC_USER (userid, userpassword) VALUES ('user1', '6E6FDF956D04289354DCF1619E28FE77');
+INSERT INTO SMSC_USER (systemid, userpassword) VALUES ('user1', '6E6FDF956D04289354DCF1619E28FE77');
 
 -- password="pw2"
 INSERT INTO SMSC_USER VALUES ('user2', '6D5779B9B85BD4F11E44C9772E0DE602', false, 2, 3, 4);
 
 -- password=""
-INSERT INTO SMSC_USER (userid, userpassword) VALUES ('user3', 'D41D8CD98F00B204E9800998ECF8427E');
+INSERT INTO SMSC_USER (systemid, userpassword) VALUES ('user3', 'D41D8CD98F00B204E9800998ECF8427E');
 
 -- password="admin"
-INSERT INTO SMSC_USER (userid, userpassword) VALUES ('admin', '21232F297A57A5A743894A0E4A801FC3');
+INSERT INTO SMSC_USER (systemid, userpassword) VALUES ('admin', '21232F297A57A5A743894A0E4A801FC3');
 

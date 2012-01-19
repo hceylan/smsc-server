@@ -19,11 +19,11 @@
 
 package org.apache.smscserver.test.usermanager.impl;
 
-import org.apache.smscserver.usermanager.impl.ConcurrentBindPermission;
-import org.apache.smscserver.usermanager.impl.ConcurrentBindRequest;
-
 import junit.framework.Assert;
 import junit.framework.TestCase;
+
+import org.apache.smscserver.usermanager.impl.ConcurrentBindPermission;
+import org.apache.smscserver.usermanager.impl.ConcurrentBindRequest;
 
 /**
  * 
@@ -32,14 +32,14 @@ import junit.framework.TestCase;
  */
 public class ConcurrentBindPermissionTest extends TestCase {
 
-    public void testAllowAnyMaxLogins() {
+    public void testAllowAnyMaxBinds() {
         ConcurrentBindPermission permission = new ConcurrentBindPermission(0, 2);
         ConcurrentBindRequest request = new ConcurrentBindRequest(5, 2);
 
         Assert.assertNotNull(permission.authorize(request));
     }
 
-    public void testAllowAnyMaxLoginsPerIP() {
+    public void testAllowAnyMaxBindsPerIP() {
         ConcurrentBindPermission permission = new ConcurrentBindPermission(4, 0);
         ConcurrentBindRequest request = new ConcurrentBindRequest(3, 3);
 
@@ -60,14 +60,14 @@ public class ConcurrentBindPermissionTest extends TestCase {
         Assert.assertTrue(permission.canAuthorize(request));
     }
 
-    public void testMaxLoginsPerIPTooLarge() {
+    public void testMaxBindPerIPTooLarge() {
         ConcurrentBindPermission permission = new ConcurrentBindPermission(4, 2);
         ConcurrentBindRequest request = new ConcurrentBindRequest(3, 3);
 
         Assert.assertNull(permission.authorize(request));
     }
 
-    public void testMaxLoginsTooLarge() {
+    public void testMaxBindsTooLarge() {
         ConcurrentBindPermission permission = new ConcurrentBindPermission(4, 2);
         ConcurrentBindRequest request = new ConcurrentBindRequest(5, 2);
 

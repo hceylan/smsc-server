@@ -30,79 +30,79 @@ import org.apache.smscserver.smsclet.AuthorizationRequest;
  */
 public class ConcurrentBindRequest implements AuthorizationRequest {
 
-    private final int concurrentLogins;
+    private final int concurrentBinds;
 
-    private final int concurrentLoginsFromThisIP;
+    private final int concurrentBindsFromThisIP;
 
-    private int maxConcurrentLogins = 0;
+    private int maxConcurrentBinds = 0;
 
-    private int maxConcurrentLoginsPerIP = 0;
+    private int maxConcurrentBindsPerIP = 0;
 
     /**
-     * @param concurrentLogins
-     * @param concurrentLoginsFromThisIP
+     * @param concurrentBinds
+     * @param concurrentBindsFromThisIP
      */
-    public ConcurrentBindRequest(int concurrentLogins, int concurrentLoginsFromThisIP) {
+    public ConcurrentBindRequest(int concurrentBinds, int concurrentBindsFromThisIP) {
         super();
-        this.concurrentLogins = concurrentLogins;
-        this.concurrentLoginsFromThisIP = concurrentLoginsFromThisIP;
+        this.concurrentBinds = concurrentBinds;
+        this.concurrentBindsFromThisIP = concurrentBindsFromThisIP;
     }
 
     /**
-     * The number of concurrent logins requested
+     * The number of concurrent binds requested
      * 
-     * @return the concurrentLogins The number of current concurrent logins
+     * @return the concurrentBinds The number of current concurrent binds
      */
-    public int getConcurrentLogins() {
-        return this.concurrentLogins;
+    public int getConcurrentBinds() {
+        return this.concurrentBinds;
     }
 
     /**
-     * The number of concurrent logins from this IP requested
+     * The number of concurrent binds from this IP requested
      * 
-     * @return the concurrentLoginsFromThisIP The number of current concurrent logins from this IP
+     * @return the concurrentBindsFromThisIP The number of current concurrent binds from this IP
      */
-    public int getConcurrentLoginsFromThisIP() {
-        return this.concurrentLoginsFromThisIP;
+    public int getConcurrentBindsFromThisIP() {
+        return this.concurrentBindsFromThisIP;
     }
 
     /**
      * The maximum allowed concurrent bin for this user, or 0 if no limit is set. This is normally populated by
      * {@link ConcurrentBindPermission}
      * 
-     * @return The maximum allowed concurrent logins
+     * @return The maximum allowed concurrent binds
      */
     public int getMaxConcurrentBinds() {
-        return this.maxConcurrentLogins;
+        return this.maxConcurrentBinds;
     }
 
     /**
      * The maximum allowed concurrent bin per IP for this user, or 0 if no limit is set. This is normally populated by
      * {@link ConcurrentBindPermission}
      * 
-     * @return The maximum allowed concurrent logins per IP
+     * @return The maximum allowed concurrent binds per IP
      */
     public int getMaxConcurrentBindsPerIP() {
-        return this.maxConcurrentLoginsPerIP;
+        return this.maxConcurrentBindsPerIP;
     }
 
     /**
      * Set the maximum allowed concurrent binds for this user
      * 
-     * @param maxConcurrentLogins
+     * @param maxConcurrentBinds
      *            Set max allowed concurrent connections
      */
-    void setMaxConcurrentBinds(int maxConcurrentLogins) {
-        this.maxConcurrentLogins = maxConcurrentLogins;
+    void setMaxConcurrentBinds(int maxConcurrentBinds) {
+        this.maxConcurrentBinds = maxConcurrentBinds;
     }
 
     /**
      * Set the maximum allowed concurrent binds per IP for this user
      * 
-     * @param maxConcurrentLoginsPerIP
+     * @param maxConcurrentBindsPerIP
      *            Set max allowed concurrent connections per IP
      */
-    void setMaxConcurrentBindsPerIP(int maxConcurrentLoginsPerIP) {
-        this.maxConcurrentLoginsPerIP = maxConcurrentLoginsPerIP;
+    void setMaxConcurrentBindsPerIP(int maxConcurrentBindsPerIP) {
+        this.maxConcurrentBindsPerIP = maxConcurrentBindsPerIP;
     }
 }

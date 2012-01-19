@@ -59,6 +59,13 @@ public class DefaultSmscSession implements SmscSession {
     }
 
     /**
+     * Get the bind time.
+     */
+    public Date getBindTime() {
+        return this.ioSession.getBindTime();
+    }
+
+    /**
      * Get remote address
      */
     public InetSocketAddress getClientAddress() {
@@ -80,8 +87,8 @@ public class DefaultSmscSession implements SmscSession {
         return new Date(this.ioSession.getCreationTime());
     }
 
-    public int getFailedLogins() {
-        return this.ioSession.getFailedLogins();
+    public int getFailedBinds() {
+        return this.ioSession.getFailedBinds();
     }
 
     /**
@@ -89,13 +96,6 @@ public class DefaultSmscSession implements SmscSession {
      */
     public Date getLastAccessTime() {
         return this.ioSession.getLastAccessTime();
-    }
-
-    /**
-     * Get the login time.
-     */
-    public Date getLoginTime() {
-        return this.ioSession.getLoginTime();
     }
 
     public int getMaxIdleTime() {
@@ -145,10 +145,10 @@ public class DefaultSmscSession implements SmscSession {
     }
 
     /**
-     * Is logged-in
+     * Is bound
      */
-    public boolean isLoggedIn() {
-        return this.ioSession.isLoggedIn();
+    public boolean isBound() {
+        return this.ioSession.isBound();
     }
 
     public boolean isSecure() {

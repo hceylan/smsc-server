@@ -35,7 +35,7 @@ import org.apache.smscserver.smsclet.SmscStatistics;
 public interface ServerSmscStatistics extends SmscStatistics {
 
     /**
-     * Reset all cumulative total counters. Do not reset current counters, like current logins, otherwise these will
+     * Reset all cumulative total counters. Do not reset current counters, like current binds, otherwise these will
      * become negative when someone disconnects.
      */
     void resetStatisticsCounters();

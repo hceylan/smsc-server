@@ -19,11 +19,11 @@ public class MessageManagerTest extends TestCase {
         DBMessageManagerFactory manager = new DBMessageManagerFactory();
 
         manager.setDataSource(this.datasource);
-        manager.setSqlCreateTable("INSERT INTO SMSC_USER (userid, userpassword, enableflag, idletime, maxloginnumber, maxloginperip) VALUES ('{userid}', '{userpassword}', {enableflag}, {idletime}, {maxloginnumber}, {maxloginperip})");
-        manager.setSqlInsertMessage("UPDATE SMSC_USER SET userpassword='{userpassword}',enableflag={enableflag},idletime={idletime},maxloginnumber={maxloginnumber}, maxloginperip={maxloginperip} WHERE userid='{userid}'");
-        manager.setSqlUpdateMessage("DELETE FROM SMSC_USER WHERE userid = '{userid}'");
-        manager.setSqlUpdateMessage("SELECT * FROM SMSC_USER WHERE userid = '{userid}'");
-        manager.setSqlSelectLatestReplacableMessage("SELECT userid FROM SMSC_USER ORDER BY userid");
+        manager.setSqlCreateTable("INSERT INTO SMSC_USER (systemid, userpassword, enableflag, idletime, maxbindnumber, maxbindperip) VALUES ('{systemid}', '{userpassword}', {enableflag}, {idletime}, {maxbindnumber}, {maxbindperip})");
+        manager.setSqlInsertMessage("UPDATE SMSC_USER SET userpassword='{userpassword}',enableflag={enableflag},idletime={idletime},maxbindnumber={maxbindnumber}, maxbindperip={maxbindperip} WHERE systemid='{systemid}'");
+        manager.setSqlUpdateMessage("DELETE FROM SMSC_USER WHERE systemid = '{systemid}'");
+        manager.setSqlUpdateMessage("SELECT * FROM SMSC_USER WHERE systemid = '{systemid}'");
+        manager.setSqlSelectLatestReplacableMessage("SELECT systemid FROM SMSC_USER ORDER BY systemid");
 
         return manager;
     }
@@ -58,6 +58,10 @@ public class MessageManagerTest extends TestCase {
     }
 
     public void testStoreMessageWithCancel() {
+        Assert.fail("TODO");
+    }
+
+    public void testStoreMessageWithCancelMultiExisting() {
         Assert.fail("TODO");
     }
 
