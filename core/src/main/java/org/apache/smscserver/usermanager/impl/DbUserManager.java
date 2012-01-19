@@ -191,6 +191,38 @@ public class DbUserManager extends AbstractUserManager {
         }
     }
 
+    public DataSource getDataSource() {
+        return this.dataSource;
+    }
+
+    public String getSqlUserAdmin() {
+        return this.isAdminStmt;
+    }
+
+    public String getSqlUserAuthenticate() {
+        return this.authenticateStmt;
+    }
+
+    public String getSqlUserDelete() {
+        return this.deleteUserStmt;
+    }
+
+    public String getSqlUserInsert() {
+        return this.insertUserStmt;
+    }
+
+    public String getSqlUserSelect() {
+        return this.selectUserStmt;
+    }
+
+    public String getSqlUserSelectAll() {
+        return this.selectAllStmt;
+    }
+
+    public String getSqlUserUpdate() {
+        return this.updateUserStmt;
+    }
+
     /**
      * Get the user object. Fetch the row from the table.
      */

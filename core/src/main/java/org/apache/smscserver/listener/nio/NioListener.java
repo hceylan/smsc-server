@@ -48,6 +48,7 @@ import org.apache.smscserver.ipfilter.MinaSessionFilter;
 import org.apache.smscserver.ipfilter.SessionFilter;
 import org.apache.smscserver.listener.Listener;
 import org.apache.smscserver.listener.ListenerFactory;
+import org.apache.smscserver.smsclet.SmscIoSession;
 import org.apache.smscserver.ssl.ClientAuth;
 import org.apache.smscserver.ssl.SslConfiguration;
 import org.slf4j.Logger;
@@ -96,10 +97,10 @@ public class NioListener extends AbstractListener {
      * {@inheritDoc}
      * 
      */
-    public synchronized Set<DefaultSmscIoSession> getActiveSessions() {
+    public synchronized Set<SmscIoSession> getActiveSessions() {
         Map<Long, IoSession> sessions = this.acceptor.getManagedSessions();
 
-        Set<DefaultSmscIoSession> smscSessions = new HashSet<DefaultSmscIoSession>();
+        Set<SmscIoSession> smscSessions = new HashSet<SmscIoSession>();
         for (IoSession session : sessions.values()) {
             smscSessions.add(new DefaultSmscIoSession(session, this.context));
         }

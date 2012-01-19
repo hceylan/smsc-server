@@ -27,6 +27,7 @@ import org.apache.mina.filter.firewall.Subnet;
 import org.apache.smscserver.SmscServerContext;
 import org.apache.smscserver.impl.DefaultSmscIoSession;
 import org.apache.smscserver.ipfilter.SessionFilter;
+import org.apache.smscserver.smsclet.SmscIoSession;
 import org.apache.smscserver.ssl.SslConfiguration;
 
 /**
@@ -43,7 +44,7 @@ public interface Listener {
      * 
      * @return The currently active sessions
      */
-    Set<DefaultSmscIoSession> getActiveSessions();
+    Set<SmscIoSession> getActiveSessions();
 
     /**
      * @deprecated Replaced by IpFilter. Retrieves the {@link InetAddress} for which this listener blocks connections.

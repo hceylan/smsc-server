@@ -37,9 +37,9 @@ import junit.framework.TestCase;
 import org.apache.smscserver.ConnectionConfigFactory;
 import org.apache.smscserver.SmscServer;
 import org.apache.smscserver.SmscServerFactory;
-import org.apache.smscserver.impl.DefaultSmscIoSession;
 import org.apache.smscserver.impl.DefaultSmscServer;
 import org.apache.smscserver.listener.ListenerFactory;
+import org.apache.smscserver.smsclet.SmscIoSession;
 import org.apache.smscserver.test.TestUtil;
 import org.apache.smscserver.usermanager.ClearTextPasswordEncryptor;
 import org.apache.smscserver.usermanager.PropertiesUserManagerFactory;
@@ -191,7 +191,7 @@ public abstract class ClientTestTemplate extends TestCase {
         }
     }
 
-    protected DefaultSmscIoSession getActiveSession() {
+    protected SmscIoSession getActiveSession() {
         return ((DefaultSmscServer) this.server).getListener("default").getActiveSessions().iterator().next();
     }
 

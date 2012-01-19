@@ -53,7 +53,7 @@ public class CommandFactoryBeanDefinitionParser extends AbstractSingleBeanDefini
         List<Element> childs = SpringUtil.getChildElements(element);
 
         for (Element commandElm : childs) {
-            String name = commandElm.getAttribute("name");
+            String name = commandElm.getAttribute("protocol-id");
             Object bean = SpringUtil.parseSpringChildElement(commandElm, parserContext, builder);
             commands.put(name, bean);
         }

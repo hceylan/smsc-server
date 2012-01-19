@@ -115,18 +115,18 @@ public class BindTest extends ClientTestTemplate {
     /*
      * public void testBindWithMaxConnectionsPerIp() throws Exception { String[] ips = getHostAddresses();
      * 
-     * if(ips.length > 1) { FTPClient client2 = new FTPClient(); client2.connect(ips[0], port); FTPClient client3 = new
-     * FTPClient(); client3.connect(ips[0], port); FTPClient client4 = new FTPClient(); client4.connect(ips[1], port);
-     * FTPClient client5 = new FTPClient(); client5.connect(ips[1], port); FTPClient client6 = new FTPClient();
-     * client6.connect(ips[1], port);
+     * if(ips.length > 1) { SMSCClient client2 = new SMSCClient(); client2.connect(ips[0], port); SMSCClient client3 =
+     * new SMSCClient(); client3.connect(ips[0], port); SMSCClient client4 = new SMSCClient(); client4.connect(ips[1],
+     * port); SMSCClient client5 = new SMSCClient(); client5.connect(ips[1], port); SMSCClient client6 = new
+     * SMSCClient(); client6.connect(ips[1], port);
      * 
      * assertTrue(client2.bind(TESTUSER2_USERNAME, TESTUSER_PASSWORD)); assertTrue(client3.bind(TESTUSER2_USERNAME,
      * TESTUSER_PASSWORD)); assertTrue(client4.bind(TESTUSER2_USERNAME, TESTUSER_PASSWORD));
      * assertTrue(client5.bind(TESTUSER2_USERNAME, TESTUSER_PASSWORD));
      * 
      * try{ assertTrue(client6.bind(TESTUSER2_USERNAME, TESTUSER_PASSWORD));
-     * fail("Must throw FTPConnectionClosedException"); } catch(FTPConnectionClosedException e) { // expected } } else {
-     * // ignore test } }
+     * fail("Must throw SMSCConnectionClosedException"); } catch(SMSCConnectionClosedException e) { // expected } } else
+     * { // ignore test } }
      */
     /*
      * public void testBindWithMaxConnectionsMulti() throws Exception { for(int i = 0; i<50; i++) {

@@ -14,14 +14,14 @@
 		License.
 	-->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-	elementFormDefault="qualified" targetNamespace="http://mina.apache.org/ftpserver/spring/v1"
-	xmlns="http://mina.apache.org/ftpserver/spring/v1" xmlns:beans="http://www.springframework.org/schema/beans">
+	elementFormDefault="qualified" targetNamespace="http://mina.apache.org/smscserver/spring/v1"
+	xmlns="http://mina.apache.org/smscserver/spring/v1" xmlns:beans="http://www.springframework.org/schema/beans">
 
 	<!-- Import the Spring beans XML schema -->
 	<xs:import namespace="http://www.springframework.org/schema/beans"
 		schemaLocation="http://www.springframework.org/schema/beans/spring-beans-2.5.xsd" />
 
-	<!-- The main entry point, used for setting up an entire FTP server -->
+	<!-- The main entry point, used for setting up an entire SMSC server -->
 	<xs:element name="server">
 		<xs:complexType>
 			<xs:sequence>
@@ -33,7 +33,7 @@
 						</xs:choice>
 					</xs:complexType>
 				</xs:element>
-				<xs:element minOccurs="0" ref="ftplets" />
+				<xs:element minOccurs="0" ref="smsclets" />
 				<xs:choice minOccurs="0" maxOccurs="1">
 					<xs:element minOccurs="0" ref="file-user-manager" />
 					<xs:element minOccurs="0" ref="db-user-manager" />
@@ -156,11 +156,11 @@
 	<!-- Extension element used for defining a custom listener -->
 	<xs:element name="listener" type="spring-bean-or-ref-with-name" />
 
-	<!-- Element used to configure Ftplets for used with the server -->
-	<xs:element name="ftplets">
+	<!-- Element used to configure Smsclets for used with the server -->
+	<xs:element name="smsclets">
 		<xs:complexType>
 			<xs:choice>
-				<xs:element name="ftplet" maxOccurs="unbounded">
+				<xs:element name="smsclet" maxOccurs="unbounded">
 					<xs:complexType>
 						<xs:sequence>
 							<xs:choice>
@@ -225,10 +225,6 @@
 	<!-- Extension element used for defining a custom user manager -->
 	<xs:element name="user-manager" type="spring-bean-or-ref" />
 
-	<!-- Element used to configure the default file system -->
-
-	<!-- Extension element used for defining a custom file system -->
-
 	<!-- Element used to provide custom command implementations -->
 	<xs:element name="commands">
 		<xs:complexType>
@@ -241,7 +237,7 @@
 								<xs:element ref="beans:ref" />
 							</xs:choice>
 						</xs:sequence>
-						<xs:attribute name="name" use="required" />
+						<xs:attribute name="protocol-id" use="required" />
 					</xs:complexType>
 				</xs:element>
 			</xs:sequence>
@@ -249,8 +245,6 @@
 		</xs:complexType>
 	</xs:element>
 	
-	<!-- Element used to configure and localize messages -->
-
 	<!-- Reusable type used for extension elements -->
 	<xs:complexType name="spring-bean-or-ref">
 		<xs:choice>
