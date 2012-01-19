@@ -29,6 +29,8 @@ import org.apache.smscserver.listener.Listener;
 import org.apache.smscserver.smsclet.Smsclet;
 import org.apache.smscserver.smsclet.UserManager;
 import org.apache.smscserver.smscletcontainer.impl.DefaultSmscletContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This is the starting point of all the servers. Creates server instances based on the provided configuration.
@@ -36,6 +38,8 @@ import org.apache.smscserver.smscletcontainer.impl.DefaultSmscletContainer;
  * @author hceylan
  */
 public class SmscServerFactory {
+
+    private final Logger LOG = LoggerFactory.getLogger(SmscServerFactory.class);
 
     private final DefaultSmscServerContext serverContext;
 
@@ -64,6 +68,9 @@ public class SmscServerFactory {
      * @return The {@link DefaultSmscServer} instance
      */
     public SmscServer createServer() {
+        this.LOG.info("SMSC Server is starting with the context {}", DefaultSmscServerContext.class.getCanonicalName());
+        this.serverContext.info(this.LOG);
+
         return new DefaultSmscServer(this.serverContext);
     }
 

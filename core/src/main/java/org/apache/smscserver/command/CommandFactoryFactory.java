@@ -21,7 +21,10 @@ package org.apache.smscserver.command;
 
 import ie.omk.smpp.message.SMPPPacket;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.smscserver.command.impl.BindCommand;
@@ -29,6 +32,8 @@ import org.apache.smscserver.command.impl.DefaultCommandFactory;
 import org.apache.smscserver.command.impl.EnquireLinkCommand;
 import org.apache.smscserver.command.impl.SubmitSMCommand;
 import org.apache.smscserver.command.impl.UnbindCommand;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Factory for {@link CommandFactory} instances
@@ -36,7 +41,9 @@ import org.apache.smscserver.command.impl.UnbindCommand;
  * @author hceylan
  */
 public class CommandFactoryFactory {
-    private static final HashMap<Integer, Command> DEFAULT_COMMAND_MAP = new HashMap<Integer, Command>();
+    private static final Logger LOG = LoggerFactory.getLogger(CommandFactoryFactory.class);
+
+    private static final Map<Integer, Command> DEFAULT_COMMAND_MAP = new HashMap<Integer, Command>();
 
     static {
         // first populate the default command list
@@ -80,7 +87,13 @@ public class CommandFactoryFactory {
         Map<Integer, Command> mergedCommands = new HashMap<Integer, Command>();
         if (this.useDefaultCommands) {
             mergedCommands.putAll(CommandFactoryFactory.DEFAULT_COMMAND_MAP);
+
+            this.logCommands(CommandFactoryFactory.DEFAULT_COMMAND_MAP, "default");
+        } else {
+            CommandFactoryFactory.LOG.info("Default commands are disabled!");
         }
+
+        this.logCommands(this.commandMap, "configured");
 
         mergedCommands.putAll(this.commandMap);
 
@@ -103,6 +116,21 @@ public class CommandFactoryFactory {
      */
     public boolean isUseDefaultCommands() {
         return this.useDefaultCommands;
+    }
+
+    private void logCommands(Map<Integer, Command> map, String type) {
+        if (map.isEmpty()) {
+            CommandFactoryFactory.LOG.info("No {} command found.", type);
+        } else {
+            List<Integer> ids = new ArrayList<Integer>(map.keySet());
+
+            Collections.sort(ids);
+
+            for (Integer id : ids) {
+                CommandFactoryFactory.LOG.info("Adding " + type + " command {} - {}", id, map.get(id).getClass()
+                        .getCanonicalName());
+            }
+        }
     }
 
     /**

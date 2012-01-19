@@ -44,7 +44,6 @@ import org.apache.smscserver.smscletcontainer.impl.DefaultSmscletContainer;
 import org.apache.smscserver.usermanager.PropertiesUserManagerFactory;
 import org.apache.smscserver.usermanager.impl.BaseUser;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * <strong>Internal class, do not use directly.</strong>
@@ -55,22 +54,14 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultSmscServerContext implements SmscServerContext {
 
-    private final Logger LOG = LoggerFactory.getLogger(DefaultSmscServerContext.class);
-
     private static final List<Authority> ADMIN_AUTHORITIES = new ArrayList<Authority>();
 
     private MessageManager messageManager = null;// new DBMessageManagerFactory().createMessageManager();
-
     private UserManager userManager = new PropertiesUserManagerFactory().createUserManager();
-
     private SmscletContainer smscletContainer = new DefaultSmscletContainer();
-
     private SmscStatistics statistics = new DefaultSmscStatistics();
-
-    private CommandFactory commandFactory = new CommandFactoryFactory().createCommandFactory();
-
+    private CommandFactory commandFactory = null;
     private ConnectionConfig connectionConfig = new ConnectionConfigFactory().createConnectionConfig();
-
     private Map<String, Listener> listeners = new HashMap<String, Listener>();
 
     /**
@@ -78,8 +69,9 @@ public class DefaultSmscServerContext implements SmscServerContext {
      */
     private ThreadPoolExecutor threadPoolExecutor = null;
 
+    private Logger LOG;
+
     public DefaultSmscServerContext() {
-        // create the default listener
         this.listeners.put("default", new ListenerFactory().createListener());
     }
 
@@ -122,7 +114,10 @@ public class DefaultSmscServerContext implements SmscServerContext {
                 this.threadPoolExecutor.awaitTermination(5000, TimeUnit.MILLISECONDS);
             } catch (InterruptedException e) {
             } finally {
-                // TODO: how to handle?
+                if (!this.threadPoolExecutor.isTerminated()) {
+                    this.LOG.warn("Forcing shutdown on thread pool...");
+                    this.threadPoolExecutor.shutdownNow();
+                }
             }
         }
     }
@@ -132,6 +127,10 @@ public class DefaultSmscServerContext implements SmscServerContext {
      * 
      */
     public CommandFactory getCommandFactory() {
+        if (this.commandFactory == null) {
+            this.commandFactory = new CommandFactoryFactory().createCommandFactory();
+        }
+
         return this.commandFactory;
     }
 
@@ -227,6 +226,18 @@ public class DefaultSmscServerContext implements SmscServerContext {
      */
     public UserManager getUserManager() {
         return this.userManager;
+    }
+
+    public void info(Logger LOG) {
+        this.LOG = LOG;
+
+        this.LOG.info("Using {} as the connection configuration", this.getConnectionConfig().getClass()
+                .getCanonicalName());
+        // FIXME: Enable when fully implemented
+        // this.LOG.info("Using {} as the message manager", this.getMessageManager().getClass().getCanonicalName());
+        this.LOG.info("Using {} as the SMSCLet Container", this.getSmscletContainer().getClass().getCanonicalName());
+        this.LOG.info("Using {} as the statistics provider", this.getSmscStatistics().getClass().getCanonicalName());
+        this.LOG.info("Using {} as the command factory", this.getCommandFactory().getClass().getCanonicalName());
     }
 
     public Listener removeListener(String name) {

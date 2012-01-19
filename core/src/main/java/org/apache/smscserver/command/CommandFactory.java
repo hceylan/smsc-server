@@ -34,5 +34,4 @@ public interface CommandFactory {
      * @return The {@link Command} matching the provided name, or null if no such command exists.
      */
     Command getCommand(int commandID);
-
 }

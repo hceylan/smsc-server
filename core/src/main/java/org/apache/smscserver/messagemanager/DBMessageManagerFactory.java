@@ -46,6 +46,7 @@ public class DBMessageManagerFactory implements MessageManagerFactory {
     private void check(Object field, boolean required, String errorMessage) {
         if (field == null) {
             if (required) {
+                //FIXME: Hasan for now
                 throw new SmscServerConfigurationException("Required " + errorMessage);
             } else {
                 DBMessageManagerFactory.LOG.warn("Optional parameter {}", errorMessage);
