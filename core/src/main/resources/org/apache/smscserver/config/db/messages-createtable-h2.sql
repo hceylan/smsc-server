@@ -1,3 +1,5 @@
+--<ScriptOptions statementTerminator=";"/>
+
 CREATE TABLE IF NOT EXISTS SMSC_MESSAGE (      
 	id VARCHAR(37) NOT NULL PRIMARY KEY,
 	datacoding TINYINT,
@@ -23,6 +25,7 @@ CREATE TABLE IF NOT EXISTS SMSC_MESSAGE (
 	validityperiod TINYINT
 );
 
+
 CREATE INDEX IF NOT EXISTS SRC_ADDR ON SMSC_MESSAGE (sourceaddr);
 
-CREATE INDEX IF NOT EXISTS REPLACE_MSG ON SMSC_MESSAGE (sourceaddr, destaddr, servicetype);
+CREATE INDEX IF NOT EXISTS REPLACE_MSG ON SMSC_MESSAGE (sourceaddr, destaddr, servicetype, status, received DESC);
