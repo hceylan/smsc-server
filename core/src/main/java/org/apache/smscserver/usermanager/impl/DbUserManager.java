@@ -302,9 +302,9 @@ public class DbUserManager extends AbstractUserManager {
      * @return true if user with this bind is administrator
      */
     @Override
-    public boolean isAdmin(String bind) throws SmscException {
+    public boolean isAdmin(String systemid) throws SmscException {
         // check input
-        if (bind == null) {
+        if (systemid == null) {
             return false;
         }
 
@@ -315,7 +315,7 @@ public class DbUserManager extends AbstractUserManager {
         try {
             // create the sql query
             Map<String, Object> map = new HashMap<String, Object>();
-            map.put(AbstractUserManager.ATTR_SYSTEM_ID, DBUtils.escapeString(bind));
+            map.put(AbstractUserManager.ATTR_SYSTEM_ID, DBUtils.escapeString(systemid));
             sql = StringUtils.replaceString(this.isAdminStmt, map);
             DbUserManager.LOG.debug(sql);
 
@@ -401,7 +401,7 @@ public class DbUserManager extends AbstractUserManager {
         }
     }
 
-    private BaseUser selectUserByName(String name) throws SmscException {
+    private BaseUser selectUserByName(String systemid) throws SmscException {
         Statement stmt = null;
         ResultSet rs = null;
         String sql = null;
@@ -409,7 +409,7 @@ public class DbUserManager extends AbstractUserManager {
         try {
             // create sql query
             Map<String, Object> map = new HashMap<String, Object>();
-            map.put(AbstractUserManager.ATTR_SYSTEM_ID, DBUtils.escapeString(name));
+            map.put(AbstractUserManager.ATTR_SYSTEM_ID, DBUtils.escapeString(systemid));
             sql = StringUtils.replaceString(this.selectUserStmt, map);
             DbUserManager.LOG.debug(sql);
 

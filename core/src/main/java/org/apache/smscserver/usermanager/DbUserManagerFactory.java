@@ -33,19 +33,12 @@ import org.apache.smscserver.usermanager.impl.DbUserManager;
 public class DbUserManagerFactory implements UserManagerFactory {
 
     private String adminName = "admin";
-
     private String insertUserStmt;
-
     private String updateUserStmt;
-
     private String deleteUserStmt;
-
     private String selectUserStmt;
-
     private String selectAllStmt;
-
     private String isAdminStmt;
-
     private String authenticateStmt;
 
     private DataSource dataSource;
