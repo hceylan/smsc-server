@@ -37,15 +37,15 @@ import org.apache.smscserver.smsclet.SubmitSMRequest;
  * 
  * @author hceylan
  */
-public class SubmitSMCommand implements Command {
+public class CancelSMCommand implements Command {
 
-    public static final SubmitSMCommand SINGLETON = new SubmitSMCommand();
+    public static final CancelSMCommand SINGLETON = new CancelSMCommand();
 
     /**
      * @param type
      * 
      */
-    private SubmitSMCommand() {
+    private CancelSMCommand() {
         super();
     }
 
@@ -59,28 +59,19 @@ public class SubmitSMCommand implements Command {
         MessageManager messageManager = context.getMessageManager();
 
         ShortMessageImpl shortMessage = new ShortMessageImpl();
-        shortMessage.setDatacoding(submitSMRequest.getDataCoding());
-        shortMessage.setDefaultMessageId(submitSMRequest.getDefaultMessageId());
         shortMessage.setDestinationAddress(submitSMRequest.getDestinationAddress());
         shortMessage.setDestinationAddressNPI(submitSMRequest.getDestinationAddressNPI());
         shortMessage.setDestinationAddressTON(submitSMRequest.getDestinationAddressTON());
-        shortMessage.setEsmClass(submitSMRequest.getEsmClass());
-        shortMessage.setMessageLength(submitSMRequest.getMessageLength());
-        shortMessage.setPriorityFlag(submitSMRequest.getPriorityFlag());
-        shortMessage.setProtocolId(submitSMRequest.getProtocolId());
-        shortMessage.setReplaceIfPresent(submitSMRequest.replaceIfPresent());
         shortMessage.setScheduleDeliveryTime(submitSMRequest.getScheduleDeliveryTime());
-        shortMessage.setServiceType(submitSMRequest.getServiceType());
         // FIXME: HCEYLAN check source address for spoofing
         // FIXME: Create a source addr filter
         shortMessage.setSourceAddress(submitSMRequest.getSourceAddress() != null ? submitSMRequest.getSourceAddress()
                 : session.getUser().getName());
         shortMessage.setSourceAddressNPI(submitSMRequest.getSourceAddressNPI());
         shortMessage.setSourceAddressTON(submitSMRequest.getSourceAddressTON());
-        shortMessage.setValidityPeriod(submitSMRequest.getValidityPeriod());
 
         try {
-            messageManager.submitSM(shortMessage);
+            messageManager.cancelSM(shortMessage);
         } catch (SmscException e) {
             return new SmscStatusReplyImpl(submitSMRequest, ErrorCode.ESME_RSUBMITFAIL);
         }

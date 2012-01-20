@@ -10,15 +10,20 @@ public enum ShortMessageStatus {
     /**
      * Message is waiting for delivery.
      */
-    PENDING(),
+    PENDING,
 
     /**
      * Message has been delivered.
      */
-    DELIVERED(),
+    DELIVERED,
 
     /**
      * Message has expired.
      */
-    EXPIRED()
+    EXPIRED,
+
+    /**
+     * Message has been canceled
+     */
+    CANCELED
 }

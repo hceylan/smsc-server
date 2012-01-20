@@ -32,8 +32,8 @@ import org.apache.smscserver.messagemanager.DBMessageManagerFactory;
 import org.apache.smscserver.smsclet.MessageManager;
 import org.apache.smscserver.smsclet.ShortMessage;
 import org.apache.smscserver.smsclet.ShortMessageStatus;
-import org.apache.smscserver.smsclet.SmscCannotReplaceException;
 import org.apache.smscserver.smsclet.SmscException;
+import org.apache.smscserver.smsclet.SmscOriginalNotFoundException;
 import org.apache.smscserver.util.DBUtils;
 import org.apache.smscserver.util.StringUtils;
 import org.slf4j.Logger;
@@ -105,7 +105,6 @@ public class DBMessageManager implements MessageManager {
         try {
             // test the connection
             con = this.createConnection();
-            DBMessageManager.LOG.info("Database connection for message manager successfully opened.");
 
             // create table if not exists
             stmt = con.createStatement();
@@ -116,6 +115,38 @@ public class DBMessageManager implements MessageManager {
             throw new SmscServerConfigurationException(msg, e);
         } finally {
             DBUtils.closeQuitelyWithConnection(stmt);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     */
+    public void cancelSM(ShortMessage _shortMessage) throws SmscException {
+        ShortMessageImpl shortMessage = (ShortMessageImpl) _shortMessage;
+
+        // Can we actually replace an existing short messages
+        ShortMessageImpl oldMessage = (ShortMessageImpl) this.selectLatestShortMessage(shortMessage.getSourceAddress(),
+                shortMessage.getDestinationAddress(), shortMessage.getServiceType());
+        if ((oldMessage == null) || (oldMessage.getStatus() != ShortMessageStatus.PENDING)) {
+            throw new SmscOriginalNotFoundException();
+        }
+
+        DBMessageManager.LOG.debug("Replacement possible with {}", oldMessage.getId());
+        Connection connection = null;
+        Statement stmt = null;
+        String sql = null;
+
+        try {
+            connection = this.createConnection();
+            stmt = connection.createStatement();
+
+            oldMessage.setStatus(ShortMessageStatus.CANCELED);
+            this.storeShortMessageImpl(oldMessage, stmt);
+
+            connection.commit();
+        } catch (Exception e) {
+            DBUtils.handleException(sql, e);
         }
     }
 
@@ -186,11 +217,8 @@ public class DBMessageManager implements MessageManager {
         return shortMessage;
     }
 
-    /**
-     * {@inheritDoc}
-     * 
-     */
-    public void replace(ShortMessage _shortMessage, boolean replace) throws SmscException {
+    private boolean replaceImpl(ShortMessage _shortMessage, boolean replace) throws SmscException,
+            SmscOriginalNotFoundException {
         ShortMessageImpl shortMessage = (ShortMessageImpl) _shortMessage;
 
         // Only applicable for new short messages
@@ -202,54 +230,61 @@ public class DBMessageManager implements MessageManager {
         ShortMessageImpl oldMessage = (ShortMessageImpl) this.selectLatestShortMessage(shortMessage.getSourceAddress(),
                 shortMessage.getDestinationAddress(), shortMessage.getServiceType());
         if ((oldMessage == null) && replace) {
-            throw new SmscCannotReplaceException();
+            throw new SmscOriginalNotFoundException();
+        }
+
+        if (oldMessage == null) {
+            return false;
         }
 
         ShortMessageStatus status = oldMessage != null ? oldMessage.getStatus() : null;
         if (replace && (status != ShortMessageStatus.PENDING)) {
-            throw new SmscCannotReplaceException();
+            throw new SmscOriginalNotFoundException();
         }
 
         // is the message still pending
-        if (status == ShortMessageStatus.PENDING) {
-            DBMessageManager.LOG.debug("Replcaement possible with {}", oldMessage.getId());
-            Connection connection = null;
-            Statement stmt = null;
-            String sql = null;
+        DBMessageManager.LOG.debug("Replcaement possible with {}", oldMessage.getId());
+        Connection connection = null;
+        Statement stmt = null;
+        String sql = null;
 
+        try {
+            connection = this.createConnection();
+            stmt = connection.createStatement();
+
+            // begin transaction
+            connection.setAutoCommit(false);
             try {
-                connection = this.createConnection();
-                stmt = connection.createStatement();
+                shortMessage.setReplaced(oldMessage.getId());
+                this.storeShortMessageImpl(shortMessage, stmt);
 
-                // begin transaction
-                connection.setAutoCommit(false);
+                oldMessage.setReplacedBy(shortMessage.getId());
+                this.storeShortMessageImpl(oldMessage, stmt);
+
+                connection.commit();
+
+                return true;
+            } catch (Exception e) {
                 try {
-                    shortMessage.setReplaced(oldMessage.getId());
-                    this.storeShortMessageImpl(shortMessage, stmt);
-
-                    oldMessage.setReplacedBy(shortMessage.getId());
-                    this.storeShortMessageImpl(oldMessage, stmt);
-
-                    connection.commit();
-                } catch (Exception e) {
-                    try {
-                        connection.rollback();
-                    } catch (Exception e2) {
-                        DBMessageManager.LOG.error("Cannot rollback operation", e2);
-                    }
-
-                    throw e;
+                    connection.rollback();
+                } catch (Exception e2) {
+                    DBMessageManager.LOG.error("Cannot rollback operation", e2);
                 }
 
-            } catch (Exception e) {
-                DBUtils.handleException(sql, e);
+                throw e;
             }
-        } else {
-            DBMessageManager.LOG.debug("Falling back to store...");
 
-            shortMessage.setReplaceIfPresent(false);
-            this.storeShortMessage(shortMessage);
+        } catch (Exception e) {
+            throw DBUtils.handleException(sql, e);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     */
+    public void replaceSM(ShortMessage _shortMessage) throws SmscException {
+        this.replaceImpl(_shortMessage, true);
     }
 
     private ShortMessage selectLatestShortMessage(String sourceAddress, String destinationAddress, String serviceType)
@@ -315,31 +350,6 @@ public class DBMessageManager implements MessageManager {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     * 
-     */
-    public void storeShortMessage(ShortMessage _shortMessage) throws SmscException {
-        ShortMessageImpl shortMessage = (ShortMessageImpl) _shortMessage;
-        if (shortMessage.isReplaceIfPresent()) {
-            DBMessageManager.LOG.debug("Falling back to replace...");
-            this.replace(_shortMessage, false);
-        } else {
-
-            Statement stmt = null;
-            String sql = null;
-
-            try {
-                stmt = this.createConnection().createStatement();
-                sql = this.storeShortMessageImpl(shortMessage, stmt);
-            } catch (Exception e) {
-                throw DBUtils.handleException(sql, e);
-            } finally {
-                DBUtils.closeQuitelyWithConnection(stmt);
-            }
-        }
-    }
-
     private String storeShortMessageImpl(ShortMessageImpl shortMessage, Statement stmt) throws SmscException,
             SQLException {
         String sql;
@@ -352,5 +362,32 @@ public class DBMessageManager implements MessageManager {
         stmt.executeUpdate(sql);
 
         return sql;
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     */
+    public void submitSM(ShortMessage _shortMessage) throws SmscException {
+        ShortMessageImpl shortMessage = (ShortMessageImpl) _shortMessage;
+        if (shortMessage.isReplaceIfPresent()) {
+            DBMessageManager.LOG.debug("Falling back to replace...");
+            boolean replaced = this.replaceImpl(_shortMessage, false);
+            if (replaced) {
+                return;
+            }
+        }
+
+        Statement stmt = null;
+        String sql = null;
+
+        try {
+            stmt = this.createConnection().createStatement();
+            sql = this.storeShortMessageImpl(shortMessage, stmt);
+        } catch (Exception e) {
+            throw DBUtils.handleException(sql, e);
+        } finally {
+            DBUtils.closeQuitelyWithConnection(stmt);
+        }
     }
 }

@@ -28,16 +28,25 @@ package org.apache.smscserver.smsclet;
 public interface MessageManager {
 
     /**
+     * Cancels the short message for delivery.
+     * 
+     * @param shortMessage
+     * @return the id of the new short message
+     * @throws SmscException
+     * @throws SmscOriginalNotFoundException
+     *             if the original not found
+     */
+    public void cancelSM(ShortMessage shortMessage) throws SmscException, SmscOriginalNotFoundException;
+
+    /**
      * Replaces a message with the new one.
      * 
      * @param shortMessage
      *            the short message replacing the short message with the id.
-     * @param replace
-     *            true if message is intended as replacement false otherwise
      * @throws SmscException
-     * @throws {@link SmscCannotReplaceException} if replace cannot be undertaken
+     * @throws {@link SmscOriginalNotFoundException} if replace cannot be undertaken
      */
-    public void replace(ShortMessage shortMessage, boolean replace) throws SmscException, SmscCannotReplaceException;
+    public void replaceSM(ShortMessage shortMessage) throws SmscException, SmscOriginalNotFoundException;
 
     /**
      * Returns the short message with the id.
@@ -58,5 +67,5 @@ public interface MessageManager {
      * @return the id of the new short message
      * @throws SmscException
      */
-    public void storeShortMessage(ShortMessage shortMessage) throws SmscException;
+    public void submitSM(ShortMessage shortMessage) throws SmscException;
 }

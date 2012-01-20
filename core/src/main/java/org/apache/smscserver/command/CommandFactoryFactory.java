@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.smscserver.command.impl.BindCommand;
+import org.apache.smscserver.command.impl.CancelSMCommand;
 import org.apache.smscserver.command.impl.DefaultCommandFactory;
 import org.apache.smscserver.command.impl.EnquireLinkCommand;
 import org.apache.smscserver.command.impl.SubmitSMCommand;
@@ -53,6 +54,7 @@ public class CommandFactoryFactory {
         CommandFactoryFactory.DEFAULT_COMMAND_MAP.put(SMPPPacket.UNBIND, UnbindCommand.SINGLETON);
         CommandFactoryFactory.DEFAULT_COMMAND_MAP.put(SMPPPacket.ENQUIRE_LINK, EnquireLinkCommand.SINGLETON);
         CommandFactoryFactory.DEFAULT_COMMAND_MAP.put(SMPPPacket.SUBMIT_SM, SubmitSMCommand.SINGLETON);
+        CommandFactoryFactory.DEFAULT_COMMAND_MAP.put(SMPPPacket.CANCEL_SM, CancelSMCommand.SINGLETON);
     }
 
     private final Map<Integer, Command> commandMap = new HashMap<Integer, Command>();

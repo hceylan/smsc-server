@@ -21,21 +21,21 @@ package org.apache.smscserver.smsclet;
  * 
  * @version $Rev$ $Date$
  */
-public class SmscCannotReplaceException extends SmscException {
+public class SmscOriginalNotFoundException extends SmscException {
 
     private static final long serialVersionUID = -5660571203403837115L;
 
     /**
      * 
      */
-    public SmscCannotReplaceException() {
+    public SmscOriginalNotFoundException() {
         super();
     }
 
     /**
      * @param msg
      */
-    public SmscCannotReplaceException(String msg) {
+    public SmscOriginalNotFoundException(String msg) {
         super(msg);
     }
 
@@ -43,14 +43,14 @@ public class SmscCannotReplaceException extends SmscException {
      * @param msg
      * @param th
      */
-    public SmscCannotReplaceException(String msg, Throwable th) {
+    public SmscOriginalNotFoundException(String msg, Throwable th) {
         super(msg, th);
     }
 
     /**
      * @param th
      */
-    public SmscCannotReplaceException(Throwable th) {
+    public SmscOriginalNotFoundException(Throwable th) {
         super(th);
     }
 
