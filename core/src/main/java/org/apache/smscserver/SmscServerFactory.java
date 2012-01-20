@@ -129,6 +129,16 @@ public class SmscServerFactory {
     }
 
     /**
+     * Sets the session lock timeout in milliseconds
+     * 
+     * @param sessionLockTimeout
+     *            the sessionLockTimeout to set
+     */
+    public void setSessionLockTimeout(long sessionLockTimeout) {
+        this.serverContext.setSessionLockTimeout(sessionLockTimeout);
+    }
+
+    /**
      * Set the {@link Smsclet}s to be active by servers created by this factory. Replaces existing {@link Smsclet}s
      * 
      * @param smsclets
@@ -155,4 +165,5 @@ public class SmscServerFactory {
 
         userManager.setContext(this.serverContext);
     }
+
 }

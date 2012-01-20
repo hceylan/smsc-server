@@ -31,8 +31,8 @@ import org.apache.smscserver.smscletcontainer.SmscletContainer;
 /**
  * <strong>Internal class, do not use directly.</strong>
  * 
- * This is basically <code>org.apache.smscserver.test.smsclet.SmscletContext</code> with added connection manager, message
- * resource functionalities.
+ * This is basically <code>org.apache.smscserver.test.smsclet.SmscletContext</code> with added connection manager,
+ * message resource functionalities.
  * 
  * @author hceylan
  */
@@ -58,6 +58,13 @@ public interface SmscServerContext extends SmscletContext {
     ConnectionConfig getConnectionConfig();
 
     /**
+     * Returns the thread pool for delivery.
+     * 
+     * @return the thread pool for delivery
+     */
+    ThreadPoolExecutor getDeliveryThreadPoolExecutor();
+
+    /**
      * Returns the listener identified with the name
      * 
      * @param name
@@ -79,6 +86,14 @@ public interface SmscServerContext extends SmscletContext {
      * @return the message manager
      */
     MessageManager getMessageManager();
+
+    /**
+     * Returns the timeout time in milliseconds for the session lock.
+     * 
+     * @see SmscSession#lock
+     * @return the timeout time in milliseconds for the session lock
+     */
+    long getSessionLockTimeout();
 
     /**
      * Get smsclet container.

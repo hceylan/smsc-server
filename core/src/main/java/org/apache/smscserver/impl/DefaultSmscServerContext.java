@@ -60,8 +60,8 @@ public class DefaultSmscServerContext implements SmscServerContext {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultSmscServer.class);
 
     private static final List<Authority> ADMIN_AUTHORITIES = new ArrayList<Authority>();
-
     private final static String SMSC_HOME = DefaultSmscServerContext.getSmscHome();
+    private static final long DEFAULT_SESSION_LOCK_TIMEOUT = 1000;
 
     private static String getSmscHome() {
         try {
@@ -85,6 +85,7 @@ public class DefaultSmscServerContext implements SmscServerContext {
     private SmscStatistics statistics = new DefaultSmscStatistics();
     private CommandFactory commandFactory = null;
     private ConnectionConfig connectionConfig = new ConnectionConfigFactory().createConnectionConfig();
+    private long sessionLockTimeout = DefaultSmscServerContext.DEFAULT_SESSION_LOCK_TIMEOUT;
 
     private Map<String, Listener> listeners = new HashMap<String, Listener>();
 
@@ -168,6 +169,36 @@ public class DefaultSmscServerContext implements SmscServerContext {
      * {@inheritDoc}
      * 
      */
+    public ThreadPoolExecutor getDeliveryThreadPoolExecutor() {
+        if (this.threadPoolExecutor == null) {
+            int minThreads = this.connectionConfig.getMinDeliveryThreads();
+            int maxThreads = this.connectionConfig.getMaxDeliveryThreads();
+
+            if (maxThreads < 1) {
+                int maxBinds = this.connectionConfig.getMaxBinds();
+                if (maxBinds > 0) {
+                    maxThreads = maxBinds / 2;
+                } else {
+                    maxThreads = 16;
+                }
+            }
+
+            if (minThreads < 1) {
+                minThreads = maxThreads / 4;
+            }
+
+            DefaultSmscServerContext.LOG.debug("Intializing shared thread pool executor with min/max threads of {}/{}",
+                    minThreads, maxThreads);
+            this.threadPoolExecutor = new OrderedThreadPoolExecutor(minThreads, maxThreads);
+        }
+
+        return this.threadPoolExecutor;
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     */
     public Listener getListener(String name) {
         return this.listeners.get(name);
     }
@@ -191,6 +222,14 @@ public class DefaultSmscServerContext implements SmscServerContext {
         }
 
         return this.messageManager;
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     */
+    public long getSessionLockTimeout() {
+        return this.sessionLockTimeout;
     }
 
     /**
@@ -290,6 +329,14 @@ public class DefaultSmscServerContext implements SmscServerContext {
 
     public void setMessageManager(MessageManager messageManager) {
         this.messageManager = messageManager;
+    }
+
+    /**
+     * @param sessionLockTimeout
+     *            the sessionLockTimeout to set
+     */
+    public void setSessionLockTimeout(long sessionLockTimeout) {
+        this.sessionLockTimeout = sessionLockTimeout;
     }
 
     public void setSmscletContainer(SmscletContainer smscletContainer) {

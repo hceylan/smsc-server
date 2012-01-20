@@ -34,6 +34,8 @@ public class ConnectionConfigFactory {
     private int bindFailureDelay = 500;
     private int maxThreads = 8;
     private int minThreads = 2;
+    private int maxDeliveryThreads = 1;
+    private int minDeliveryThreads = 4;
 
     /**
      * Create a connection configuration instances based on the configuration on this factory
@@ -42,7 +44,7 @@ public class ConnectionConfigFactory {
      */
     public ConnectionConfig createConnectionConfig() {
         return new DefaultConnectionConfig(this.bindFailureDelay, this.maxBinds, this.maxBindFailures, this.minThreads,
-                this.maxThreads);
+                this.maxThreads, this.maxDeliveryThreads, this.minDeliveryThreads);
     }
 
     /**
@@ -73,12 +75,33 @@ public class ConnectionConfigFactory {
     }
 
     /**
+     * @return the maxDeliveryThreads
+     */
+    public int getMaxDeliveryThreads() {
+        return this.maxDeliveryThreads;
+    }
+
+    /**
      * Returns the maximum number of threads the server is allowed to create for processing client requests.
      * 
      * @return the maximum number of threads the server is allowed to create for processing client requests.
      */
     public int getMaxThreads() {
         return this.maxThreads;
+    }
+
+    /**
+     * @return the minDeliveryThreads
+     */
+    public int getMinDeliveryThreads() {
+        return this.minDeliveryThreads;
+    }
+
+    /**
+     * @return the minThreads
+     */
+    public int getMinThreads() {
+        return this.minThreads;
     }
 
     /**
@@ -113,6 +136,14 @@ public class ConnectionConfigFactory {
     }
 
     /**
+     * @param maxDeliveryThreads
+     *            the maxDeliveryThreads to set
+     */
+    public void setMaxDeliveryThreads(int maxDeliveryThreads) {
+        this.maxDeliveryThreads = maxDeliveryThreads;
+    }
+
+    /**
      * Sets the maximum number of threads the server is allowed to create for processing client requests.
      * 
      * @param maxThreads
@@ -120,6 +151,14 @@ public class ConnectionConfigFactory {
      */
     public void setMaxThreads(int maxThreads) {
         this.maxThreads = maxThreads;
+    }
+
+    /**
+     * @param minDeliveryThreads
+     *            the minDeliveryThreads to set
+     */
+    public void setMinDeliveryThreads(int minDeliveryThreads) {
+        this.minDeliveryThreads = minDeliveryThreads;
     }
 
     /**

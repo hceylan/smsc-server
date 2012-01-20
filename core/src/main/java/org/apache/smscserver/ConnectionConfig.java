@@ -19,6 +19,7 @@
 
 package org.apache.smscserver;
 
+
 /**
  * Interface for providing the configuration for the control socket connections.
  * 
@@ -50,6 +51,13 @@ public interface ConnectionConfig {
     int getMaxBinds();
 
     /**
+     * Returns the maximum number of threads the server is allowed to create for processing deliveries.
+     * 
+     * @return the maximum number of threads the server is allowed to create for processing deliveries
+     */
+    int getMaxDeliveryThreads();
+
+    /**
      * Returns the maximum number of threads the server is allowed to create for processing client requests.
      * 
      * @return the maximum number of threads the server is allowed to create for processing client requests
@@ -57,9 +65,17 @@ public interface ConnectionConfig {
     int getMaxThreads();
 
     /**
+     * Returns the maximum number of threads the server is allowed to create for processing deliveries.
+     * 
+     * @return the maximum number of threads the server is allowed to create for processing deliveries
+     */
+    int getMinDeliveryThreads();
+
+    /**
      * Returns the minimum number of threads the server is required tkeep for processing client requests.
      * 
      * @return the minimum number of threads the server is required tkeep for processing client requests
      */
     int getMinThreads();
+
 }

@@ -89,10 +89,16 @@ public class ServerBeanDefinitionParser extends AbstractSingleBeanDefinitionPars
             connectionConfig.setMaxBinds(SpringUtil.parseInt(element, "max-binds"));
         }
         if (StringUtils.hasText(element.getAttribute("min-threads"))) {
-            connectionConfig.setMaxThreads(SpringUtil.parseInt(element, "min-threads"));
+            connectionConfig.setMinThreads(SpringUtil.parseInt(element, "min-threads"));
         }
         if (StringUtils.hasText(element.getAttribute("max-threads"))) {
             connectionConfig.setMaxThreads(SpringUtil.parseInt(element, "max-threads"));
+        }
+        if (StringUtils.hasText(element.getAttribute("min-delivery-threads"))) {
+            connectionConfig.setMinDeliveryThreads(SpringUtil.parseInt(element, "min-delivery-threads"));
+        }
+        if (StringUtils.hasText(element.getAttribute("max-delivery-threads"))) {
+            connectionConfig.setMaxDeliveryThreads(SpringUtil.parseInt(element, "max-delivery-threads"));
         }
         if (StringUtils.hasText(element.getAttribute("max-bind-failures"))) {
             connectionConfig.setMaxBindFailures(SpringUtil.parseInt(element, "max-bind-failures"));
@@ -102,6 +108,11 @@ public class ServerBeanDefinitionParser extends AbstractSingleBeanDefinitionPars
         }
 
         factoryBuilder.addPropertyValue("connectionConfig", connectionConfig.createConnectionConfig());
+
+        if (StringUtils.hasText(element.getAttribute("sessionLockTimeout"))) {
+            factoryBuilder.addPropertyValue("session-lock-timeout",
+                    SpringUtil.parseInt(element, "session-lock-timeout"));
+        }
 
         BeanDefinition factoryDefinition = factoryBuilder.getBeanDefinition();
 
@@ -113,7 +124,6 @@ public class ServerBeanDefinitionParser extends AbstractSingleBeanDefinitionPars
         // set the factory on the listener bean
         builder.getRawBeanDefinition().setFactoryBeanName(factoryName);
         builder.getRawBeanDefinition().setFactoryMethodName("createServer");
-
     }
 
     /**

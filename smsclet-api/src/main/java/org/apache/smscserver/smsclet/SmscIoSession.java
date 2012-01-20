@@ -38,4 +38,31 @@ public interface SmscIoSession {
      * @return the user associates with the session
      */
     User getUser();
+
+    /**
+     * Locks the session for a conversation
+     * 
+     * @return true if lock is successful
+     * 
+     */
+    boolean lock();
+
+    /**
+     * Called upon sucessful bind.
+     * <p>
+     * Starts the delivery for the client.
+     */
+    void startDelivery();
+
+    /**
+     * Called upon sucessful bind.
+     * <p>
+     * Starts the delivery for the client.
+     */
+    void stopDelivery();
+
+    /**
+     * unlocks the session
+     */
+    void unlock();
 }

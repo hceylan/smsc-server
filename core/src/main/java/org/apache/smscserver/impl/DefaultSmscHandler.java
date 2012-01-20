@@ -27,6 +27,7 @@ import org.apache.smscserver.SmscServerContext;
 import org.apache.smscserver.command.Command;
 import org.apache.smscserver.command.CommandFactory;
 import org.apache.smscserver.listener.Listener;
+import org.apache.smscserver.packet.impl.SmscStatusReplyImpl;
 import org.apache.smscserver.smsclet.SmscReply;
 import org.apache.smscserver.smsclet.SmscRequest;
 import org.apache.smscserver.smscletcontainer.SmscletContainer;
@@ -47,6 +48,10 @@ public class DefaultSmscHandler implements SmscHandler {
 
     private Listener listener;
 
+    /**
+     * {@inheritDoc}
+     * 
+     */
     public void exceptionCaught(final DefaultSmscIoSession session, final Throwable cause) throws Exception {
         if (cause instanceof WriteToClosedSessionException) {
             WriteToClosedSessionException writeToClosedSessionException = (WriteToClosedSessionException) cause;
@@ -60,36 +65,62 @@ public class DefaultSmscHandler implements SmscHandler {
 
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     */
     public void init(final SmscServerContext context, final Listener listener) {
         this.context = context;
         this.listener = listener;
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     */
     public SmscReply messageReceived(final DefaultSmscIoSession session, final SmscRequest request) throws Exception {
         session.updateLastAccessTime();
 
-        SmscReply reply = this.context.getSmscletContainer().onRequest(session.getSmscletSession(), request);
-        if (reply != null) {
-            return reply;
+        if (!session.lock()) {
+            this.LOG.warn("Cannot acquire session lock");
+            return new SmscStatusReplyImpl(request, SmscReply.ErrorCode.ESME_RUNKNOWNERR);
         }
 
-        int commandID = request.getCommandId();
-        CommandFactory commandFactory = this.context.getCommandFactory();
-        Command command = commandFactory.getCommand(commandID);
+        try {
+            SmscReply reply = this.context.getSmscletContainer().onRequest(session.getSmscletSession(), request);
+            if (reply != null) {
+                return reply;
+            }
 
-        if (command != null) {
-            return command.execute(session, this.context, request);
+            int commandID = request.getCommandId();
+            CommandFactory commandFactory = this.context.getCommandFactory();
+            Command command = commandFactory.getCommand(commandID);
+
+            if (command != null) {
+                return command.execute(session, this.context, request);
+            }
+
+            return null;
+        } finally {
+            session.unlock();
         }
-
-        return null;
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     */
     public void messageSent(final DefaultSmscIoSession session, final SmscReply reply) throws Exception {
         // do nothing
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     */
     public void sessionClosed(final DefaultSmscIoSession session) throws Exception {
         this.LOG.debug("Closing session");
+
         try {
             this.context.getSmscletContainer().onDisconnect(session.getSmscletSession());
         } catch (Exception e) {
@@ -109,6 +140,10 @@ public class DefaultSmscHandler implements SmscHandler {
         this.LOG.debug("Session closed");
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     */
     public void sessionCreated(final DefaultSmscIoSession session) throws Exception {
         session.setListener(this.listener);
 
@@ -119,11 +154,20 @@ public class DefaultSmscHandler implements SmscHandler {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     */
     public void sessionIdle(final DefaultSmscIoSession session, final IdleStatus status) throws Exception {
         this.LOG.info("Session idle, closing");
+
         session.close(false).awaitUninterruptibly(10000);
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     */
     public void sessionOpened(final DefaultSmscIoSession session) throws Exception {
         SmscletContainer smsclets = this.context.getSmscletContainer();
 

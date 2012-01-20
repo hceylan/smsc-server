@@ -23,6 +23,8 @@ import java.security.cert.Certificate;
 import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
@@ -63,7 +65,6 @@ public class DefaultSmscIoSession implements SmscIoSession, IoSession {
 
     private static final String ATTRIBUTE_SESSION_ID = DefaultSmscIoSession.ATTRIBUTE_PREFIX + "session-id";
     private static final String ATTRIBUTE_USER = DefaultSmscIoSession.ATTRIBUTE_PREFIX + "user";
-    private static final String ATTRIBUTE_LANGUAGE = DefaultSmscIoSession.ATTRIBUTE_PREFIX + "language";
     private static final String ATTRIBUTE_BIND_TIME = DefaultSmscIoSession.ATTRIBUTE_PREFIX + "bind-time";
     private static final String ATTRIBUTE_FAILED_BINDS = DefaultSmscIoSession.ATTRIBUTE_PREFIX + "failed-binds";
     private static final String ATTRIBUTE_LISTENER = DefaultSmscIoSession.ATTRIBUTE_PREFIX + "listener";
@@ -74,40 +75,44 @@ public class DefaultSmscIoSession implements SmscIoSession, IoSession {
 
     private final IoSession wrappedSession;
     private final SmscServerContext context;
-
     private boolean consumed = false;
-
     private SmscRequest request;
+    private final ReentrantLock lock;
 
     public DefaultSmscIoSession(IoSession wrappedSession, SmscServerContext context) {
         this.wrappedSession = wrappedSession;
         this.context = context;
+
+        this.lock = new ReentrantLock();
     }
 
-    /* Begin wrapped IoSession methods */
     /**
-     * @see IoSession#close()
+     * {@inheritDoc}
+     * 
      */
     public CloseFuture close() {
         return this.wrappedSession.close();
     }
 
     /**
-     * @see IoSession#close(boolean)
+     * {@inheritDoc}
+     * 
      */
     public CloseFuture close(boolean immediately) {
         return this.wrappedSession.close(immediately);
     }
 
     /**
-     * @see IoSession#containsAttribute(Object)
+     * {@inheritDoc}
+     * 
      */
     public boolean containsAttribute(Object key) {
         return this.wrappedSession.containsAttribute(key);
     }
 
     /**
-     * @see IoSession#getAttachment()
+     * {@inheritDoc}
+     * 
      */
     @SuppressWarnings("deprecation")
     public Object getAttachment() {
@@ -115,21 +120,24 @@ public class DefaultSmscIoSession implements SmscIoSession, IoSession {
     }
 
     /**
-     * @see IoSession#getAttribute(Object)
+     * {@inheritDoc}
+     * 
      */
     public Object getAttribute(Object key) {
         return this.wrappedSession.getAttribute(key);
     }
 
     /**
-     * @see IoSession#getAttribute(Object, Object)
+     * {@inheritDoc}
+     * 
      */
     public Object getAttribute(Object key, Object defaultValue) {
         return this.wrappedSession.getAttribute(key, defaultValue);
     }
 
     /**
-     * @see IoSession#getAttributeKeys()
+     * {@inheritDoc}
+     * 
      */
     public Set<Object> getAttributeKeys() {
         return this.wrappedSession.getAttributeKeys();
@@ -140,7 +148,8 @@ public class DefaultSmscIoSession implements SmscIoSession, IoSession {
     }
 
     /**
-     * @see IoSession#getBothIdleCount()
+     * {@inheritDoc}
+     * 
      */
     public int getBothIdleCount() {
         return this.wrappedSession.getBothIdleCount();
@@ -168,35 +177,40 @@ public class DefaultSmscIoSession implements SmscIoSession, IoSession {
     }
 
     /**
-     * @see IoSession#getCloseFuture()
+     * {@inheritDoc}
+     * 
      */
     public CloseFuture getCloseFuture() {
         return this.wrappedSession.getCloseFuture();
     }
 
     /**
-     * @see IoSession#getConfig()
+     * {@inheritDoc}
+     * 
      */
     public IoSessionConfig getConfig() {
         return this.wrappedSession.getConfig();
     }
 
     /**
-     * @see IoSession#getCreationTime()
+     * {@inheritDoc}
+     * 
      */
     public long getCreationTime() {
         return this.wrappedSession.getCreationTime();
     }
 
     /**
-     * @see IoSession#getCurrentWriteMessage()
+     * {@inheritDoc}
+     * 
      */
     public Object getCurrentWriteMessage() {
         return this.wrappedSession.getCurrentWriteMessage();
     }
 
     /**
-     * @see IoSession#getCurrentWriteRequest()
+     * {@inheritDoc}
+     * 
      */
     public WriteRequest getCurrentWriteRequest() {
         return this.wrappedSession.getCurrentWriteRequest();
@@ -207,28 +221,32 @@ public class DefaultSmscIoSession implements SmscIoSession, IoSession {
     }
 
     /**
-     * @see IoSession#getFilterChain()
+     * {@inheritDoc}
+     * 
      */
     public IoFilterChain getFilterChain() {
         return this.wrappedSession.getFilterChain();
     }
 
     /**
-     * @see IoSession#getHandler()
+     * {@inheritDoc}
+     * 
      */
     public IoHandler getHandler() {
         return this.wrappedSession.getHandler();
     }
 
     /**
-     * @see IoSession#getId()
+     * {@inheritDoc}
+     * 
      */
     public long getId() {
         return this.wrappedSession.getId();
     }
 
     /**
-     * @see IoSession#getIdleCount(IdleStatus)
+     * {@inheritDoc}
+     * 
      */
     public int getIdleCount(IdleStatus status) {
         return this.wrappedSession.getIdleCount(status);
@@ -239,49 +257,56 @@ public class DefaultSmscIoSession implements SmscIoSession, IoSession {
     }
 
     /**
-     * @see IoSession#getLastBothIdleTime()
+     * {@inheritDoc}
+     * 
      */
     public long getLastBothIdleTime() {
         return this.wrappedSession.getLastBothIdleTime();
     }
 
     /**
-     * @see IoSession#getLastIdleTime(IdleStatus)
+     * {@inheritDoc}
+     * 
      */
     public long getLastIdleTime(IdleStatus status) {
         return this.wrappedSession.getLastIdleTime(status);
     }
 
     /**
-     * @see IoSession#getLastIoTime()
+     * {@inheritDoc}
+     * 
      */
     public long getLastIoTime() {
         return this.wrappedSession.getLastIoTime();
     }
 
     /**
-     * @see IoSession#getLastReaderIdleTime()
+     * {@inheritDoc}
+     * 
      */
     public long getLastReaderIdleTime() {
         return this.wrappedSession.getLastReaderIdleTime();
     }
 
     /**
-     * @see IoSession#getLastReadTime()
+     * {@inheritDoc}
+     * 
      */
     public long getLastReadTime() {
         return this.wrappedSession.getLastReadTime();
     }
 
     /**
-     * @see IoSession#getLastWriterIdleTime()
+     * {@inheritDoc}
+     * 
      */
     public long getLastWriterIdleTime() {
         return this.wrappedSession.getLastWriterIdleTime();
     }
 
     /**
-     * @see IoSession#getLastWriteTime()
+     * {@inheritDoc}
+     * 
      */
     public long getLastWriteTime() {
         return this.wrappedSession.getLastWriteTime();
@@ -292,7 +317,8 @@ public class DefaultSmscIoSession implements SmscIoSession, IoSession {
     }
 
     /**
-     * @see IoSession#getLocalAddress()
+     * {@inheritDoc}
+     * 
      */
     public SocketAddress getLocalAddress() {
         return this.wrappedSession.getLocalAddress();
@@ -303,42 +329,48 @@ public class DefaultSmscIoSession implements SmscIoSession, IoSession {
     }
 
     /**
-     * @see IoSession#getReadBytes()
+     * {@inheritDoc}
+     * 
      */
     public long getReadBytes() {
         return this.wrappedSession.getReadBytes();
     }
 
     /**
-     * @see IoSession#getReadBytesThroughput()
+     * {@inheritDoc}
+     * 
      */
     public double getReadBytesThroughput() {
         return this.wrappedSession.getReadBytesThroughput();
     }
 
     /**
-     * @see IoSession#getReaderIdleCount()
+     * {@inheritDoc}
+     * 
      */
     public int getReaderIdleCount() {
         return this.wrappedSession.getReaderIdleCount();
     }
 
     /**
-     * @see IoSession#getReadMessages()
+     * {@inheritDoc}
+     * 
      */
     public long getReadMessages() {
         return this.wrappedSession.getReadMessages();
     }
 
     /**
-     * @see IoSession#getReadMessagesThroughput()
+     * {@inheritDoc}
+     * 
      */
     public double getReadMessagesThroughput() {
         return this.wrappedSession.getReadMessagesThroughput();
     }
 
     /**
-     * @see IoSession#getRemoteAddress()
+     * {@inheritDoc}
+     * 
      */
     public SocketAddress getRemoteAddress() {
         // when closing a socket, the remote address might be reset to null
@@ -354,35 +386,39 @@ public class DefaultSmscIoSession implements SmscIoSession, IoSession {
     }
 
     /**
-     * @see IoSession#getScheduledWriteBytes()
+     * {@inheritDoc}
+     * 
      */
     public long getScheduledWriteBytes() {
         return this.wrappedSession.getScheduledWriteBytes();
     }
 
     /**
-     * @see IoSession#getScheduledWriteMessages()
+     * {@inheritDoc}
+     * 
      */
     public int getScheduledWriteMessages() {
         return this.wrappedSession.getScheduledWriteMessages();
     }
 
     /**
-     * @see IoSession#getService()
+     * {@inheritDoc}
+     * 
      */
     public IoService getService() {
         return this.wrappedSession.getService();
     }
 
     /**
-     * @see IoSession#getServiceAddress()
+     * {@inheritDoc}
+     * 
      */
     public SocketAddress getServiceAddress() {
         return this.wrappedSession.getServiceAddress();
     }
 
     /**
-     * @see SmscSession#getSessionId()
+     * @return
      */
     public UUID getSessionId() {
         synchronized (this.wrappedSession) {
@@ -398,7 +434,8 @@ public class DefaultSmscIoSession implements SmscIoSession, IoSession {
     }
 
     /**
-     * @see IoSession#getTransportMetadata()
+     * {@inheritDoc}
+     * 
      */
     public TransportMetadata getTransportMetadata() {
         return this.wrappedSession.getTransportMetadata();
@@ -409,42 +446,48 @@ public class DefaultSmscIoSession implements SmscIoSession, IoSession {
     }
 
     /**
-     * @see IoSession#getWriteRequestQueue()
+     * {@inheritDoc}
+     * 
      */
     public WriteRequestQueue getWriteRequestQueue() {
         return this.wrappedSession.getWriteRequestQueue();
     }
 
     /**
-     * @see IoSession#getWriterIdleCount()
+     * {@inheritDoc}
+     * 
      */
     public int getWriterIdleCount() {
         return this.wrappedSession.getWriterIdleCount();
     }
 
     /**
-     * @see IoSession#getWrittenBytes()
+     * {@inheritDoc}
+     * 
      */
     public long getWrittenBytes() {
         return this.wrappedSession.getWrittenBytes();
     }
 
     /**
-     * @see IoSession#getWrittenBytesThroughput()
+     * {@inheritDoc}
+     * 
      */
     public double getWrittenBytesThroughput() {
         return this.wrappedSession.getWrittenBytesThroughput();
     }
 
     /**
-     * @see IoSession#getWrittenMessages()
+     * {@inheritDoc}
+     * 
      */
     public long getWrittenMessages() {
         return this.wrappedSession.getWrittenMessages();
     }
 
     /**
-     * @see IoSession#getWrittenMessagesThroughput()
+     * {@inheritDoc}
+     * 
      */
     public double getWrittenMessagesThroughput() {
         return this.wrappedSession.getWrittenMessagesThroughput();
@@ -482,7 +525,8 @@ public class DefaultSmscIoSession implements SmscIoSession, IoSession {
     }
 
     /**
-     * @see IoSession#isBothIdle()
+     * {@inheritDoc}
+     * 
      */
     public boolean isBothIdle() {
         return this.wrappedSession.isBothIdle();
@@ -496,35 +540,40 @@ public class DefaultSmscIoSession implements SmscIoSession, IoSession {
     }
 
     /**
-     * @see IoSession#isClosing()
+     * {@inheritDoc}
+     * 
      */
     public boolean isClosing() {
         return this.wrappedSession.isClosing();
     }
 
     /**
-     * @see IoSession#isConnected()
+     * {@inheritDoc}
+     * 
      */
     public boolean isConnected() {
         return this.wrappedSession.isConnected();
     }
 
     /**
-     * @see IoSession#isIdle(IdleStatus)
+     * {@inheritDoc}
+     * 
      */
     public boolean isIdle(IdleStatus status) {
         return this.wrappedSession.isIdle(status);
     }
 
     /**
-     * @see IoSession#isReaderIdle()
+     * {@inheritDoc}
+     * 
      */
     public boolean isReaderIdle() {
         return this.wrappedSession.isReaderIdle();
     }
 
     /**
-     * @see IoSession#isReadSuspended()
+     * {@inheritDoc}
+     * 
      */
     public boolean isReadSuspended() {
         return this.wrappedSession.isReadSuspended();
@@ -540,21 +589,38 @@ public class DefaultSmscIoSession implements SmscIoSession, IoSession {
     }
 
     /**
-     * @see IoSession#isWriterIdle()
+     * {@inheritDoc}
+     * 
      */
     public boolean isWriterIdle() {
         return this.wrappedSession.isWriterIdle();
     }
 
     /**
-     * @see IoSession#isWriteSuspended()
+     * {@inheritDoc}
+     * 
      */
     public boolean isWriteSuspended() {
         return this.wrappedSession.isWriteSuspended();
     }
 
     /**
-     * @see IoSession#read()
+     * {@inheritDoc}
+     * 
+     */
+    public synchronized boolean lock() {
+        long timeout = this.context.getSessionLockTimeout();
+
+        try {
+            return this.lock.tryLock(timeout, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            throw new SmscRuntimeException("Unable to acquire lock");
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
      */
     public ReadFuture read() {
         return this.wrappedSession.read();
@@ -567,42 +633,48 @@ public class DefaultSmscIoSession implements SmscIoSession, IoSession {
     }
 
     /**
-     * @see IoSession#removeAttribute(Object)
+     * {@inheritDoc}
+     * 
      */
     public Object removeAttribute(Object key) {
         return this.wrappedSession.removeAttribute(key);
     }
 
     /**
-     * @see IoSession#removeAttribute(Object, Object)
+     * {@inheritDoc}
+     * 
      */
     public boolean removeAttribute(Object key, Object value) {
         return this.wrappedSession.removeAttribute(key, value);
     }
 
     /**
-     * @see IoSession#replaceAttribute(Object, Object, Object)
+     * {@inheritDoc}
+     * 
      */
     public boolean replaceAttribute(Object key, Object oldValue, Object newValue) {
         return this.wrappedSession.replaceAttribute(key, oldValue, newValue);
     }
 
     /**
-     * @see IoSession#resumeRead()
+     * {@inheritDoc}
+     * 
      */
     public void resumeRead() {
         this.wrappedSession.resumeRead();
     }
 
     /**
-     * @see IoSession#resumeWrite()
+     * {@inheritDoc}
+     * 
      */
     public void resumeWrite() {
         this.wrappedSession.resumeWrite();
     }
 
     /**
-     * @see IoSession#setAttachment(Object)
+     * {@inheritDoc}
+     * 
      */
     @SuppressWarnings("deprecation")
     public Object setAttachment(Object attachment) {
@@ -610,43 +682,43 @@ public class DefaultSmscIoSession implements SmscIoSession, IoSession {
     }
 
     /**
-     * @see IoSession#setAttribute(Object)
+     * {@inheritDoc}
+     * 
      */
     public Object setAttribute(Object key) {
         return this.wrappedSession.setAttribute(key);
     }
 
     /**
-     * @see IoSession#setAttribute(Object, Object)
+     * {@inheritDoc}
+     * 
      */
     public Object setAttribute(Object key, Object value) {
         return this.wrappedSession.setAttribute(key, value);
     }
 
     /**
-     * @see IoSession#setAttributeIfAbsent(Object)
+     * {@inheritDoc}
+     * 
      */
     public Object setAttributeIfAbsent(Object key) {
         return this.wrappedSession.setAttributeIfAbsent(key);
     }
 
     /**
-     * @see IoSession#setAttributeIfAbsent(Object, Object)
+     * {@inheritDoc}
+     * 
      */
     public Object setAttributeIfAbsent(Object key, Object value) {
         return this.wrappedSession.setAttributeIfAbsent(key, value);
     }
 
     /**
-     * @see IoSession#setCurrentWriteRequest(WriteRequest)
+     * {@inheritDoc}
+     * 
      */
     public void setCurrentWriteRequest(WriteRequest currentWriteRequest) {
         this.wrappedSession.setCurrentWriteRequest(currentWriteRequest);
-    }
-
-    public void setLanguage(String language) {
-        this.setAttribute(DefaultSmscIoSession.ATTRIBUTE_LANGUAGE, language);
-
     }
 
     public void setListener(Listener listener) {
@@ -688,14 +760,32 @@ public class DefaultSmscIoSession implements SmscIoSession, IoSession {
     }
 
     /**
-     * @see IoSession#suspendRead()
+     * {@inheritDoc}
+     * 
+     */
+    public void startDelivery() {
+        this.context.getDeliveryThreadPoolExecutor();
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     */
+    public void stopDelivery() {
+        // TODO Auto-generated method stub
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
      */
     public void suspendRead() {
         this.wrappedSession.suspendRead();
     }
 
     /**
-     * @see IoSession#suspendWrite()
+     * {@inheritDoc}
+     * 
      */
     public void suspendWrite() {
         this.wrappedSession.suspendWrite();
@@ -712,20 +802,26 @@ public class DefaultSmscIoSession implements SmscIoSession, IoSession {
         }
     }
 
+    public synchronized void unlock() {
+        this.lock.unlock();
+    }
+
     public void updateLastAccessTime() {
         this.setAttribute(DefaultSmscIoSession.ATTRIBUTE_LAST_ACCESS_TIME, new Date());
 
     }
 
     /**
-     * @see IoSession#updateThroughput(long, boolean)
+     * {@inheritDoc}
+     * 
      */
     public void updateThroughput(long currentTime, boolean force) {
         this.wrappedSession.updateThroughput(currentTime, force);
     }
 
     /**
-     * @see IoSession#write(Object)
+     * {@inheritDoc}
+     * 
      */
     public WriteFuture write(Object message) {
         if (this.request == null) {
@@ -744,7 +840,8 @@ public class DefaultSmscIoSession implements SmscIoSession, IoSession {
     }
 
     /**
-     * @see IoSession#write(Object, SocketAddress)
+     * {@inheritDoc}
+     * 
      */
     public WriteFuture write(Object message, SocketAddress destination) {
         if (this.request == null) {
@@ -761,4 +858,5 @@ public class DefaultSmscIoSession implements SmscIoSession, IoSession {
 
         return future;
     }
+
 }

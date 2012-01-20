@@ -68,6 +68,7 @@ public class BindCommand implements Command {
 
         Authentication authentication = new UsernamePasswordAuthentication(session, bindRequest.getSystemId(),
                 bindRequest.getPassword());
+
         User user;
         try {
             user = context.getUserManager().authenticate(authentication);

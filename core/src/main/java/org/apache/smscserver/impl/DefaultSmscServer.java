@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.smscserver.ConnectionConfig;
 import org.apache.smscserver.SmscServer;
 import org.apache.smscserver.SmscServerContext;
 import org.apache.smscserver.SmscServerFactory;
@@ -48,9 +47,7 @@ public class DefaultSmscServer implements SmscServer {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultSmscServer.class);
 
     private SmscServerContext serverContext;
-
     private boolean suspended = false;
-
     private boolean started = false;
 
     /**
