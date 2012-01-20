@@ -19,8 +19,8 @@
 
 package org.apache.smscserver.impl;
 
-import org.apache.smscserver.ConnectionConfig;
 import org.apache.smscserver.ConnectionConfigFactory;
+import org.apache.smscserver.DeliveryManagerConfig;
 
 /**
  * <strong>Internal class, do not use directly.</strong>
@@ -28,26 +28,21 @@ import org.apache.smscserver.ConnectionConfigFactory;
  * @author hceylan
  * 
  */
-public class DefaultConnectionConfig implements ConnectionConfig {
+public class DefaultDeliveryManagerConfig implements DeliveryManagerConfig {
 
-    private final int maxBinds;
-    private final int maxBindFailures;
-    private final int bindFailureDelay;
+    private final int managerThreads;
     private final int maxThreads;
     private final int minThreads;
 
-    public DefaultConnectionConfig() {
-        this(500, 10, 3, 2, 8);
+    public DefaultDeliveryManagerConfig() {
+        this(2, 8, 2);
     }
 
     /**
      * Internal constructor, do not use directly. Use {@link ConnectionConfigFactory} instead
      */
-    public DefaultConnectionConfig(int nindFailureDelay, int maxBinds, int maxBindFailures, int minThreads,
-            int maxThreads) {
-        this.bindFailureDelay = nindFailureDelay;
-        this.maxBinds = maxBinds;
-        this.maxBindFailures = maxBindFailures;
+    public DefaultDeliveryManagerConfig(int managerThreads, int minThreads, int maxThreads) {
+        this.managerThreads = managerThreads;
         this.minThreads = minThreads;
         this.maxThreads = maxThreads;
     }
@@ -56,24 +51,8 @@ public class DefaultConnectionConfig implements ConnectionConfig {
      * {@inheritDoc}
      * 
      */
-    public int getBindFailureDelay() {
-        return this.bindFailureDelay;
-    }
-
-    /**
-     * {@inheritDoc}
-     * 
-     */
-    public int getMaxBindFailures() {
-        return this.maxBindFailures;
-    }
-
-    /**
-     * {@inheritDoc}
-     * 
-     */
-    public int getMaxBinds() {
-        return this.maxBinds;
+    public int getManagerThreads() {
+        return this.managerThreads;
     }
 
     /**

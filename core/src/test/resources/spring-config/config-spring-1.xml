@@ -15,8 +15,8 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd 
 	   http://mina.apache.org/smscserver/spring/v1 http://mina.apache.org/smscserver/smscserver-1.0.xsd"
 	max-binds="500" max-bind-failures="124" bind-failure-delay="125"
-	min-threads="4" max-threads="16" min-delivery-threads="2"
-	max-delivery-threads="8" session-lock-timeout="1000">
+	min-threads="4" max-threads="16" delivery-threads="2" min-delivery-threads="8"
+	max-delivery-threads="24" session-lock-timeout="1000">
 
 	<listeners>
 		<nio-listener name="listener0" port="2222" local-address="1.2.3.4">

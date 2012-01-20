@@ -26,28 +26,14 @@ package org.apache.smscserver;
  * @author hceylan
  * 
  */
-public interface ConnectionConfig {
+public interface DeliveryManagerConfig {
 
     /**
-     * The delay in number of milliseconds between bind failures. Important to make brute force attacks harder.
+     * Returns the number of threads the server to create for mnaging delivery.
      * 
-     * @return The delay time in milliseconds
+     * @return the number of threads the server to create for mnaging delivery
      */
-    int getBindFailureDelay();
-
-    /**
-     * The maximum number of time an user can fail to bind before getting disconnected
-     * 
-     * @return The maximum number of failure bind attempts
-     */
-    int getMaxBindFailures();
-
-    /**
-     * The maximum number of concurrently bound in users
-     * 
-     * @return The maximum number of users
-     */
-    int getMaxBinds();
+    int getManagerThreads();
 
     /**
      * Returns the maximum number of threads the server is allowed to create for processing client requests.

@@ -764,7 +764,7 @@ public class DefaultSmscIoSession implements SmscIoSession, IoSession {
      * 
      */
     public void startDelivery() {
-        this.context.getDeliveryThreadPoolExecutor();
+        // TODO Auto-generated method stub
     }
 
     /**

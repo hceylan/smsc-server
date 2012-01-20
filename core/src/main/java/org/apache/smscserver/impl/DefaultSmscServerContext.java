@@ -29,13 +29,15 @@ import java.util.concurrent.TimeUnit;
 import org.apache.mina.filter.executor.OrderedThreadPoolExecutor;
 import org.apache.smscserver.ConnectionConfig;
 import org.apache.smscserver.ConnectionConfigFactory;
+import org.apache.smscserver.DeliveryManagerConfig;
+import org.apache.smscserver.DeliveryManagerConfigFactory;
 import org.apache.smscserver.SmscServerConfigurationException;
 import org.apache.smscserver.SmscServerContext;
 import org.apache.smscserver.command.CommandFactory;
 import org.apache.smscserver.command.CommandFactoryFactory;
 import org.apache.smscserver.listener.Listener;
 import org.apache.smscserver.listener.ListenerFactory;
-import org.apache.smscserver.messagemanager.DBMessageManagerFactory;
+import org.apache.smscserver.message.DBMessageManagerFactory;
 import org.apache.smscserver.smsclet.Authority;
 import org.apache.smscserver.smsclet.MessageManager;
 import org.apache.smscserver.smsclet.SmscStatistics;
@@ -85,6 +87,8 @@ public class DefaultSmscServerContext implements SmscServerContext {
     private SmscStatistics statistics = new DefaultSmscStatistics();
     private CommandFactory commandFactory = null;
     private ConnectionConfig connectionConfig = new ConnectionConfigFactory().createConnectionConfig();
+    private DeliveryManagerConfig deliveryManagerConfig = new DeliveryManagerConfigFactory().createDeliveryManagerConfig();
+
     private long sessionLockTimeout = DefaultSmscServerContext.DEFAULT_SESSION_LOCK_TIMEOUT;
 
     private Map<String, Listener> listeners = new HashMap<String, Listener>();
@@ -169,30 +173,8 @@ public class DefaultSmscServerContext implements SmscServerContext {
      * {@inheritDoc}
      * 
      */
-    public ThreadPoolExecutor getDeliveryThreadPoolExecutor() {
-        if (this.threadPoolExecutor == null) {
-            int minThreads = this.connectionConfig.getMinDeliveryThreads();
-            int maxThreads = this.connectionConfig.getMaxDeliveryThreads();
-
-            if (maxThreads < 1) {
-                int maxBinds = this.connectionConfig.getMaxBinds();
-                if (maxBinds > 0) {
-                    maxThreads = maxBinds / 2;
-                } else {
-                    maxThreads = 16;
-                }
-            }
-
-            if (minThreads < 1) {
-                minThreads = maxThreads / 4;
-            }
-
-            DefaultSmscServerContext.LOG.debug("Intializing shared thread pool executor with min/max threads of {}/{}",
-                    minThreads, maxThreads);
-            this.threadPoolExecutor = new OrderedThreadPoolExecutor(minThreads, maxThreads);
-        }
-
-        return this.threadPoolExecutor;
+    public DeliveryManagerConfig getDeliveryManagerConfig() {
+        return this.deliveryManagerConfig;
     }
 
     /**
@@ -317,6 +299,11 @@ public class DefaultSmscServerContext implements SmscServerContext {
 
     public void setConnectionConfig(ConnectionConfig connectionConfig) {
         this.connectionConfig = connectionConfig;
+    }
+
+    public void setDeliveryManagerConfig(DeliveryManagerConfig deliveryManagerConfig) {
+        this.deliveryManagerConfig = deliveryManagerConfig;
+
     }
 
     public void setListener(String name, Listener listener) {

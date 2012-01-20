@@ -19,7 +19,7 @@
 
 package org.apache.smscserver.config.spring;
 
-import org.apache.smscserver.messagemanager.DBMessageManagerFactory;
+import org.apache.smscserver.message.DBMessageManagerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;

@@ -1,4 +1,4 @@
-package org.apache.smscserver.messagemanager.impl;
+package org.apache.smscserver.message.impl;
 
 import java.util.Date;
 

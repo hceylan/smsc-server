@@ -45,7 +45,7 @@ public class SmscServerFactory {
     private final DefaultSmscServerContext serverContext;
 
     /**
-     * Creates a server with the default configuration
+     * Create a server with the default configuration.
      */
     public SmscServerFactory() {
         this.serverContext = new DefaultSmscServerContext();
@@ -64,7 +64,7 @@ public class SmscServerFactory {
     }
 
     /**
-     * Create a {@link DefaultSmscServer} instance based on the provided configuration
+     * Create a {@link DefaultSmscServer} instance based on the provided configuration.
      * 
      * @return The {@link DefaultSmscServer} instance
      */
@@ -85,7 +85,7 @@ public class SmscServerFactory {
     }
 
     /**
-     * Set the command factory to be used by servers created by this factory
+     * Set the command factory to be used by servers created by this factory.
      * 
      * @param commandFactory
      *            The {@link CommandFactory}
@@ -97,13 +97,23 @@ public class SmscServerFactory {
     }
 
     /**
-     * Set the message resource to be used with this server
+     * Set the configuration to be used for the connections.
      * 
      * @param connectionConfig
-     *            The {@link ConnectionConfig} to be used by servers created by this factory
+     *            The {@link ConnectionConfig} the configuration to be used for the connections
      */
     public void setConnectionConfig(final ConnectionConfig connectionConfig) {
         this.serverContext.setConnectionConfig(connectionConfig);
+    }
+
+    /**
+     * Set the configuration to be used for the connections.
+     * 
+     * @param deliveryManagerConfig
+     *            The {@link ConnectionConfig} to be used by servers created by this factory
+     */
+    public void setDeliveryManagerConfig(final DeliveryManagerConfig deliveryManagerConfig) {
+        this.serverContext.setDeliveryManagerConfig(deliveryManagerConfig);
     }
 
     /**

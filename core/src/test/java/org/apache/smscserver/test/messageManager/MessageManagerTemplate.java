@@ -7,8 +7,8 @@ import java.sql.Statement;
 
 import junit.framework.TestCase;
 
-import org.apache.smscserver.messagemanager.DBMessageManagerFactory;
-import org.apache.smscserver.messagemanager.impl.ShortMessageImpl;
+import org.apache.smscserver.message.DBMessageManagerFactory;
+import org.apache.smscserver.message.impl.ShortMessageImpl;
 import org.apache.smscserver.smsclet.MessageManager;
 import org.apache.smscserver.test.TestUtil;
 import org.apache.smscserver.util.DBUtils;

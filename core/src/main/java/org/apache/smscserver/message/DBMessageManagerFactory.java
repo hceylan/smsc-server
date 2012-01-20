@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.smscserver.messagemanager;
+package org.apache.smscserver.message;
 
 import java.io.InputStream;
 
@@ -25,7 +25,7 @@ import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.smscserver.SmscServerConfigurationException;
-import org.apache.smscserver.messagemanager.impl.DBMessageManager;
+import org.apache.smscserver.message.impl.DBMessageManager;
 import org.apache.smscserver.smsclet.MessageManager;
 import org.apache.smscserver.util.IoUtils;
 import org.h2.jdbcx.JdbcDataSource;

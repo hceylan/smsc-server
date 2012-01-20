@@ -25,6 +25,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import org.apache.smscserver.command.CommandFactory;
 import org.apache.smscserver.listener.Listener;
 import org.apache.smscserver.smsclet.MessageManager;
+import org.apache.smscserver.smsclet.SmscSession;
 import org.apache.smscserver.smsclet.SmscletContext;
 import org.apache.smscserver.smscletcontainer.SmscletContainer;
 
@@ -58,11 +59,11 @@ public interface SmscServerContext extends SmscletContext {
     ConnectionConfig getConnectionConfig();
 
     /**
-     * Returns the thread pool for delivery.
+     * Returns the the delivery manager configuration.
      * 
-     * @return the thread pool for delivery
+     * @return the the delivery manager configuration
      */
-    ThreadPoolExecutor getDeliveryThreadPoolExecutor();
+    DeliveryManagerConfig getDeliveryManagerConfig();
 
     /**
      * Returns the listener identified with the name

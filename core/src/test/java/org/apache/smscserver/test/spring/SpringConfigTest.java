@@ -53,8 +53,9 @@ public class SpringConfigTest extends TestCase {
         Assert.assertEquals(125, server.getServerContext().getConnectionConfig().getBindFailureDelay());
         Assert.assertEquals(4, server.getServerContext().getConnectionConfig().getMinThreads());
         Assert.assertEquals(16, server.getServerContext().getConnectionConfig().getMaxThreads());
-        Assert.assertEquals(2, server.getServerContext().getConnectionConfig().getMinDeliveryThreads());
-        Assert.assertEquals(8, server.getServerContext().getConnectionConfig().getMaxDeliveryThreads());
+        Assert.assertEquals(2, server.getServerContext().getDeliveryManagerConfig().getManagerThreads());
+        Assert.assertEquals(8, server.getServerContext().getDeliveryManagerConfig().getMinThreads());
+        Assert.assertEquals(24, server.getServerContext().getDeliveryManagerConfig().getMaxThreads());
 
         Assert.assertEquals(1000, server.getServerContext().getSessionLockTimeout());
 

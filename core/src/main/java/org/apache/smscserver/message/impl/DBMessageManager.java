@@ -14,7 +14,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.apache.smscserver.messagemanager.impl;
+package org.apache.smscserver.message.impl;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -28,7 +28,7 @@ import java.util.UUID;
 import javax.sql.DataSource;
 
 import org.apache.smscserver.SmscServerConfigurationException;
-import org.apache.smscserver.messagemanager.DBMessageManagerFactory;
+import org.apache.smscserver.message.DBMessageManagerFactory;
 import org.apache.smscserver.smsclet.MessageManager;
 import org.apache.smscserver.smsclet.ShortMessage;
 import org.apache.smscserver.smsclet.ShortMessageStatus;

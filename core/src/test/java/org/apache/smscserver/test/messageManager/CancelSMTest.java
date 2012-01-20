@@ -2,7 +2,7 @@ package org.apache.smscserver.test.messageManager;
 
 import junit.framework.Assert;
 
-import org.apache.smscserver.messagemanager.impl.ShortMessageImpl;
+import org.apache.smscserver.message.impl.ShortMessageImpl;
 import org.apache.smscserver.smsclet.ShortMessageStatus;
 import org.apache.smscserver.smsclet.SmscOriginalNotFoundException;
 

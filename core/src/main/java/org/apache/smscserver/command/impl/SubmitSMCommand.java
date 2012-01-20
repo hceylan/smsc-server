@@ -19,7 +19,7 @@ package org.apache.smscserver.command.impl;
 import org.apache.smscserver.SmscServerContext;
 import org.apache.smscserver.command.Command;
 import org.apache.smscserver.impl.DefaultSmscIoSession;
-import org.apache.smscserver.messagemanager.impl.ShortMessageImpl;
+import org.apache.smscserver.message.impl.ShortMessageImpl;
 import org.apache.smscserver.packet.impl.SmscStatusReplyImpl;
 import org.apache.smscserver.smsclet.MessageManager;
 import org.apache.smscserver.smsclet.SmscException;

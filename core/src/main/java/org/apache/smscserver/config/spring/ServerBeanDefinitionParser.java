@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.smscserver.ConnectionConfigFactory;
+import org.apache.smscserver.DeliveryManagerConfigFactory;
 import org.apache.smscserver.SmscServer;
 import org.apache.smscserver.SmscServerConfigurationException;
 import org.apache.smscserver.SmscServerFactory;
@@ -83,7 +84,7 @@ public class ServerBeanDefinitionParser extends AbstractSingleBeanDefinitionPars
             }
         }
 
-        // Configure bind limits
+        // Configure the connection config
         ConnectionConfigFactory connectionConfig = new ConnectionConfigFactory();
         if (StringUtils.hasText(element.getAttribute("max-binds"))) {
             connectionConfig.setMaxBinds(SpringUtil.parseInt(element, "max-binds"));
@@ -94,12 +95,6 @@ public class ServerBeanDefinitionParser extends AbstractSingleBeanDefinitionPars
         if (StringUtils.hasText(element.getAttribute("max-threads"))) {
             connectionConfig.setMaxThreads(SpringUtil.parseInt(element, "max-threads"));
         }
-        if (StringUtils.hasText(element.getAttribute("min-delivery-threads"))) {
-            connectionConfig.setMinDeliveryThreads(SpringUtil.parseInt(element, "min-delivery-threads"));
-        }
-        if (StringUtils.hasText(element.getAttribute("max-delivery-threads"))) {
-            connectionConfig.setMaxDeliveryThreads(SpringUtil.parseInt(element, "max-delivery-threads"));
-        }
         if (StringUtils.hasText(element.getAttribute("max-bind-failures"))) {
             connectionConfig.setMaxBindFailures(SpringUtil.parseInt(element, "max-bind-failures"));
         }
@@ -108,6 +103,21 @@ public class ServerBeanDefinitionParser extends AbstractSingleBeanDefinitionPars
         }
 
         factoryBuilder.addPropertyValue("connectionConfig", connectionConfig.createConnectionConfig());
+
+        // Configure the delivery manager
+        DeliveryManagerConfigFactory deliveryManagerConfig = new DeliveryManagerConfigFactory();
+
+        if (StringUtils.hasText(element.getAttribute("delivery-threads"))) {
+            deliveryManagerConfig.setManagerThreads(SpringUtil.parseInt(element, "delivery-threads"));
+        }
+        if (StringUtils.hasText(element.getAttribute("min-delivery-threads"))) {
+            deliveryManagerConfig.setMinThreads(SpringUtil.parseInt(element, "min-delivery-threads"));
+        }
+        if (StringUtils.hasText(element.getAttribute("max-delivery-threads"))) {
+            deliveryManagerConfig.setMaxThreads(SpringUtil.parseInt(element, "max-delivery-threads"));
+        }
+
+        factoryBuilder.addPropertyValue("deliveryManagerConfig", deliveryManagerConfig.createDeliveryManagerConfig());
 
         if (StringUtils.hasText(element.getAttribute("sessionLockTimeout"))) {
             factoryBuilder.addPropertyValue("session-lock-timeout",
