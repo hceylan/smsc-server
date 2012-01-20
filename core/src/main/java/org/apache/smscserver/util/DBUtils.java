@@ -119,7 +119,7 @@ public class DBUtils {
      */
     public static String escapeString(String input) {
         if (input == null) {
-            return input;
+            return "null";
         }
 
         StringBuilder valBuf = new StringBuilder(input);
@@ -132,7 +132,8 @@ public class DBUtils {
                 i++;
             }
         }
-        return valBuf.toString();
+
+        return "'" + valBuf.toString() + "'";
     }
 
     public static SmscException handleException(String sql, Exception e) {

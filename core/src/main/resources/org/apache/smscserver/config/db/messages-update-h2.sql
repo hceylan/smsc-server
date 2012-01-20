@@ -1,24 +1,7 @@
--- Licensed to the Apache Software Foundation (ASF) under one
--- or more contributor license agreements.  See the NOTICE file
--- distributed with this work for additional information
--- regarding copyright ownership.  The ASF licenses this file
--- to you under the Apache License, Version 2.0 (the
--- "License"); you may not use this file except in compliance
--- with the License.  You may obtain a copy of the License at
--- 
---  http://www.apache.org/licenses/LICENSE-2.0
--- 
--- Unless required by applicable law or agreed to in writing,
--- software distributed under the License is distributed on an
--- "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
--- KIND, either express or implied.  See the License for the
--- specific language governing permissions and limitations
--- under the License.
-
-UPDATE SMSC_MESSAGE 
+UPDATE SMSC_MESSAGE SET
 	datacoding = {datacoding},
 	defaultmessage = {defaultmessage},
-	destaddr = '{destaddr}',
+	destaddr = {destaddr},
 	destaddrnpi = {destaddrnpi},
 	destaddrton = {destaddrton},
 	esmclass = {esmclass},
@@ -27,14 +10,14 @@ UPDATE SMSC_MESSAGE
 	priorityflag = {priorityflag},
 	protocolid = {protocolid},
 	received = {received},
-	replacedby = '{replacedby}',
-	replaced = '{replaced}',
+	replacedby = {replacedby},
+	replaced = {replaced},
 	scheduledate = {scheduledate},
-	servicetype = '{servicetype}',
-	shortmessage = '{shortmessage}',
-	sourceaddr = '{sourceaddr}',
+	servicetype = {servicetype},
+	shortmessage = {shortmessage},
+	sourceaddr = {sourceaddr},
 	sourceaddrnpi = {sourceaddrnpi},
 	sourceaddrton = {sourceaddrton},
-	status = '{status}',
+	status = {status},
 	validityperiod = {validityperiod}
-WHERE id = '{id}';
+WHERE id = {id};

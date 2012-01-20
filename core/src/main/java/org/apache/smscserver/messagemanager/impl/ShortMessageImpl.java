@@ -35,6 +35,14 @@ public class ShortMessageImpl implements ShortMessage {
         super();
     }
 
+    public String asString(String string) {
+        if (string == null) {
+            return "null";
+        }
+
+        return "'" + string + "'";
+    }
+
     /**
      * @return the datacoding
      */

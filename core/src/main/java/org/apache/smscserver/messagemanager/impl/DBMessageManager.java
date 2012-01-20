@@ -21,7 +21,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -125,17 +124,10 @@ public class DBMessageManager implements MessageManager {
     }
 
     private Map<String, Object> populateFrom(ShortMessageImpl shortMessage) throws SmscException {
-        String id = shortMessage.getId();
-        if (id != null) {
-            this.selectShortMessage(id);
-        }
-
-        if (id == null) {
-            id = UUID.randomUUID().toString();
-            Date now = Calendar.getInstance().getTime();
-            shortMessage.setReceived(now);
-            shortMessage.setNextTryDeliverTime(shortMessage.getScheduleDeliveryTime() != null ? shortMessage
-                    .getScheduleDeliveryTime() : now);
+        if (shortMessage.getId() == null) {
+            shortMessage.setId(UUID.randomUUID().toString());
+            shortMessage.setStatus(ShortMessageStatus.PENDING);
+            shortMessage.setReceived(Calendar.getInstance().getTime());
         }
 
         Map<String, Object> map = new HashMap<String, Object>();
@@ -145,7 +137,7 @@ public class DBMessageManager implements MessageManager {
         map.put(DBMessageManager.ATTR_DESTINATION_ADDRESS_NPI, shortMessage.getDestinationAddressNPI());
         map.put(DBMessageManager.ATTR_DESTINATION_ADDRESS_TON, shortMessage.getDestinationAddressTON());
         map.put(DBMessageManager.ATTR_ESM_CLASS, shortMessage.getEsmClass());
-        map.put(DBMessageManager.ATTR_ID, DBUtils.escapeString(id));
+        map.put(DBMessageManager.ATTR_ID, DBUtils.escapeString(shortMessage.getId()));
         map.put(DBMessageManager.ATTR_MESSAGE_LENGTH, shortMessage.getMessageLength());
         map.put(DBMessageManager.ATTR_NEXT_TRY_DELIVERY_TIME, DBUtils.asString(shortMessage.getNextTryDeliverTime()));
         map.put(DBMessageManager.ATTR_PRIORITY_FLAG, shortMessage.getPriorityFlag());
@@ -154,12 +146,12 @@ public class DBMessageManager implements MessageManager {
         map.put(DBMessageManager.ATTR_REPLACED, DBUtils.escapeString(shortMessage.getReplaced()));
         map.put(DBMessageManager.ATTR_REPLACED_BY, DBUtils.escapeString(shortMessage.getReplacedBy()));
         map.put(DBMessageManager.ATTR_SCHEDULE_DATE, DBUtils.asString(shortMessage.getScheduleDeliveryTime()));
-        map.put(DBMessageManager.ATTR_SERVICE_TYPE, shortMessage.getServiceType());
+        map.put(DBMessageManager.ATTR_SERVICE_TYPE, DBUtils.escapeString(shortMessage.getServiceType()));
         map.put(DBMessageManager.ATTR_SHORT_MESSAGE, DBUtils.escapeString(shortMessage.getShortMessage()));
         map.put(DBMessageManager.ATTR_SOURCE_ADDRESS, DBUtils.escapeString(shortMessage.getSourceAddress()));
         map.put(DBMessageManager.ATTR_SOURCE_ADDRESS_NPI, shortMessage.getSourceAddressNPI());
         map.put(DBMessageManager.ATTR_SOURCE_ADDRESS_TON, shortMessage.getSourceAddressTON());
-        map.put(DBMessageManager.ATTR_STATUS, shortMessage.getStatus().toString());
+        map.put(DBMessageManager.ATTR_STATUS, shortMessage.asString(shortMessage.getStatus().toString()));
         map.put(DBMessageManager.ATTR_VALIDITY_PERIOD, DBUtils.asString(shortMessage.getValidityPeriod()));
 
         return map;
@@ -207,7 +199,7 @@ public class DBMessageManager implements MessageManager {
         }
 
         // Can we actually replace an existing short messages
-        ShortMessage oldMessage = this.selectLatestShortMessage(shortMessage.getSourceAddress(),
+        ShortMessageImpl oldMessage = (ShortMessageImpl) this.selectLatestShortMessage(shortMessage.getSourceAddress(),
                 shortMessage.getDestinationAddress(), shortMessage.getServiceType());
         if ((oldMessage == null) && replace) {
             throw new SmscCannotReplaceException();
@@ -220,29 +212,34 @@ public class DBMessageManager implements MessageManager {
 
         // is the message still pending
         if (status == ShortMessageStatus.PENDING) {
-            DBMessageManager.LOG.debug("Replcaement possible");
+            DBMessageManager.LOG.debug("Replcaement possible with {}", oldMessage.getId());
             Connection connection = null;
             Statement stmt = null;
             String sql = null;
+
             try {
                 connection = this.createConnection();
+                stmt = connection.createStatement();
 
                 // begin transaction
                 connection.setAutoCommit(false);
-
-                this.storeShortMessageImpl(shortMessage, stmt);
-                DBUtils.closeQuitely(stmt);
-
                 try {
-                    ((ShortMessageImpl) oldMessage).setReplacedBy(shortMessage.getId());
+                    shortMessage.setReplaced(oldMessage.getId());
                     this.storeShortMessageImpl(shortMessage, stmt);
+
+                    oldMessage.setReplacedBy(shortMessage.getId());
+                    this.storeShortMessageImpl(oldMessage, stmt);
+
+                    connection.commit();
                 } catch (Exception e) {
-                    connection.rollback();
+                    try {
+                        connection.rollback();
+                    } catch (Exception e2) {
+                        DBMessageManager.LOG.error("Cannot rollback operation", e2);
+                    }
 
                     throw e;
                 }
-
-                connection.commit();
 
             } catch (Exception e) {
                 DBUtils.handleException(sql, e);
@@ -266,7 +263,7 @@ public class DBMessageManager implements MessageManager {
             Map<String, Object> map = new HashMap<String, Object>();
             map.put(DBMessageManager.ATTR_SOURCE_ADDRESS, DBUtils.escapeString(sourceAddress));
             map.put(DBMessageManager.ATTR_DESTINATION_ADDRESS, DBUtils.escapeString(destinationAddress));
-            map.put(DBMessageManager.ATTR_SERVICE_TYPE, serviceType);
+            map.put(DBMessageManager.ATTR_SERVICE_TYPE, DBUtils.escapeString(serviceType));
             sql = StringUtils.replaceString(this.sqlSelectLatestReplacableMessage, map);
             DBMessageManager.LOG.debug(sql);
 
@@ -324,9 +321,6 @@ public class DBMessageManager implements MessageManager {
      */
     public void storeShortMessage(ShortMessage _shortMessage) throws SmscException {
         ShortMessageImpl shortMessage = (ShortMessageImpl) _shortMessage;
-
-        shortMessage.setStatus(ShortMessageStatus.PENDING);
-
         if (shortMessage.isReplaceIfPresent()) {
             DBMessageManager.LOG.debug("Falling back to replace...");
             this.replace(_shortMessage, false);
@@ -337,10 +331,7 @@ public class DBMessageManager implements MessageManager {
 
             try {
                 stmt = this.createConnection().createStatement();
-
                 sql = this.storeShortMessageImpl(shortMessage, stmt);
-
-                shortMessage.getId();
             } catch (Exception e) {
                 throw DBUtils.handleException(sql, e);
             } finally {
