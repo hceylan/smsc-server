@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ser="http://service.ericsson.com/serviceinterface/">
+  <soapenv:Header />
+  <soapenv:Body>
+    <ser:execute>
+      <ser:clientcredential />
+      <ser:requestparams>
+        <ser:item>
+          <ser:name>operationname</ser:name>
+          <ser:value>FullPurchaseProductId</ser:value>
+        </ser:item>
+        <ser:item>
+          <ser:name>msisdn</ser:name>
+          <ser:value>${msisdn}</ser:value>
+        </ser:item>
+        <ser:item>
+          <ser:name>serviceId</ser:name>
+          <ser:value>400</ser:value>
+        </ser:item>
+        <ser:item>
+          <ser:name>resourceType</ser:name>
+          <ser:value>Maacom-Silver</ser:value>
+        </ser:item>
+        <ser:item>
+          <ser:name>productId</ser:name>
+          <ser:value>Maacom-Silver</ser:value>
+        </ser:item>
+        <ser:item>
+          <ser:name>eventtype</ser:name>
+          <ser:value>TX_Execution</ser:value>
+        </ser:item>
+        <ser:item>
+          <ser:name>event</ser:name>
+          <ser:value>toFullPurchase</ser:value>
+        </ser:item>
+        <ser:item>
+          <ser:name>plugin</ser:name>
+          <ser:value>FulfillmentEngine</ser:value>
+        </ser:item>
+        <ser:item>
+          <ser:name>synchronous</ser:name>
+          <ser:value>false</ser:value>
+        </ser:item>
+      </ser:requestparams>
+      <ser:attachments />
+    </ser:execute>
+  </soapenv:Body>
+</soapenv:Envelope>
