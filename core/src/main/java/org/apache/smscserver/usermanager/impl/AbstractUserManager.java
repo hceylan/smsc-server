@@ -84,8 +84,7 @@ public abstract class AbstractUserManager implements UserManager {
      */
     public final User authenticate(Authentication authentication) throws SmscException {
         try {
-            User internalAuthenticate = this.internalAuthenticate(authentication);
-            return internalAuthenticate;
+            return this.internalAuthenticate(authentication);
         } catch (AuthenticationFailedException e) {
             if (this.context == null) {
                 AbstractUserManager.LOG.warn("Context is null bind statistics will not be updated!");

@@ -2,25 +2,22 @@
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 <log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/'>
 	<appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+		<param name="threshold" value="INFO"/>
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="%d{HH:mm:ss,SSS} %-5p (%-16t) [%-20c{1}] %m%n" />
 		</layout>
 	</appender>
 
 	<appender name="FILE" class="org.apache.log4j.DailyRollingFileAppender">
-		<param name="File" value="${SP_HOME}/log/spd.log" />
+		<param name="File" value="${SMSC_HOME}/log/spd.log" />
 		<param name="Append" value="true" />
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="%d{HH:mm:ss,SSS} %-5p (%-16t) [%20c] %m%n" />
 		</layout>
 	</appender>
 
-	<category name="com.ericsson">
-		<priority value="INFO" />
-	</category>
-
-	<category name="org.apache.axis">
-		<priority value="INFO" />
+	<category name="org.apache.smscserver">
+		<priority value="DEBUG" />
 	</category>
 
 	<root>

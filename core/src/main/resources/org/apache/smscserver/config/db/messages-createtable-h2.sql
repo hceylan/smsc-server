@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS SMSC_MESSAGE (
 	destaddrnpi TINYINT,
 	destaddrton TINYINT,
 	esmclass TINYINT,
-	messageLength TINYINT,
+	messageLength INTEGER,
 	nexttrydelivertime TIMESTAMP,
 	priorityflag TINYINT,
 	protocolid TINYINT,

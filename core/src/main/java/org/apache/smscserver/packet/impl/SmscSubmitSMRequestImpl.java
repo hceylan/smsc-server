@@ -91,6 +91,11 @@ public class SmscSubmitSMRequestImpl extends SubmitSM implements SubmitSMRequest
      */
     public Date getScheduleDeliveryTime() {
         SMPPDate deliveryTime = super.getDeliveryTime();
+
+        if (deliveryTime == null) {
+            return new Date(System.currentTimeMillis());
+        }
+
         if (!deliveryTime.isRelative()) {
             return deliveryTime.getCalendar().getTime();
         }
@@ -141,6 +146,11 @@ public class SmscSubmitSMRequestImpl extends SubmitSM implements SubmitSMRequest
      */
     public Date getValidityPeriod() {
         SMPPDate expiryTime = super.getExpiryTime();
+
+        if (expiryTime == null) {
+            return null;
+        }
+
         if (!expiryTime.isRelative()) {
             return expiryTime.getCalendar().getTime();
         }

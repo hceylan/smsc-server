@@ -69,7 +69,7 @@ public abstract class ClientTestTemplate extends TestCase {
 
     protected Connection connection;
 
-    private static final File USERS_FILE = new File(TestUtil.getBaseDir(), "src/test/resources/users.properties");
+    private static final File USERS_FILE = new File(TestUtil.getBaseDir(), "src/test/resources/conf/user.properties");
 
     private static final File TEST_TMP_DIR = new File("test-tmp");
 

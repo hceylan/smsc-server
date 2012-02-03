@@ -20,10 +20,13 @@
 package org.apache.smscserver.usermanager;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.smscserver.smsclet.UserManager;
 import org.apache.smscserver.usermanager.impl.PropertiesUserManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Factory for the properties file based <code>UserManager</code> implementation.
@@ -31,6 +34,8 @@ import org.apache.smscserver.usermanager.impl.PropertiesUserManager;
  * @author hceylan
  */
 public class PropertiesUserManagerFactory implements UserManagerFactory {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PropertiesUserManagerFactory.class);
 
     private String adminName = "admin";
 
@@ -40,19 +45,36 @@ public class PropertiesUserManagerFactory implements UserManagerFactory {
 
     private PasswordEncryptor passwordEncryptor = new Md5PasswordEncryptor();
 
+    private String smscHome;
+
     public PropertiesUserManagerFactory() {
         super();
+    }
+
+    public PropertiesUserManagerFactory(String smscHome) {
+        super();
+        this.smscHome = smscHome;
     }
 
     /**
      * Creates a {@link PropertiesUserManager} instance based on the provided configuration
      */
     public UserManager createUserManager() {
-        if (this.userDataURL != null) {
-            return new PropertiesUserManager(this.passwordEncryptor, this.userDataURL, this.adminName);
-        } else {
+        if (this.userDataFile != null) {
             return new PropertiesUserManager(this.passwordEncryptor, this.userDataFile, this.adminName);
         }
+
+        if ((this.userDataURL == null) && (this.smscHome != null)) {
+            try {
+                this.userDataURL = new URL("file://" + this.smscHome + "/conf/user.properties");
+
+                PropertiesUserManagerFactory.LOG.info("User Properties file is " + this.userDataURL);
+            } catch (MalformedURLException e) {
+                PropertiesUserManagerFactory.LOG.error("Error with user properties file!", e);
+            }
+        }
+
+        return new PropertiesUserManager(this.passwordEncryptor, this.userDataURL, this.adminName);
     }
 
     /**

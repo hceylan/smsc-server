@@ -32,7 +32,6 @@ import org.apache.smscserver.ConnectionConfigFactory;
 import org.apache.smscserver.DeliveryManager;
 import org.apache.smscserver.DeliveryManagerConfig;
 import org.apache.smscserver.DeliveryManagerConfigFactory;
-import org.apache.smscserver.SmscServerConfigurationException;
 import org.apache.smscserver.SmscServerContext;
 import org.apache.smscserver.command.CommandFactory;
 import org.apache.smscserver.command.CommandFactoryFactory;
@@ -64,27 +63,13 @@ public class DefaultSmscServerContext implements SmscServerContext {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultSmscServer.class);
 
     private static final List<Authority> ADMIN_AUTHORITIES = new ArrayList<Authority>();
-    private final static String SMSC_HOME = DefaultSmscServerContext.getSmscHome();
+    private final static String SMSC_HOME = System.getProperty("SMSC_HOME");
     private static final long DEFAULT_SESSION_LOCK_TIMEOUT = 1000;
 
-    private static String getSmscHome() {
-        try {
-            String smscHome = System.getProperty("SMSC_HOME");
-            if (smscHome != null) {
-                return smscHome;
-            }
-
-            smscHome = new java.io.File(".").getCanonicalPath();
-            DefaultSmscServerContext.LOG.warn("SMSC_HOME is not provided, using " + smscHome);
-
-            return smscHome;
-        } catch (Exception e) {
-            throw new SmscServerConfigurationException("Error determining SMSC_HOME", e);
-        }
-    }
-
     private MessageManager messageManager = null;
-    private UserManager userManager = new PropertiesUserManagerFactory().createUserManager();
+    private UserManager userManager = new PropertiesUserManagerFactory(System.getProperty("SMSC_HOME"))
+            .createUserManager();
+
     private DeliveryManager deliveryManager = new DefaultDeliveryManager(this);
     private SmscletContainer smscletContainer = new DefaultSmscletContainer();
 

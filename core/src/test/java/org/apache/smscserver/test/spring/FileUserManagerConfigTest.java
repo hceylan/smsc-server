@@ -36,7 +36,7 @@ import org.apache.smscserver.usermanager.impl.PropertiesUserManager;
  */
 public class FileUserManagerConfigTest extends SpringConfigTestTemplate {
 
-    private static final String USER_FILE_PATH = "src/test/resources/users.properties";
+    private static final String USER_FILE_PATH = "src/test/resources/conf/user.properties";
 
     private PropertiesUserManager createPropertiesUserManager(String config) {
         DefaultSmscServer server = (DefaultSmscServer) this.createServer(config);
@@ -54,7 +54,7 @@ public class FileUserManagerConfigTest extends SpringConfigTestTemplate {
     public void testFile() throws Throwable {
         PropertiesUserManager um = this.createPropertiesUserManager("<file-user-manager file=\""
                 + FileUserManagerConfigTest.USER_FILE_PATH + "\" />");
-        Assert.assertEquals(new File("src/test/resources/users.properties"), um.getFile());
+        Assert.assertEquals(new File("src/test/resources/conf/user.properties"), um.getFile());
     }
 
     public void testMd5PasswordEncryptor() throws Throwable {
