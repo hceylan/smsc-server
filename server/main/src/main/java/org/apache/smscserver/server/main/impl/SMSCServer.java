@@ -4,12 +4,13 @@
 package org.apache.smscserver.server.main.impl;
 
 import java.io.File;
-import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.log4j.xml.DOMConfigurator;
+import org.apache.smscserver.SmscServer;
+import org.apache.smscserver.SmscServerFactory;
 import org.apache.smscserver.server.main.SPLogger;
 
 import com.ericsson.service.server.Server;
@@ -26,10 +27,7 @@ public class SMSCServer implements Server {
 
     private static final SPLogger LOG = SPLogger.getLogger(SMSCServer.class);
 
-    private static final String MODULES_PATH = File.separator + "modules";
-
     private String serverHome;
-    private String modulesPath;
     private final Map<String, SPModule> modules;
 
     private ClassLoader classLoader;
@@ -75,28 +73,6 @@ public class SMSCServer implements Server {
         return this.serverHome;
     }
 
-    private void initializeModules() throws Exception {
-        SMSCServer.LOG.info("Initializing modules...");
-
-        this.modulesPath = this.serverHome + SMSCServer.MODULES_PATH;
-        String[] modules = new File(this.modulesPath).list();
-
-        for (String module : modules) {
-            SMSCServer.LOG.info("Found module {0}", module);
-
-            SPModule spModule = new SPModule(this.classLoader, module, this.modulesPath + File.separator + module);
-
-            this.modules.put(module, spModule);
-
-            Method method = this.classLoader.getClass().getMethod("addModuleClassLoader", ClassLoader.class);
-            method.invoke(this.classLoader, spModule.getClassLoader());
-
-            spModule.deploy();
-        }
-
-        SMSCServer.LOG.info("Modules have been initialized successfully");
-    }
-
     /**
      * Runs the server
      * 
@@ -116,9 +92,10 @@ public class SMSCServer implements Server {
         SMSCServer.LOG.info("Starting Service Portal Server...");
 
         try {
-            this.initializeModules();
-
             long time = (System.currentTimeMillis() - start);
+
+            SmscServer server = new SmscServerFactory().createServer();
+            server.start();
 
             SMSCServer.LOG.info("Service Portal has started successfully in {0} miliseconds", time);
         } catch (Exception e) {

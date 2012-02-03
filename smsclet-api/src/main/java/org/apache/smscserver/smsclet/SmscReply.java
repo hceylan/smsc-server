@@ -24,7 +24,7 @@ package org.apache.smscserver.smsclet;
  * 
  * @author hceylan
  */
-public interface SmscReply {
+public interface SmscReply extends SmscPacket {
 
     public enum ErrorCode {
 

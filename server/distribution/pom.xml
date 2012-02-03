@@ -28,7 +28,7 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<name>Standalone Server Implementation - Distribution</name>
+	<name>SMSCS Server Standalone - Distribution</name>
 
 	<artifactId>distribution</artifactId>
 	<packaging>pom</packaging>
@@ -76,7 +76,7 @@
 						<configuration>
 							<artifactItems>
 								<artifactItem>
-									<groupId>org.apache.smscserver</groupId>
+									<groupId>org.apache.smscserver.server</groupId>
 									<artifactId>bootstrap</artifactId>
 									<version>${project.version}</version>
 									<outputDirectory>${project.build.directory}</outputDirectory>
@@ -85,6 +85,7 @@
 							</artifactItems>
 						</configuration>
 					</execution>
+						<!-- 
 					<execution>
 						<id>copy-modules</id>
 						<phase>package</phase>
@@ -92,7 +93,6 @@
 							<goal>copy</goal>
 						</goals>
 						<configuration>
-						<!-- 
 							<artifactItems>
 								<artifactItem>
 									<groupId>com.ericsson.serviceportal.modules</groupId>
@@ -100,9 +100,9 @@
 									<outputDirectory>${project.build.directory}/modules/MyModule/bin</outputDirectory>
 								</artifactItem>
 							</artifactItems>
-						 -->
 						</configuration>
 					</execution>
+						 -->
 				</executions>
 			</plugin>
 
@@ -134,5 +134,12 @@
 			<groupId>org.apache.smscserver.server</groupId>
 			<artifactId>main</artifactId>
 		</dependency>
+		
+		<!-- DB Support -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+		</dependency>
+		
 	</dependencies>
 </project>

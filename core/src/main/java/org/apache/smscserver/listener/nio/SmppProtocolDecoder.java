@@ -31,6 +31,7 @@ import org.apache.mina.filter.codec.ProtocolDecoderOutput;
 import org.apache.smscserver.packet.impl.SmscBindRequestImpl;
 import org.apache.smscserver.packet.impl.SmscCancelSMRequestImpl;
 import org.apache.smscserver.packet.impl.SmscDataSMRequestImpl;
+import org.apache.smscserver.packet.impl.SmscDeliverSMResponseImpl;
 import org.apache.smscserver.packet.impl.SmscEnquireLinkRequestImpl;
 import org.apache.smscserver.packet.impl.SmscMsgDetailsRequestImpl;
 import org.apache.smscserver.packet.impl.SmscOutbindRequestImpl;
@@ -41,7 +42,7 @@ import org.apache.smscserver.packet.impl.SmscReplaceSMRequestImpl;
 import org.apache.smscserver.packet.impl.SmscSubmitMultiRequestImpl;
 import org.apache.smscserver.packet.impl.SmscSubmitSMRequestImpl;
 import org.apache.smscserver.packet.impl.SmscUnbindRequestImpl;
-import org.apache.smscserver.smsclet.SmscRequest;
+import org.apache.smscserver.smsclet.SmscPacket;
 
 /**
  * <strong>Internal class, do not use directly.</strong>
@@ -79,61 +80,61 @@ public class SmppProtocolDecoder extends CumulativeProtocolDecoder {
 
         byte[] body = this.readBody(is, length - 16);
 
-        SmscRequest request = null;
+        SmscPacket packet = null;
         switch (id) {
         case SMPPPacket.BIND_RECEIVER:
-            request = new SmscBindRequestImpl(SMPPPacket.BIND_RECEIVER, sequenceNum, body);
+            packet = new SmscBindRequestImpl(SMPPPacket.BIND_RECEIVER, sequenceNum, body);
             break;
         case SMPPPacket.BIND_TRANSCEIVER:
-            request = new SmscBindRequestImpl(SMPPPacket.BIND_TRANSCEIVER, sequenceNum, body);
+            packet = new SmscBindRequestImpl(SMPPPacket.BIND_TRANSCEIVER, sequenceNum, body);
             break;
         case SMPPPacket.BIND_TRANSMITTER:
-            request = new SmscBindRequestImpl(SMPPPacket.BIND_TRANSMITTER, sequenceNum, body);
+            packet = new SmscBindRequestImpl(SMPPPacket.BIND_TRANSMITTER, sequenceNum, body);
             break;
         case SMPPPacket.CANCEL_SM:
-            request = new SmscCancelSMRequestImpl(sequenceNum, body);
+            packet = new SmscCancelSMRequestImpl(sequenceNum, body);
             break;
         case SMPPPacket.DATA_SM:
-            request = new SmscDataSMRequestImpl(sequenceNum, body);
+            packet = new SmscDataSMRequestImpl(sequenceNum, body);
             break;
         case SMPPPacket.DELIVER_SM_RESP:
-            request = new SmscDeliverSMResponseImpl(id, , body);
+            packet = new SmscDeliverSMResponseImpl(sequenceNum, body);
             break;
         case SMPPPacket.ENQUIRE_LINK:
-            request = new SmscEnquireLinkRequestImpl(sequenceNum, body);
+            packet = new SmscEnquireLinkRequestImpl(sequenceNum, body);
             break;
         case SMPPPacket.OUTBIND:
-            request = new SmscOutbindRequestImpl(sequenceNum, body);
+            packet = new SmscOutbindRequestImpl(sequenceNum, body);
             break;
         case SMPPPacket.PARAM_RETRIEVE:
-            request = new SmscParamRetrieveRequestImpl(sequenceNum, body);
+            packet = new SmscParamRetrieveRequestImpl(sequenceNum, body);
             break;
         case SMPPPacket.QUERY_LAST_MSGS:
-            request = new SmscQueryLastMsgsRequestImpl(sequenceNum, body);
+            packet = new SmscQueryLastMsgsRequestImpl(sequenceNum, body);
             break;
         case SMPPPacket.QUERY_MSG_DETAILS:
-            request = new SmscMsgDetailsRequestImpl(sequenceNum, body);
+            packet = new SmscMsgDetailsRequestImpl(sequenceNum, body);
             break;
         case SMPPPacket.QUERY_SM:
-            request = new SmscQuerySMRequestImpl(sequenceNum, body);
+            packet = new SmscQuerySMRequestImpl(sequenceNum, body);
             break;
         case SMPPPacket.REPLACE_SM:
-            request = new SmscReplaceSMRequestImpl(sequenceNum, body);
+            packet = new SmscReplaceSMRequestImpl(sequenceNum, body);
             break;
         case SMPPPacket.SUBMIT_MULTI:
-            request = new SmscSubmitMultiRequestImpl(sequenceNum, body);
+            packet = new SmscSubmitMultiRequestImpl(sequenceNum, body);
             break;
         case SMPPPacket.SUBMIT_SM:
-            request = new SmscSubmitSMRequestImpl(sequenceNum, body);
+            packet = new SmscSubmitSMRequestImpl(sequenceNum, body);
             break;
         case SMPPPacket.UNBIND:
-            request = new SmscUnbindRequestImpl(sequenceNum, body);
+            packet = new SmscUnbindRequestImpl(sequenceNum, body);
             break;
         default:
             break;
         }
 
-        out.write(request);
+        out.write(packet);
 
         return in.remaining() >= 16;
     }

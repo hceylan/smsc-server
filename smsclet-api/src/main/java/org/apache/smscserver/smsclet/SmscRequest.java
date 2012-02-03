@@ -26,7 +26,7 @@ import java.util.UUID;
  * 
  * @author hceylan
  */
-public interface SmscRequest {
+public interface SmscRequest extends SmscPacket {
 
     /**
      * Get the Command Id of this SMPP packet.
