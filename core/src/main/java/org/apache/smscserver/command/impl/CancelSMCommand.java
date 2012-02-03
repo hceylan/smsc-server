@@ -63,6 +63,7 @@ public class CancelSMCommand implements Command {
         shortMessage.setDestinationAddressNPI(submitSMRequest.getDestinationAddressNPI());
         shortMessage.setDestinationAddressTON(submitSMRequest.getDestinationAddressTON());
         shortMessage.setScheduleDeliveryTime(submitSMRequest.getScheduleDeliveryTime());
+
         // FIXME: HCEYLAN check source address for spoofing
         // FIXME: Create a source addr filter
         shortMessage.setSourceAddress(submitSMRequest.getSourceAddress() != null ? submitSMRequest.getSourceAddress()

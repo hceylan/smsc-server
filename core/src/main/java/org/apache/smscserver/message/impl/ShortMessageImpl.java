@@ -1,3 +1,19 @@
+/**
+ *  Licensed to the Apache Software Foundation (ASF) under one or more
+ *  contributor license agreements.  See the NOTICE file distributed with
+ *  this work for additional information regarding copyright ownership.
+ *  The ASF licenses this file to You under the Apache License, Version 2.0
+ *  (the "License"); you may not use this file except in compliance with
+ *  the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.apache.smscserver.message.impl;
 
 import java.util.Date;
@@ -5,6 +21,13 @@ import java.util.Date;
 import org.apache.smscserver.smsclet.ShortMessage;
 import org.apache.smscserver.smsclet.ShortMessageStatus;
 
+/**
+ * <strong>Internal class, do not use directly.</strong>
+ * <p>
+ * Implementation of {@link ShortMessage}
+ * 
+ * @author hceylan
+ */
 public class ShortMessageImpl implements ShortMessage {
 
     private int datacoding;
@@ -114,6 +137,10 @@ public class ShortMessageImpl implements ShortMessage {
         return this.messageLength;
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     */
     public Date getNextTryDeliverTime() {
         return this.nextTryDeliverTime;
     }
@@ -141,6 +168,10 @@ public class ShortMessageImpl implements ShortMessage {
         return this.protocolId;
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     */
     public Date getReceived() {
         return this.received;
     }
@@ -223,6 +254,11 @@ public class ShortMessageImpl implements ShortMessage {
         return this.validityPeriod;
     }
 
+    /**
+     * Returns if the message will be replaced if a matching message exists.
+     * 
+     * @return if the message will be replaced if a matching message exists
+     */
     public boolean isReplaceIfPresent() {
         return this.replaceIfPresent;
     }
@@ -291,9 +327,12 @@ public class ShortMessageImpl implements ShortMessage {
         this.messageLength = messageLength;
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     */
     public void setNextTryDeliverTime(Date nextTryDeliverTime) {
         this.nextTryDeliverTime = nextTryDeliverTime;
-
     }
 
     /**

@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.net.ssl.SSLPeerUnverifiedException;
@@ -59,31 +60,38 @@ import org.slf4j.LoggerFactory;
  * @author hceylan
  * 
  */
-public class DefaultSmscIoSession implements SmscIoSession, IoSession {
+public class DefaultSmscIoSession implements SmscIoSession {
 
-    public static final String ATTRIBUTE_PREFIX = "org.apache.smscserver.test.";
-
-    private static final String ATTRIBUTE_SESSION_ID = DefaultSmscIoSession.ATTRIBUTE_PREFIX + "session-id";
-    private static final String ATTRIBUTE_USER = DefaultSmscIoSession.ATTRIBUTE_PREFIX + "user";
-    private static final String ATTRIBUTE_BIND_TIME = DefaultSmscIoSession.ATTRIBUTE_PREFIX + "bind-time";
-    private static final String ATTRIBUTE_FAILED_BINDS = DefaultSmscIoSession.ATTRIBUTE_PREFIX + "failed-binds";
-    private static final String ATTRIBUTE_LISTENER = DefaultSmscIoSession.ATTRIBUTE_PREFIX + "listener";
-    private static final String ATTRIBUTE_MAX_IDLE_TIME = DefaultSmscIoSession.ATTRIBUTE_PREFIX + "max-idle-time";
-    private static final String ATTRIBUTE_LAST_ACCESS_TIME = DefaultSmscIoSession.ATTRIBUTE_PREFIX + "last-access-time";
-    private static final String ATTRIBUTE_CACHED_REMOTE_ADDRESS = DefaultSmscIoSession.ATTRIBUTE_PREFIX
+    private static final String ATTRIBUTE_SESSION_ID = SmscIoSession.ATTRIBUTE_PREFIX + "session-id";
+    private static final String ATTRIBUTE_USER = SmscIoSession.ATTRIBUTE_PREFIX + "user";
+    private static final String ATTRIBUTE_BIND_TIME = SmscIoSession.ATTRIBUTE_PREFIX + "bind-time";
+    private static final String ATTRIBUTE_FAILED_BINDS = SmscIoSession.ATTRIBUTE_PREFIX + "failed-binds";
+    private static final String ATTRIBUTE_LISTENER = SmscIoSession.ATTRIBUTE_PREFIX + "listener";
+    private static final String ATTRIBUTE_MAX_IDLE_TIME = SmscIoSession.ATTRIBUTE_PREFIX + "max-idle-time";
+    private static final String ATTRIBUTE_LAST_ACCESS_TIME = SmscIoSession.ATTRIBUTE_PREFIX + "last-access-time";
+    private static final String ATTRIBUTE_CACHED_REMOTE_ADDRESS = SmscIoSession.ATTRIBUTE_PREFIX
             + "cached-remote-address";
 
     private final IoSession wrappedSession;
-    private final SmscServerContext context;
+    private final SmscServerContext serverContext;
     private boolean consumed = false;
     private SmscRequest request;
     private final ReentrantLock lock;
 
+    private final AtomicInteger sequenceNumber = new AtomicInteger();
+
     public DefaultSmscIoSession(IoSession wrappedSession, SmscServerContext context) {
         this.wrappedSession = wrappedSession;
-        this.context = context;
+        this.serverContext = context;
 
         this.lock = new ReentrantLock();
+    }
+
+    public void clearUser() {
+        DefaultSmscStatistics statistics = (DefaultSmscStatistics) this.serverContext.getSmscStatistics();
+        statistics.setUnbind(this);
+        this.setAttribute(DefaultSmscIoSession.ATTRIBUTE_USER, null);
+        this.serverContext.getDeliveryManager().closeBoundSession(this);
     }
 
     /**
@@ -326,6 +334,14 @@ public class DefaultSmscIoSession implements SmscIoSession, IoSession {
 
     public int getMaxIdleTime() {
         return (Integer) this.getAttribute(DefaultSmscIoSession.ATTRIBUTE_MAX_IDLE_TIME, 0);
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     */
+    public int getNextSequnce() {
+        return this.sequenceNumber.incrementAndGet();
     }
 
     /**
@@ -609,7 +625,7 @@ public class DefaultSmscIoSession implements SmscIoSession, IoSession {
      * 
      */
     public synchronized boolean lock() {
-        long timeout = this.context.getSessionLockTimeout();
+        long timeout = this.serverContext.getSessionLockTimeout();
 
         try {
             return this.lock.tryLock(timeout, TimeUnit.MILLISECONDS);
@@ -748,14 +764,13 @@ public class DefaultSmscIoSession implements SmscIoSession, IoSession {
         this.request = request;
     }
 
-    public void setUser(User user) {
-        DefaultSmscStatistics statistics = (DefaultSmscStatistics) this.context.getSmscStatistics();
-        if (user != null) {
-            this.setAttribute(DefaultSmscIoSession.ATTRIBUTE_USER, user);
-            statistics.setBind(this);
-        } else {
-            statistics.setUnbind(this);
-            this.setAttribute(DefaultSmscIoSession.ATTRIBUTE_USER, user);
+    public void setUser(User user, boolean receiver) {
+        DefaultSmscStatistics statistics = (DefaultSmscStatistics) this.serverContext.getSmscStatistics();
+        this.setAttribute(DefaultSmscIoSession.ATTRIBUTE_USER, user);
+        statistics.setBind(this);
+
+        if (receiver) {
+            this.serverContext.getDeliveryManager().newBoundSession(this);
         }
     }
 
@@ -792,8 +807,8 @@ public class DefaultSmscIoSession implements SmscIoSession, IoSession {
     }
 
     public void unbindUser() {
-        if (((ServerSmscStatistics) this.context.getSmscStatistics()) != null) {
-            ((ServerSmscStatistics) this.context.getSmscStatistics()).setUnbind(this);
+        if (((ServerSmscStatistics) this.serverContext.getSmscStatistics()) != null) {
+            ((ServerSmscStatistics) this.serverContext.getSmscStatistics()).setUnbind(this);
 
             LoggerFactory.getLogger(this.getClass()).debug("Statistics unbind decreased due to user unbind");
         } else {
@@ -858,5 +873,4 @@ public class DefaultSmscIoSession implements SmscIoSession, IoSession {
 
         return future;
     }
-
 }

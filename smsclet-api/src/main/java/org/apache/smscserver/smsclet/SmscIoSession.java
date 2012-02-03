@@ -18,12 +18,23 @@ package org.apache.smscserver.smsclet;
 
 import java.net.SocketAddress;
 
+import org.apache.mina.core.session.IoSession;
+
 /**
  * 
  * 
  * @version $Rev$ $Date$
  */
-public interface SmscIoSession {
+public interface SmscIoSession extends IoSession {
+
+    final String ATTRIBUTE_PREFIX = "org.apache.smscserver.";
+
+    /**
+     * Returns the next sequence number the server should use for sending requests to client.
+     * 
+     * @return the next sequence number
+     */
+    int getNextSequnce();
 
     /**
      * Returns the socket address of remote peer.

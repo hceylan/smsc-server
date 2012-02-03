@@ -116,6 +116,12 @@ public class ServerBeanDefinitionParser extends AbstractSingleBeanDefinitionPars
         if (StringUtils.hasText(element.getAttribute("max-delivery-threads"))) {
             deliveryManagerConfig.setMaxThreads(SpringUtil.parseInt(element, "max-delivery-threads"));
         }
+        if (StringUtils.hasText(element.getAttribute("delivery-retry-periods"))) {
+            deliveryManagerConfig.setDeliveryRetryPeriods(element.getAttribute("delivery-retry-periods"));
+        }
+        if (StringUtils.hasText(element.getAttribute("delivery-poll-time"))) {
+            deliveryManagerConfig.setDeliveryPollTime(SpringUtil.parseInt(element, "delivery-poll-time"));
+        }
 
         factoryBuilder.addPropertyValue("deliveryManagerConfig", deliveryManagerConfig.createDeliveryManagerConfig());
 

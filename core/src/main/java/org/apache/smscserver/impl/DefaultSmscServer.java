@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.smscserver.DeliveryManager;
 import org.apache.smscserver.SmscServer;
 import org.apache.smscserver.SmscServerContext;
 import org.apache.smscserver.SmscServerFactory;
@@ -113,6 +114,8 @@ public class DefaultSmscServer implements SmscServer {
             return;
         }
 
+        this.serverContext.getDeliveryManager().resume();
+
         DefaultSmscServer.LOG.debug("Resuming server");
         Map<String, Listener> listeners = this.serverContext.getListeners();
         for (Listener listener : listeners.values()) {
@@ -120,6 +123,7 @@ public class DefaultSmscServer implements SmscServer {
         }
 
         this.suspended = false;
+
         DefaultSmscServer.LOG.debug("Server resumed");
     }
 
@@ -128,7 +132,7 @@ public class DefaultSmscServer implements SmscServer {
      * 
      * @throws SmscException
      */
-    public void start() throws SmscException {
+    public synchronized void start() throws SmscException {
         if (this.serverContext == null) {
             // we have already been stopped, can not be restarted
             throw new IllegalStateException("SmscServer has been stopped. Restart is not supported");
@@ -137,6 +141,11 @@ public class DefaultSmscServer implements SmscServer {
         List<Listener> startedListeners = new ArrayList<Listener>();
 
         try {
+            DeliveryManager deliveryManager = this.serverContext.getDeliveryManager();
+            deliveryManager.start();
+
+            this.serverContext.setDeliveryManager(deliveryManager);
+
             Map<String, Listener> listeners = this.serverContext.getListeners();
             for (Listener listener : listeners.values()) {
                 listener.start(this.serverContext);
@@ -168,11 +177,14 @@ public class DefaultSmscServer implements SmscServer {
      * Stop the server. Stopping the server will close completely and it not supported to restart using {@link #start()}
      * .
      */
-    public void stop() {
+    public synchronized void stop() {
         if (this.serverContext == null) {
             // we have already been stopped, ignore
             return;
         }
+
+        this.serverContext.getDeliveryManager().destroy();
+        this.serverContext.setDeliveryManager(null);
 
         // stop all listeners
         Map<String, Listener> listeners = this.serverContext.getListeners();
@@ -201,13 +213,17 @@ public class DefaultSmscServer implements SmscServer {
         }
 
         DefaultSmscServer.LOG.debug("Suspending server");
+
         // stop all listeners
         Map<String, Listener> listeners = this.serverContext.getListeners();
         for (Listener listener : listeners.values()) {
             listener.suspend();
         }
 
+        this.serverContext.getDeliveryManager().suspend();
+
         this.suspended = true;
+
         DefaultSmscServer.LOG.debug("Server suspended");
     }
 }

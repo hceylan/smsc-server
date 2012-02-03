@@ -32,14 +32,49 @@ public class DeliveryManagerConfigFactory {
     private int managerThreads = 2;
     private int maxThreads = 8;
     private int minThreads = 2;
+    private long[] periods;
+    private int deliveryPollTime;
 
     /**
      * Create a connection configuration instances based on the configuration on this factory
      * 
-     * @return The {@link ConnectionConfig} instance
+     * @return The {@link DeliveryManagerConfig} instance
      */
     public DeliveryManagerConfig createDeliveryManagerConfig() {
-        return new DefaultDeliveryManagerConfig(this.managerThreads, this.minThreads, this.maxThreads);
+        return new DefaultDeliveryManagerConfig(this.managerThreads, this.minThreads, this.maxThreads, this.periods,
+                this.deliveryPollTime);
+    }
+
+    /**
+     * Sets the time in seconds, how long message poller should wait for next message poll.
+     * 
+     * @param deliveryPollTime
+     *            the time in seconds
+     */
+    public void setDeliveryPollTime(int deliveryPollTime) {
+        this.deliveryPollTime = deliveryPollTime;
+    }
+
+    /**
+     * Sets the delivery retry periods.
+     * <p>
+     * Delivery retry periods must be in the form of array of seconds i.e.: <code>60, 3600, 86400, 604800</code>
+     * 
+     * @param attribute
+     */
+    public void setDeliveryRetryPeriods(String attribute) {
+        String[] periodsStrs = attribute.split(",");
+
+        this.periods = new long[periodsStrs.length];
+        int i = 0;
+        for (String periodStr : periodsStrs) {
+            try {
+                this.periods[i++] = Long.parseLong(periodStr.trim());
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException(
+                        "Delivery periods setting is invalid! Must be in the form of i.e.: 60, 3600, 86400, 604800");
+            }
+        }
     }
 
     /**

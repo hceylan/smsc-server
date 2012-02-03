@@ -19,6 +19,7 @@
 
 package org.apache.smscserver.smsclet;
 
+
 /**
  * A smsclet configuration object used by a smsclet container used to pass information to a smsclet during
  * initialization. The configuration information contains initialization parameters.

@@ -48,6 +48,8 @@
 			<xs:attribute name="delivery-threads" type="xs:int" />
 			<xs:attribute name="max-delivery-threads" type="xs:int" />
 			<xs:attribute name="min-delivery-threads" type="xs:int" />
+			<xs:attribute name="delivery-retry-periods" type="xs:string" />
+			<xs:attribute name="delivery-poll-time" type="xs:int" />
 		</xs:complexType>
 	</xs:element>
 
@@ -200,7 +202,7 @@
 		</xs:complexType>
 	</xs:element>
 
-	<!-- Element used to configure a database based user manager -->
+	<!-- Element used to configure a message manager -->
 	<xs:element name="message-manager">
 		<xs:complexType>
 			<xs:sequence>

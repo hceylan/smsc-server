@@ -19,6 +19,7 @@
 
 package org.apache.smscserver.smsclet;
 
+
 /**
  * 
  * User manager interface.

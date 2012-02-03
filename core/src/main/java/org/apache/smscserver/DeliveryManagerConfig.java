@@ -29,6 +29,22 @@ package org.apache.smscserver;
 public interface DeliveryManagerConfig {
 
     /**
+     * Returns the delivery periods.
+     * <p>
+     * Delivery periods ued to reschedule next delivery trial based on an error.
+     * 
+     * @return the delivery periods
+     */
+    long[] getDeliveryPeriods();
+
+    /**
+     * Returns the time in seconds, how long message poller should wait for next message poll.
+     * 
+     * @return the time in seconds, how long message poller should wait for next message poll.
+     */
+    int getDeliveryPollTime();
+
+    /**
      * Returns the number of threads the server to create for mnaging delivery.
      * 
      * @return the number of threads the server to create for mnaging delivery

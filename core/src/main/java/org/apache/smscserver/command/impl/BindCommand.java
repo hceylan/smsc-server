@@ -16,6 +16,8 @@
  */
 package org.apache.smscserver.command.impl;
 
+import ie.omk.smpp.message.SMPPPacket;
+
 import org.apache.smscserver.SmscServerContext;
 import org.apache.smscserver.command.Command;
 import org.apache.smscserver.impl.DefaultSmscIoSession;
@@ -72,8 +74,9 @@ public class BindCommand implements Command {
         User user;
         try {
             user = context.getUserManager().authenticate(authentication);
-            session.setUser(user);
 
+            boolean receiving = bindRequest.getCommandId() != SMPPPacket.BIND_TRANSMITTER;
+            session.setUser(user, receiving);
         } catch (AuthenticationFailedException e) {
             return new SmscStatusReplyImpl(request, SmscReply.ErrorCode.ESME_RBINDFAIL);
         } catch (SmscException e) {

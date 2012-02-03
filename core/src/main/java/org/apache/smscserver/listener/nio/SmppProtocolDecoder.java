@@ -31,7 +31,6 @@ import org.apache.mina.filter.codec.ProtocolDecoderOutput;
 import org.apache.smscserver.packet.impl.SmscBindRequestImpl;
 import org.apache.smscserver.packet.impl.SmscCancelSMRequestImpl;
 import org.apache.smscserver.packet.impl.SmscDataSMRequestImpl;
-import org.apache.smscserver.packet.impl.SmscDeliverSMRequestImpl;
 import org.apache.smscserver.packet.impl.SmscEnquireLinkRequestImpl;
 import org.apache.smscserver.packet.impl.SmscMsgDetailsRequestImpl;
 import org.apache.smscserver.packet.impl.SmscOutbindRequestImpl;
@@ -97,8 +96,8 @@ public class SmppProtocolDecoder extends CumulativeProtocolDecoder {
         case SMPPPacket.DATA_SM:
             request = new SmscDataSMRequestImpl(sequenceNum, body);
             break;
-        case SMPPPacket.DELIVER_SM:
-            request = new SmscDeliverSMRequestImpl(sequenceNum, body);
+        case SMPPPacket.DELIVER_SM_RESP:
+            request = new SmscDeliverSMResponseImpl(id, , body);
             break;
         case SMPPPacket.ENQUIRE_LINK:
             request = new SmscEnquireLinkRequestImpl(sequenceNum, body);

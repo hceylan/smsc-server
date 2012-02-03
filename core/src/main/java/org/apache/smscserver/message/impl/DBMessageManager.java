@@ -22,6 +22,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -34,6 +35,7 @@ import org.apache.smscserver.smsclet.ShortMessage;
 import org.apache.smscserver.smsclet.ShortMessageStatus;
 import org.apache.smscserver.smsclet.SmscException;
 import org.apache.smscserver.smsclet.SmscOriginalNotFoundException;
+import org.apache.smscserver.smsclet.User;
 import org.apache.smscserver.util.DBUtils;
 import org.apache.smscserver.util.StringUtils;
 import org.slf4j.Logger;
@@ -152,6 +154,11 @@ public class DBMessageManager implements MessageManager {
 
     private Connection createConnection() throws SQLException {
         return DBUtils.createConnection(this.datasource);
+    }
+
+    public List<ShortMessage> getPendingMessagesForUser(User user) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     private Map<String, Object> populateFrom(ShortMessageImpl shortMessage) throws SmscException {
@@ -370,13 +377,35 @@ public class DBMessageManager implements MessageManager {
      */
     public void submitSM(ShortMessage _shortMessage) throws SmscException {
         ShortMessageImpl shortMessage = (ShortMessageImpl) _shortMessage;
+
         if (shortMessage.isReplaceIfPresent()) {
             DBMessageManager.LOG.debug("Falling back to replace...");
+
             boolean replaced = this.replaceImpl(_shortMessage, false);
             if (replaced) {
                 return;
             }
         }
+
+        Statement stmt = null;
+        String sql = null;
+
+        try {
+            stmt = this.createConnection().createStatement();
+            sql = this.storeShortMessageImpl(shortMessage, stmt);
+        } catch (Exception e) {
+            throw DBUtils.handleException(sql, e);
+        } finally {
+            DBUtils.closeQuitelyWithConnection(stmt);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     */
+    public void updateMesage(ShortMessage _shortMessage) throws SmscException {
+        ShortMessageImpl shortMessage = (ShortMessageImpl) _shortMessage;
 
         Statement stmt = null;
         String sql = null;

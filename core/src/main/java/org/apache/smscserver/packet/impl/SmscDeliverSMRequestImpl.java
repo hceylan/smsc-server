@@ -15,13 +15,10 @@ public class SmscDeliverSMRequestImpl extends DeliverSM implements DeliverSMRequ
 
     private UUID id;
 
-    public SmscDeliverSMRequestImpl(int sequenceNum, byte[] body) {
+    public SmscDeliverSMRequestImpl(int sequenceNum) {
         super();
 
         this.sequenceNum = sequenceNum;
-
-        this.readBodyFrom(body, 0);
-
     }
 
     /**

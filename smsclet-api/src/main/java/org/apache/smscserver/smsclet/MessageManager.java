@@ -19,6 +19,8 @@
 
 package org.apache.smscserver.smsclet;
 
+import java.util.List;
+
 /**
  * 
  * User manager interface.
@@ -37,6 +39,15 @@ public interface MessageManager {
      *             if the original not found
      */
     public void cancelSM(ShortMessage shortMessage) throws SmscException, SmscOriginalNotFoundException;
+
+    /**
+     * Returns the pending messages for the user.
+     * 
+     * @param user
+     *            the user to check whose mesages are pending
+     * @return the pending messages for the user
+     */
+    public List<ShortMessage> getPendingMessagesForUser(User user);
 
     /**
      * Replaces a message with the new one.
@@ -68,4 +79,13 @@ public interface MessageManager {
      * @throws SmscException
      */
     public void submitSM(ShortMessage shortMessage) throws SmscException;
+
+    /**
+     * Updates the short message.
+     * 
+     * @param message
+     *            the message to update
+     * @throws SmscException
+     */
+    public void updateMesage(ShortMessage message) throws SmscException;
 }

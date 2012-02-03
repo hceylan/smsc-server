@@ -59,6 +59,13 @@ public interface SmscServerContext extends SmscletContext {
     ConnectionConfig getConnectionConfig();
 
     /**
+     * Returns the delivery manager.
+     * 
+     * @return the delivery manager
+     */
+    DeliveryManager getDeliveryManager();
+
+    /**
      * Returns the the delivery manager configuration.
      * 
      * @return the the delivery manager configuration
@@ -107,4 +114,12 @@ public interface SmscServerContext extends SmscletContext {
      * @return the thread pool executor for this context.
      */
     ThreadPoolExecutor getThreadPoolExecutor();
+
+    /**
+     * Set the delivery manager.
+     * 
+     * @param deliveryManager
+     *            the delivery manager to set
+     */
+    void setDeliveryManager(DeliveryManager deliveryManager);
 }

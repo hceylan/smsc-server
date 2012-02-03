@@ -33,18 +33,53 @@ public class DefaultDeliveryManagerConfig implements DeliveryManagerConfig {
     private final int managerThreads;
     private final int maxThreads;
     private final int minThreads;
+    private final long[] deliveryPeriods;
+    private final int deliveryPollTime;
 
+    /**
+     * Default constructor with all defaults.
+     */
     public DefaultDeliveryManagerConfig() {
-        this(2, 8, 2);
+        this(2, 8, 2, new long[] { 60, 3600, 86400, 604800 }, 30);
     }
 
     /**
      * Internal constructor, do not use directly. Use {@link ConnectionConfigFactory} instead
+     * 
+     * @param managerThreads
+     *            the number of manager threads to manage delivery
+     * @param minThreads
+     *            the minimum number of delivery worker threads
+     * @param maxThreads
+     *            the maximum number of delivery worker threads
+     * @param deliveryPeriods
+     *            the delivery retry periods for individual short messages
+     * @param deliveryPollTime
+     *            specifies the time in seconds, how long message poller should wait for next message poll.
      */
-    public DefaultDeliveryManagerConfig(int managerThreads, int minThreads, int maxThreads) {
+    public DefaultDeliveryManagerConfig(int managerThreads, int minThreads, int maxThreads, long[] deliveryPeriods,
+            int deliveryPollTime) {
         this.managerThreads = managerThreads;
         this.minThreads = minThreads;
         this.maxThreads = maxThreads;
+        this.deliveryPeriods = deliveryPeriods;
+        this.deliveryPollTime = deliveryPollTime;
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     */
+    public long[] getDeliveryPeriods() {
+        return this.deliveryPeriods;
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     */
+    public int getDeliveryPollTime() {
+        return this.deliveryPollTime;
     }
 
     /**

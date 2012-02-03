@@ -42,6 +42,7 @@ import org.slf4j.LoggerFactory;
  * @author hceylan
  */
 public class CommandFactoryFactory {
+
     private static final Logger LOG = LoggerFactory.getLogger(CommandFactoryFactory.class);
 
     private static final Map<Integer, Command> DEFAULT_COMMAND_MAP = new HashMap<Integer, Command>();

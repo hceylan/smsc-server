@@ -26,6 +26,7 @@ import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.apache.smscserver.impl.DefaultSmscIoSession;
 import org.apache.smscserver.listener.Listener;
+import org.apache.smscserver.smsclet.SmscIoSession;
 import org.apache.smscserver.smsclet.SmscReply;
 import org.apache.smscserver.smsclet.SmscRequest;
 
@@ -55,7 +56,7 @@ public interface SmscHandler {
     /**
      * Invoked when a message written by {@link IoSession#write(Object)} is sent out.
      */
-    void messageSent(DefaultSmscIoSession session, SmscReply reply) throws Exception;
+    void messageSent(SmscIoSession session, SmscReply reply) throws Exception;
 
     /**
      * Invoked when a connection is closed.

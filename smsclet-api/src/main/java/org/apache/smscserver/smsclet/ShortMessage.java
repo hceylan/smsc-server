@@ -77,6 +77,13 @@ public interface ShortMessage {
     int getMessageLength();
 
     /**
+     * Returns the next time the message will be tried to deliver.
+     * 
+     * @return the next time the message will be tried to deliver
+     */
+    Date getNextTryDeliverTime();
+
+    /**
      * Designates the priority level of the message.
      * 
      * @return the priority level of the message
@@ -89,6 +96,13 @@ public interface ShortMessage {
      * @return the Protocol Identifier
      */
     int getProtocolId();
+
+    /**
+     * Returns the date (time) the message was received.
+     * 
+     * @return the date (time) the message was received
+     */
+    Date getReceived();
 
     /**
      * Returns the id of the short message which this message replaces.
@@ -179,4 +193,20 @@ public interface ShortMessage {
      * @return the validity period of this message or NULL
      */
     Date getValidityPeriod();
+
+    /**
+     * Sets the next time the message will be tried to be delivered.
+     * 
+     * @param nextTryDeliverTime
+     *            the time to try
+     */
+    void setNextTryDeliverTime(Date nextTryDeliverTime);
+
+    /**
+     * Sets the new status for the message
+     * 
+     * @param status
+     *            the status to set.
+     */
+    void setStatus(ShortMessageStatus status);
 }

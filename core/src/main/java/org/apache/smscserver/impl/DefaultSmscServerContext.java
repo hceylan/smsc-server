@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.mina.filter.executor.OrderedThreadPoolExecutor;
 import org.apache.smscserver.ConnectionConfig;
 import org.apache.smscserver.ConnectionConfigFactory;
+import org.apache.smscserver.DeliveryManager;
 import org.apache.smscserver.DeliveryManagerConfig;
 import org.apache.smscserver.DeliveryManagerConfigFactory;
 import org.apache.smscserver.SmscServerConfigurationException;
@@ -38,6 +39,7 @@ import org.apache.smscserver.command.CommandFactoryFactory;
 import org.apache.smscserver.listener.Listener;
 import org.apache.smscserver.listener.ListenerFactory;
 import org.apache.smscserver.message.DBMessageManagerFactory;
+import org.apache.smscserver.message.impl.DefaultDeliveryManager;
 import org.apache.smscserver.smsclet.Authority;
 import org.apache.smscserver.smsclet.MessageManager;
 import org.apache.smscserver.smsclet.SmscStatistics;
@@ -83,14 +85,16 @@ public class DefaultSmscServerContext implements SmscServerContext {
 
     private MessageManager messageManager = null;
     private UserManager userManager = new PropertiesUserManagerFactory().createUserManager();
+    private DeliveryManager deliveryManager = new DefaultDeliveryManager(this);
     private SmscletContainer smscletContainer = new DefaultSmscletContainer();
+
     private SmscStatistics statistics = new DefaultSmscStatistics();
+
     private CommandFactory commandFactory = null;
     private ConnectionConfig connectionConfig = new ConnectionConfigFactory().createConnectionConfig();
-    private DeliveryManagerConfig deliveryManagerConfig = new DeliveryManagerConfigFactory().createDeliveryManagerConfig();
-
+    private DeliveryManagerConfig deliveryManagerConfig = new DeliveryManagerConfigFactory()
+            .createDeliveryManagerConfig();
     private long sessionLockTimeout = DefaultSmscServerContext.DEFAULT_SESSION_LOCK_TIMEOUT;
-
     private Map<String, Listener> listeners = new HashMap<String, Listener>();
 
     /**
@@ -173,6 +177,14 @@ public class DefaultSmscServerContext implements SmscServerContext {
      * {@inheritDoc}
      * 
      */
+    public DeliveryManager getDeliveryManager() {
+        return this.deliveryManager;
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     */
     public DeliveryManagerConfig getDeliveryManagerConfig() {
         return this.deliveryManagerConfig;
     }
@@ -191,6 +203,14 @@ public class DefaultSmscServerContext implements SmscServerContext {
      */
     public Map<String, Listener> getListeners() {
         return this.listeners;
+    }
+
+    private DeliveryManagerConfig getMessageDeliveryManagerConfig() {
+        if (this.deliveryManagerConfig == null) {
+            this.deliveryManagerConfig = new DefaultDeliveryManagerConfig();
+        }
+
+        return this.deliveryManagerConfig;
     }
 
     /**
@@ -281,6 +301,8 @@ public class DefaultSmscServerContext implements SmscServerContext {
                 .getClass().getCanonicalName());
         DefaultSmscServerContext.LOG.info("Using {} as the message manager", this.getMessageManager().getClass()
                 .getCanonicalName());
+        DefaultSmscServerContext.LOG.info("Using {} as the message delivery configuration", this
+                .getMessageDeliveryManagerConfig().getClass().getCanonicalName());
         DefaultSmscServerContext.LOG.info("Using {} as the SMSCLet Container", this.getSmscletContainer().getClass()
                 .getCanonicalName());
         DefaultSmscServerContext.LOG.info("Using {} as the statistics provider", this.getSmscStatistics().getClass()
@@ -299,6 +321,14 @@ public class DefaultSmscServerContext implements SmscServerContext {
 
     public void setConnectionConfig(ConnectionConfig connectionConfig) {
         this.connectionConfig = connectionConfig;
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     */
+    public void setDeliveryManager(DeliveryManager deliveryManager) {
+        this.deliveryManager = deliveryManager;
     }
 
     public void setDeliveryManagerConfig(DeliveryManagerConfig deliveryManagerConfig) {

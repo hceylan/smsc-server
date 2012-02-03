@@ -53,7 +53,7 @@ public class UnbindCommand implements Command {
     public SmscReply execute(DefaultSmscIoSession session, SmscServerContext context, SmscRequest request) {
         UnbindRequest unbindRequest = (UnbindRequest) request;
 
-        session.setUser(null);
+        session.clearUser();
 
         return new SmscStatusReplyImpl(unbindRequest, ErrorCode.ESME_ROK);
     }

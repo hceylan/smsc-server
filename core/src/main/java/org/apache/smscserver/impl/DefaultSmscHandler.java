@@ -28,6 +28,7 @@ import org.apache.smscserver.command.Command;
 import org.apache.smscserver.command.CommandFactory;
 import org.apache.smscserver.listener.Listener;
 import org.apache.smscserver.packet.impl.SmscStatusReplyImpl;
+import org.apache.smscserver.smsclet.SmscIoSession;
 import org.apache.smscserver.smsclet.SmscReply;
 import org.apache.smscserver.smsclet.SmscRequest;
 import org.apache.smscserver.smscletcontainer.SmscletContainer;
@@ -44,7 +45,7 @@ public class DefaultSmscHandler implements SmscHandler {
 
     private final Logger LOG = LoggerFactory.getLogger(DefaultSmscHandler.class);
 
-    private SmscServerContext context;
+    private SmscServerContext serverContext;
 
     private Listener listener;
 
@@ -62,7 +63,6 @@ public class DefaultSmscHandler implements SmscHandler {
             this.LOG.error("Exception caught, closing session", cause);
             session.close(false).awaitUninterruptibly(10000);
         }
-
     }
 
     /**
@@ -70,7 +70,7 @@ public class DefaultSmscHandler implements SmscHandler {
      * 
      */
     public void init(final SmscServerContext context, final Listener listener) {
-        this.context = context;
+        this.serverContext = context;
         this.listener = listener;
     }
 
@@ -87,17 +87,17 @@ public class DefaultSmscHandler implements SmscHandler {
         }
 
         try {
-            SmscReply reply = this.context.getSmscletContainer().onRequest(session.getSmscletSession(), request);
+            SmscReply reply = this.serverContext.getSmscletContainer().onRequest(session.getSmscletSession(), request);
             if (reply != null) {
                 return reply;
             }
 
             int commandID = request.getCommandId();
-            CommandFactory commandFactory = this.context.getCommandFactory();
+            CommandFactory commandFactory = this.serverContext.getCommandFactory();
             Command command = commandFactory.getCommand(commandID);
 
             if (command != null) {
-                return command.execute(session, this.context, request);
+                return command.execute(session, this.serverContext, request);
             }
 
             return null;
@@ -110,7 +110,7 @@ public class DefaultSmscHandler implements SmscHandler {
      * {@inheritDoc}
      * 
      */
-    public void messageSent(final DefaultSmscIoSession session, final SmscReply reply) throws Exception {
+    public void messageSent(final SmscIoSession session, final SmscReply reply) throws Exception {
         // do nothing
     }
 
@@ -122,13 +122,13 @@ public class DefaultSmscHandler implements SmscHandler {
         this.LOG.debug("Closing session");
 
         try {
-            this.context.getSmscletContainer().onDisconnect(session.getSmscletSession());
+            this.serverContext.getSmscletContainer().onDisconnect(session.getSmscletSession());
         } catch (Exception e) {
             // swallow the exception, we're closing down the session anyways
             this.LOG.warn("Smsclet threw an exception on disconnect", e);
         }
 
-        ServerSmscStatistics stats = ((ServerSmscStatistics) this.context.getSmscStatistics());
+        ServerSmscStatistics stats = ((ServerSmscStatistics) this.serverContext.getSmscStatistics());
 
         if (stats != null) {
             stats.setUnbind(session);
@@ -147,7 +147,7 @@ public class DefaultSmscHandler implements SmscHandler {
     public void sessionCreated(final DefaultSmscIoSession session) throws Exception {
         session.setListener(this.listener);
 
-        ServerSmscStatistics stats = ((ServerSmscStatistics) this.context.getSmscStatistics());
+        ServerSmscStatistics stats = ((ServerSmscStatistics) this.serverContext.getSmscStatistics());
 
         if (stats != null) {
             stats.setOpenConnection(session);
@@ -169,7 +169,7 @@ public class DefaultSmscHandler implements SmscHandler {
      * 
      */
     public void sessionOpened(final DefaultSmscIoSession session) throws Exception {
-        SmscletContainer smsclets = this.context.getSmscletContainer();
+        SmscletContainer smsclets = this.serverContext.getSmscletContainer();
 
         try {
             if (!smsclets.onConnect(session.getSmscletSession())) {
