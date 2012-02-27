@@ -9,7 +9,7 @@
 	</appender>
 
 	<appender name="FILE" class="org.apache.log4j.DailyRollingFileAppender">
-		<param name="File" value="${SMSC_HOME}/log/spd.log" />
+		<param name="File" value="${SMSC_HOME}/log/smsc.log" />
 		<param name="Append" value="true" />
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="%d{HH:mm:ss,SSS} %-5p (%-16t) [%20c] %m%n" />

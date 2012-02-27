@@ -174,7 +174,7 @@ while true; do
          -Djava.endorsed.dirs="$SP_ENDORSED_DIRS" \
          -DSMSC_HOME="$SMSC_HOME" \
          -classpath "$SP_CLASSPATH" \
-         com.ericsson.service.server.Main "$@"
+         org.apache.smscserver.server.bootstrap.Main "$@"
       SP_STATUS=$?
    else
       # Execute the JVM in the background
@@ -182,7 +182,7 @@ while true; do
          -Djava.endorsed.dirs="$SP_ENDORSED_DIRS" \
          -DSMSC_HOME="$SMSC_HOME" \
          -classpath "$SP_CLASSPATH" \
-         com.ericsson.service.server.Main "$@" &
+         org.apache.smscserver.server.bootstrap.Main "$@" &
       SP_PID=$!
       
       # Trap common signals and relay them to the service portal process

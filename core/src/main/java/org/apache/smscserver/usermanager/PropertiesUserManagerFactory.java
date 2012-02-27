@@ -53,6 +53,7 @@ public class PropertiesUserManagerFactory implements UserManagerFactory {
 
     public PropertiesUserManagerFactory(String smscHome) {
         super();
+        
         this.smscHome = smscHome;
     }
 
@@ -66,7 +67,7 @@ public class PropertiesUserManagerFactory implements UserManagerFactory {
 
         if ((this.userDataURL == null) && (this.smscHome != null)) {
             try {
-                this.userDataURL = new URL("file://" + this.smscHome + "/conf/user.properties");
+                this.userDataURL = new URL("file://" + this.smscHome + "/conf/users.properties");
 
                 PropertiesUserManagerFactory.LOG.info("User Properties file is " + this.userDataURL);
             } catch (MalformedURLException e) {

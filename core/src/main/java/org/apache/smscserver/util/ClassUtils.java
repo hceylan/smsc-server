@@ -44,9 +44,10 @@ public class ClassUtils {
             if (superClass.getName().equals(className)) {
                 return true;
             }
+        
             superClass = superClass.getSuperclass();
-
         }
+        
         return false;
     }
 }

@@ -79,7 +79,7 @@ public class SPModule {
         }
 
         try {
-            Class<?> clazz = parentClassloader.loadClass("com.ericsson.service.server.impl.ChildClassLoader");
+            Class<?> clazz = parentClassloader.loadClass("org.apache.smscserver.server.bootstrap.impl.ChildClassLoader");
             Constructor<?> constructor = clazz.getConstructor(URL[].class, ClassLoader.class);
             this.classLoader = (ClassLoader) constructor.newInstance(urls, parentClassloader);
         } catch (Exception e) {

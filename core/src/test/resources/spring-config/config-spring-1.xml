@@ -59,7 +59,7 @@
 
 	<message-manager>
 		<embedded-profile>h2</embedded-profile>
-		<url>jdbc:h2:${SMSC_HOME}/db/smsc</url>
+		<url>jdbc:h2:mem:smsc</url>
 	</message-manager>
 
 	<commands use-default="false">

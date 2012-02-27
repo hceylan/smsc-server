@@ -1,4 +1,4 @@
-package com.ericsson.service.server;
+package org.apache.smscserver.server.bootstrap;
 
 /**
  * Interface for the server

@@ -54,7 +54,7 @@ public class SPLogger {
 
     private static final Object[] NULL_ARRAY = new Object[] {};
 
-    private static Logger DEFAULT_LOG = LoggerFactory.getLogger("com.ericsson.service.server.ServicePortalServer");
+    private static Logger DEFAULT_LOG = LoggerFactory.getLogger("org.apache.smscserver.server.bootstrap.ServicePortalServer");
 
     /**
      * Returns an instance of Logger with the default name

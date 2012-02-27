@@ -1,8 +1,8 @@
 package org.apache.smscserver.server.main;
 
+import org.apache.smscserver.server.bootstrap.Server;
 import org.apache.smscserver.server.main.impl.DualClassLoader;
 
-import com.ericsson.service.server.Server;
 
 /**
  * @author hceylan

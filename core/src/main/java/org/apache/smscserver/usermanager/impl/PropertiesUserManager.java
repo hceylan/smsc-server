@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * <strong>Internal class, do not use directly.</strong>
  * 
  * <p>
- * Properties file based <code>UserManager</code> implementation. We use <code>user.properties</code> file to store user
+ * Properties file based <code>UserManager</code> implementation. We use <code>users.properties</code> file to store user
  * data.
  * </p>
  * 
@@ -366,7 +366,7 @@ public class PropertiesUserManager extends AbstractUserManager {
     }
 
     /**
-     * Reloads the contents of the user.properties file. This allows any manual modifications to the file to be
+     * Reloads the contents of the users.properties file. This allows any manual modifications to the file to be
      * recognised by the running server.
      */
     public void refresh() {

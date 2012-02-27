@@ -359,10 +359,9 @@ public class DBMessageManager implements MessageManager {
 
     private String storeShortMessageImpl(ShortMessageImpl shortMessage, Statement stmt) throws SmscException,
             SQLException {
-        String sql;
-
-        sql = shortMessage.getId() != null ? this.sqlUpdateMessage : this.sqlInsertMessage;
+        String sql = shortMessage.getId() != null ? this.sqlUpdateMessage : this.sqlInsertMessage;
         sql = StringUtils.replaceString(sql, this.populateFrom(shortMessage));
+       
         DBMessageManager.LOG.debug(sql);
 
         // execute query

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.ericsson.service.server;
+package org.apache.smscserver.server.bootstrap;
 
 import java.io.File;
 import java.io.IOException;

@@ -33,13 +33,6 @@
 	<artifactId>distribution</artifactId>
 	<packaging>pom</packaging>
 
-	<repositories>
-		<repository>
-			<id>inproject</id>
-			<url>file://${project.basedir}/etc/maven/</url>
-		</repository>
-	</repositories>
-
 	<build>
 		<finalName>apache-smscserver</finalName>
 
@@ -85,24 +78,6 @@
 							</artifactItems>
 						</configuration>
 					</execution>
-						<!-- 
-					<execution>
-						<id>copy-modules</id>
-						<phase>package</phase>
-						<goals>
-							<goal>copy</goal>
-						</goals>
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>com.ericsson.serviceportal.modules</groupId>
-									<artifactId>retryengine</artifactId>
-									<outputDirectory>${project.build.directory}/modules/MyModule/bin</outputDirectory>
-								</artifactItem>
-							</artifactItems>
-						</configuration>
-					</execution>
-						 -->
 				</executions>
 			</plugin>
 

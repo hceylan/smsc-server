@@ -46,6 +46,7 @@ public class BaseProperties extends Properties {
      * Default constructor.
      */
     public BaseProperties() {
+    	super();
     }
 
     /**

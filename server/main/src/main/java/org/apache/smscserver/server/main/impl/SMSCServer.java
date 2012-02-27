@@ -11,9 +11,9 @@ import java.util.Map;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.apache.smscserver.SmscServer;
 import org.apache.smscserver.SmscServerFactory;
+import org.apache.smscserver.server.bootstrap.Server;
 import org.apache.smscserver.server.main.SPLogger;
 
-import com.ericsson.service.server.Server;
 
 /**
  * The main point for Service Portal
