@@ -64,8 +64,8 @@ public class MessagePoller implements Runnable, Comparable<MessagePoller> {
     private void deliverShortMessage(ShortMessage shortMessage) {
         SmscDeliverSMRequestImpl deliverSMRequest = new SmscDeliverSMRequestImpl(this.ioSession.getNextSequnce());
 
-        deliverSMRequest.setDestination(new Address(shortMessage.getSourceAddressTON(), shortMessage
-                .getSourceAddressNPI(), shortMessage.getSourceAddress()));
+        deliverSMRequest.setSource(new Address(shortMessage.getSourceAddressTON(), shortMessage.getSourceAddressNPI(),
+                shortMessage.getSourceAddress()));
         deliverSMRequest.setDestination(new Address(shortMessage.getDestinationAddressTON(), shortMessage
                 .getDestinationAddressNPI(), shortMessage.getDestinationAddress()));
 
