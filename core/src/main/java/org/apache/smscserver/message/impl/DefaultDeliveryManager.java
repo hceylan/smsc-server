@@ -16,8 +16,10 @@
  */
 package org.apache.smscserver.message.impl;
 
-import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -37,6 +39,26 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultDeliveryManager implements DeliveryManager {
 
+    private class Worker implements Runnable {
+
+        public void run() {
+            while (!Thread.currentThread().isInterrupted()) {
+                try {
+                    MessagePoller poller = DefaultDeliveryManager.this.sessionQueue.poll();
+                    if (poller == null) {
+                        Thread.sleep(100);
+                        continue;
+                    }
+
+                    DefaultDeliveryManager.this.getDeliveryExecuter().submit(poller);
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
+        }
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(DefaultDeliveryManager.class);
 
     private static final int DEFAULT_KEEPALIVE_TIME = 30000;
@@ -44,19 +66,18 @@ public class DefaultDeliveryManager implements DeliveryManager {
     private final SmscServerContext serverContext;
     private boolean started;
     private boolean suspended;
+
+    private int managerThreads;
     private int minThreads;
     private int maxThreads;
 
-    private ThreadPoolExecutor managerExecuter;
+    private ExecutorService managerExecuter;
     private ThreadPoolExecutor deliveryExecuter;
     private final SynchronousQueue<Runnable> workQueue;
 
-    private BlockingQueue<Runnable> sessionQueue;
-
-    private int managerThreads;
+    private IOSessionQueue sessionQueue;
 
     private long[] deliveryPeriods;
-
     private int deliveryPollTime;
 
     public DefaultDeliveryManager(SmscServerContext serverContext) {
@@ -165,7 +186,7 @@ public class DefaultDeliveryManager implements DeliveryManager {
      *            the message poller to add back to the queue
      */
     public void reschedule(MessagePoller messagePoller) {
-        messagePoller.setNextCheckTime(System.currentTimeMillis() + (this.deliveryPollTime * 1000));
+        messagePoller.setNextCheckTime(System.currentTimeMillis() + (this.deliveryPollTime));
 
         this.sessionQueue.add(messagePoller);
     }
@@ -179,7 +200,7 @@ public class DefaultDeliveryManager implements DeliveryManager {
             throw new IllegalStateException("Delivery Manager has not been started");
         }
 
-        if (!this.suspended) {
+        if (this.suspended) {
             this.startManager();
 
             this.suspended = false;
@@ -204,19 +225,34 @@ public class DefaultDeliveryManager implements DeliveryManager {
         this.deliveryPeriods = config.getDeliveryPeriods();
         this.deliveryPollTime = config.getDeliveryPollTime();
 
+        if (this.deliveryPollTime == 0) {
+            this.deliveryPollTime = 15000;
+        }
+
         this.started = true;
     }
 
     private void startManager() {
-        this.managerExecuter = new ThreadPoolExecutor(this.managerThreads, this.managerThreads, 1, TimeUnit.HOURS,
-                this.sessionQueue);
+        ThreadFactory threadFactory = new ThreadFactory() {
+
+            private int i = 0;
+
+            public Thread newThread(Runnable r) {
+                return new Thread(r, "Delivery-Manager-" + this.i++);
+            }
+        };
+
+        this.managerExecuter = Executors.newCachedThreadPool(threadFactory);
+        for (int i = 0; i < this.managerThreads; i++) {
+            this.managerExecuter.submit(new Worker());
+        }
     }
 
     /**
      * {@inheritDoc}
      * 
      */
-    public void suspend() {
+    public synchronized void suspend() {
         if (!this.started) {
             throw new IllegalStateException("Delivery Manager has not been started");
         }

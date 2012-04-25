@@ -65,11 +65,11 @@ public class DefaultSmscServerContext implements SmscServerContext {
     private final static String SMSC_HOME = System.getProperty("SMSC_HOME");
 
     private static final List<Authority> ADMIN_AUTHORITIES = new ArrayList<Authority>();
-    
+
     private static final long DEFAULT_SESSION_LOCK_TIMEOUT = 1000;
 
     private MessageManager messageManager = null;
-    private UserManager userManager = new PropertiesUserManagerFactory(SMSC_HOME)
+    private UserManager userManager = new PropertiesUserManagerFactory(DefaultSmscServerContext.SMSC_HOME)
             .createUserManager();
 
     private DeliveryManager deliveryManager = new DefaultDeliveryManager(this);
@@ -206,12 +206,12 @@ public class DefaultSmscServerContext implements SmscServerContext {
      */
     public MessageManager getMessageManager() {
         if (this.messageManager == null) {
-        	if (SMSC_HOME == null){
+            if (DefaultSmscServerContext.SMSC_HOME == null) {
                 this.messageManager = new DBMessageManagerFactory("h2", "jdbc:h2:mem:smsc").createMessageManager();
-        	} else {
-        		this.messageManager = new DBMessageManagerFactory("h2", "jdbc:h2:" + DefaultSmscServerContext.SMSC_HOME
-                    + "/db/smsc").createMessageManager();
-        	}
+            } else {
+                this.messageManager = new DBMessageManagerFactory("h2", "jdbc:h2:" + DefaultSmscServerContext.SMSC_HOME
+                        + "/db/smsc").createMessageManager();
+            }
         }
 
         return this.messageManager;

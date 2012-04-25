@@ -46,8 +46,9 @@ public interface MessageManager {
      * @param user
      *            the user to check whose mesages are pending
      * @return the pending messages for the user
+     * @throws SmscException
      */
-    public List<ShortMessage> getPendingMessagesForUser(User user);
+    public List<ShortMessage> getPendingMessagesForUser(User user) throws SmscException;
 
     /**
      * Replaces a message with the new one.

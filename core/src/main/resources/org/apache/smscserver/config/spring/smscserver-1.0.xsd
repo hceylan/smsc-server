@@ -213,6 +213,7 @@
 				<xs:element minOccurs="0" maxOccurs="1" name="insert-message" type="xs:string" />
 				<xs:element minOccurs="0" maxOccurs="1" name="update-message" type="xs:string" />
 				<xs:element minOccurs="0" maxOccurs="1" name="select-message" type="xs:string" />
+				<xs:element minOccurs="0" maxOccurs="1" name="select-user-message" type="xs:string" />
 				<xs:element minOccurs="0" maxOccurs="1" name="select-replace" type="xs:string" />
 			</xs:sequence>
 		</xs:complexType>

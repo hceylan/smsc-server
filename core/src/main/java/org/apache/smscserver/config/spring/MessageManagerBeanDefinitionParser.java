@@ -63,6 +63,7 @@ public class MessageManagerBeanDefinitionParser extends AbstractSingleBeanDefini
         factoryBuilder.addPropertyValue("sqlCreateTable", this.getChildElement(element, "crate-table"));
         factoryBuilder.addPropertyValue("sqlInsertMessage", this.getChildElement(element, "insert-message"));
         factoryBuilder.addPropertyValue("sqlSelectMessage", this.getChildElement(element, "select-message"));
+        factoryBuilder.addPropertyValue("sqlSelectUserMessage", this.getChildElement(element, "select-user-message"));
         factoryBuilder.addPropertyValue("sqlSelectLatestReplacableMessage",
                 this.getChildElement(element, "select-replace"));
         factoryBuilder.addPropertyValue("sqlUpdateMessage", this.getChildElement(element, "update-message"));

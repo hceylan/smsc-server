@@ -59,6 +59,7 @@ public class SubmitSMCommand implements Command {
         MessageManager messageManager = context.getMessageManager();
 
         ShortMessageImpl shortMessage = new ShortMessageImpl();
+
         shortMessage.setDatacoding(submitSMRequest.getDataCoding());
         shortMessage.setDefaultMessageId(submitSMRequest.getDefaultMessageId());
         shortMessage.setDestinationAddress(submitSMRequest.getDestinationAddress());
@@ -78,6 +79,8 @@ public class SubmitSMCommand implements Command {
         shortMessage.setSourceAddressNPI(submitSMRequest.getSourceAddressNPI());
         shortMessage.setSourceAddressTON(submitSMRequest.getSourceAddressTON());
         shortMessage.setValidityPeriod(submitSMRequest.getValidityPeriod());
+
+        shortMessage.setShortMessage(new String(submitSMRequest.getShortMessage()));
 
         try {
             messageManager.submitSM(shortMessage);

@@ -19,11 +19,11 @@ package org.apache.smscserver.message.impl;
 import java.util.concurrent.PriorityBlockingQueue;
 
 /**
- * A Specialized queue implementation to imitate an empty queue if the head of the queue is not ready tı run.
+ * A Specialized queue implementation to imitate an empty queue if the head of the queue is not ready to run.
  * 
  * @version $Rev$ $Date$
  */
-public class IOSessionQueue extends PriorityBlockingQueue<Runnable> {
+public class IOSessionQueue extends PriorityBlockingQueue<MessagePoller> {
 
     private static final long serialVersionUID = -689568747117274583L;
 
@@ -36,11 +36,11 @@ public class IOSessionQueue extends PriorityBlockingQueue<Runnable> {
      * 
      */
     @Override
-    public Runnable peek() {
-        MessagePoller poller = (MessagePoller) super.peek();
+    public MessagePoller peek() {
+        MessagePoller poller = super.peek();
 
         // if the head of the queue is in the future we have no work to do
-        if (poller.getNextCheckTime() > System.currentTimeMillis()) {
+        if ((poller == null) || (poller.getNextCheckTime() > System.currentTimeMillis())) {
             return null;
         }
 
@@ -52,7 +52,7 @@ public class IOSessionQueue extends PriorityBlockingQueue<Runnable> {
      * 
      */
     @Override
-    public Runnable poll() {
+    public MessagePoller poll() {
         Runnable runnable = this.peek();
 
         if (runnable == null) {

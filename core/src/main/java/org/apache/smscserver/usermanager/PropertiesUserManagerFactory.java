@@ -20,6 +20,7 @@
 package org.apache.smscserver.usermanager;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -43,7 +44,7 @@ public class PropertiesUserManagerFactory implements UserManagerFactory {
 
     private URL userDataURL;
 
-    private PasswordEncryptor passwordEncryptor = new Md5PasswordEncryptor();
+    private PasswordEncryptor passwordEncryptor = new ClearTextPasswordEncryptor();
 
     private String smscHome;
 
@@ -53,7 +54,7 @@ public class PropertiesUserManagerFactory implements UserManagerFactory {
 
     public PropertiesUserManagerFactory(String smscHome) {
         super();
-        
+
         this.smscHome = smscHome;
     }
 
@@ -65,7 +66,14 @@ public class PropertiesUserManagerFactory implements UserManagerFactory {
             return new PropertiesUserManager(this.passwordEncryptor, this.userDataFile, this.adminName);
         }
 
-        if ((this.userDataURL == null) && (this.smscHome != null)) {
+        if (this.smscHome == null) {
+            try {
+                this.smscHome = new File("./").getCanonicalPath().toString();
+            } catch (IOException e1) {
+            }
+        }
+
+        if (this.userDataURL == null) {
             try {
                 this.userDataURL = new URL("file://" + this.smscHome + "/conf/users.properties");
 

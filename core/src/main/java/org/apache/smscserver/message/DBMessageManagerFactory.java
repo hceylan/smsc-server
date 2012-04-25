@@ -49,6 +49,7 @@ public class DBMessageManagerFactory implements MessageManagerFactory {
     private String sqlInsertMessage;
     private String sqlSelectLatestReplacableMessage;
     private String sqlSelectMessage;
+    private String sqlSelectUserMessage;
     private String sqlUpdateMessage;
 
     private String url;
@@ -106,6 +107,10 @@ public class DBMessageManagerFactory implements MessageManagerFactory {
             this.sqlSelectMessage = this.getProfileSQL("select");
         }
 
+        if (this.sqlSelectUserMessage == null) {
+            this.sqlSelectUserMessage = this.getProfileSQL("select-user");
+        }
+
         if (this.sqlSelectLatestReplacableMessage == null) {
             this.sqlSelectLatestReplacableMessage = this.getProfileSQL("selectlatestreplacable");
         }
@@ -134,7 +139,7 @@ public class DBMessageManagerFactory implements MessageManagerFactory {
         this.check(this.sqlUpdateMessage, true, " update message SQL statement not provided");
 
         return new DBMessageManager(this.datasource, this.sqlCreateTable, this.sqlInsertMessage, this.sqlSelectMessage,
-                this.sqlUpdateMessage, this.sqlSelectLatestReplacableMessage);
+                this.sqlSelectUserMessage, this.sqlUpdateMessage, this.sqlSelectLatestReplacableMessage);
     }
 
     private String getProfileSQL(String qualifier) {
@@ -197,6 +202,14 @@ public class DBMessageManagerFactory implements MessageManagerFactory {
      */
     public void setSqlSelectMessage(String sqlSelectMessage) {
         this.sqlSelectMessage = sqlSelectMessage;
+    }
+
+    /**
+     * @param sqlSelectUserMessage
+     *            the sqlSelectUserMessage to set
+     */
+    public void setSqlSelectUserMessage(String sqlSelectUserMessage) {
+        this.sqlSelectUserMessage = sqlSelectUserMessage;
     }
 
     /**

@@ -10,5 +10,6 @@
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="org.apache.smscserver.main.CommandLine"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="org.apache.smscserver.smscserver-core"/>
 <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.m2e.launchconfig.sourcepathProvider"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-DSMSC_HOME=${workspace_loc:org.apache.smscserver.smscserver-core/target}"/>
 <stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="${workspace_loc:org.apache.smscserver.smscserver-core/target}"/>
 </launchConfiguration>

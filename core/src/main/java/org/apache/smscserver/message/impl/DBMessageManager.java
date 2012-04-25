@@ -20,6 +20,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -87,17 +88,21 @@ public class DBMessageManager implements MessageManager {
     private final String sqlUpdateMessage;
     private final String sqlSelectLatestReplacableMessage;
 
+    private final String sqlSelectUserMessage;
+
     /**
      * Internal constructor, do not use directly. Use {@link DBMessageManagerFactory} instead.
      */
     public DBMessageManager(DataSource datasource, String sqlCreateTable, String sqlInsertMessage,
-            String sqlSelectMessage, String sqlUpdateMessage, String sqlSelectLatestReplacableMessage) {
+            String sqlSelectMessage, String sqlSelectUserMessage, String sqlUpdateMessage,
+            String sqlSelectLatestReplacableMessage) {
         super();
 
         this.datasource = datasource;
         this.sqlCreateTable = sqlCreateTable;
         this.sqlInsertMessage = sqlInsertMessage;
         this.sqlSelectMessage = sqlSelectMessage;
+        this.sqlSelectUserMessage = sqlSelectUserMessage;
         this.sqlUpdateMessage = sqlUpdateMessage;
         this.sqlSelectLatestReplacableMessage = sqlSelectLatestReplacableMessage;
 
@@ -156,9 +161,37 @@ public class DBMessageManager implements MessageManager {
         return DBUtils.createConnection(this.datasource);
     }
 
-    public List<ShortMessage> getPendingMessagesForUser(User user) {
-        // TODO Auto-generated method stub
-        return null;
+    /**
+     * {@inheritDoc}
+     * 
+     */
+    public List<ShortMessage> getPendingMessagesForUser(User user) throws SmscException {
+        Statement stmt = null;
+        ResultSet rs = null;
+        String sql = null;
+
+        try {
+            // prepare statement
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put(DBMessageManager.ATTR_DESTINATION_ADDRESS, DBUtils.escapeString(user.getName()));
+            sql = StringUtils.replaceString(this.sqlSelectUserMessage, map);
+            DBMessageManager.LOG.debug(sql);
+
+            // execute query
+            stmt = this.createConnection().createStatement();
+            rs = stmt.executeQuery(sql);
+
+            List<ShortMessage> messages = new ArrayList<ShortMessage>();
+            if (rs.next()) {
+                messages.add(this.propulateFrom(rs));
+            }
+
+            return messages;
+        } catch (Exception e) {
+            throw DBUtils.handleException(sql, e);
+        } finally {
+            DBUtils.closeQuitelyWithConnection(rs, stmt);
+        }
     }
 
     private Map<String, Object> populateFrom(ShortMessageImpl shortMessage) throws SmscException {
@@ -361,7 +394,7 @@ public class DBMessageManager implements MessageManager {
             SQLException {
         String sql = shortMessage.getId() != null ? this.sqlUpdateMessage : this.sqlInsertMessage;
         sql = StringUtils.replaceString(sql, this.populateFrom(shortMessage));
-       
+
         DBMessageManager.LOG.debug(sql);
 
         // execute query
