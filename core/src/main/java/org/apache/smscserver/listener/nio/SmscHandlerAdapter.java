@@ -27,6 +27,7 @@ import org.apache.smscserver.SmscHandler;
 import org.apache.smscserver.SmscServerContext;
 import org.apache.smscserver.impl.DefaultSmscIoSession;
 import org.apache.smscserver.packet.impl.SmscStatusReplyImpl;
+import org.apache.smscserver.smsclet.SmscPacket;
 import org.apache.smscserver.smsclet.SmscReply;
 import org.apache.smscserver.smsclet.SmscRequest;
 
@@ -64,20 +65,23 @@ public class SmscHandlerAdapter implements IoHandler {
     public void messageReceived(IoSession session, Object message) throws Exception {
         DefaultSmscIoSession smscSession = new DefaultSmscIoSession(session, this.context);
 
-        SmscRequest request = (SmscRequest) message;
+        if (message instanceof SmscRequest) {
 
-        smscSession.setRequest(request);
+            SmscRequest request = (SmscRequest) message;
 
-        SmscReply reply = this.smscHandler.messageReceived(smscSession, request);
-        if (reply == null) {
-            reply = new SmscStatusReplyImpl(request, SmscReply.ErrorCode.ESME_RINVCMDID);
+            smscSession.setRequest(request);
+
+            SmscReply reply = this.smscHandler.messageReceived(smscSession, request);
+            if (reply == null) {
+                reply = new SmscStatusReplyImpl(request, SmscReply.ErrorCode.ESME_RINVCMDID);
+            }
+
+            session.write(reply);
         }
-
-        session.write(reply);
     }
 
     public void messageSent(IoSession session, Object message) throws Exception {
-        this.smscHandler.messageSent(new DefaultSmscIoSession(session, this.context), (SmscReply) message);
+        this.smscHandler.messageSent(new DefaultSmscIoSession(session, this.context), (SmscPacket) message);
     }
 
     public void sessionClosed(IoSession session) throws Exception {

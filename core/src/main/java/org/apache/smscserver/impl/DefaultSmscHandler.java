@@ -29,6 +29,7 @@ import org.apache.smscserver.command.CommandFactory;
 import org.apache.smscserver.listener.Listener;
 import org.apache.smscserver.packet.impl.SmscStatusReplyImpl;
 import org.apache.smscserver.smsclet.SmscIoSession;
+import org.apache.smscserver.smsclet.SmscPacket;
 import org.apache.smscserver.smsclet.SmscReply;
 import org.apache.smscserver.smsclet.SmscRequest;
 import org.apache.smscserver.smscletcontainer.SmscletContainer;
@@ -110,7 +111,7 @@ public class DefaultSmscHandler implements SmscHandler {
      * {@inheritDoc}
      * 
      */
-    public void messageSent(final SmscIoSession session, final SmscReply reply) throws Exception {
+    public void messageSent(final SmscIoSession session, final SmscPacket reply) throws Exception {
         // do nothing
     }
 

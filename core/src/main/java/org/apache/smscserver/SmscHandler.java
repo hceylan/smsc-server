@@ -27,6 +27,7 @@ import org.apache.mina.core.session.IoSession;
 import org.apache.smscserver.impl.DefaultSmscIoSession;
 import org.apache.smscserver.listener.Listener;
 import org.apache.smscserver.smsclet.SmscIoSession;
+import org.apache.smscserver.smsclet.SmscPacket;
 import org.apache.smscserver.smsclet.SmscReply;
 import org.apache.smscserver.smsclet.SmscRequest;
 
@@ -56,7 +57,7 @@ public interface SmscHandler {
     /**
      * Invoked when a message written by {@link IoSession#write(Object)} is sent out.
      */
-    void messageSent(SmscIoSession session, SmscReply reply) throws Exception;
+    void messageSent(SmscIoSession session, SmscPacket reply) throws Exception;
 
     /**
      * Invoked when a connection is closed.
@@ -77,9 +78,10 @@ public interface SmscHandler {
     void sessionIdle(DefaultSmscIoSession session, IdleStatus status) throws Exception;
 
     /**
-     * Invoked when a connection has been opened. This method is invoked after {@link #sessionCreated(DefaultSmscIoSession)}.
-     * The biggest difference from {@link #sessionCreated(DefaultSmscIoSession)} is that it's invoked from other thread than an
-     * I/O processor thread once thread modesl is configured properly.
+     * Invoked when a connection has been opened. This method is invoked after
+     * {@link #sessionCreated(DefaultSmscIoSession)}. The biggest difference from
+     * {@link #sessionCreated(DefaultSmscIoSession)} is that it's invoked from other thread than an I/O processor thread
+     * once thread modesl is configured properly.
      */
     void sessionOpened(DefaultSmscIoSession session) throws Exception;
 }

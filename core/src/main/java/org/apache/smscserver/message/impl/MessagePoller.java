@@ -62,22 +62,21 @@ public class MessagePoller implements Runnable, Comparable<MessagePoller> {
     }
 
     private void deliverShortMessage(ShortMessage shortMessage) {
-        SmscDeliverSMRequestImpl deliverSMRequest = new SmscDeliverSMRequestImpl(this.ioSession.getNextSequnce());
-
-        deliverSMRequest.setSource(new Address(shortMessage.getSourceAddressTON(), shortMessage.getSourceAddressNPI(),
-                shortMessage.getSourceAddress()));
-        deliverSMRequest.setDestination(new Address(shortMessage.getDestinationAddressTON(), shortMessage
-                .getDestinationAddressNPI(), shortMessage.getDestinationAddress()));
-
-        deliverSMRequest.setEsmClass(shortMessage.getEsmClass());
-        deliverSMRequest.setMessageText(shortMessage.getShortMessage());
-        deliverSMRequest.setMessageId(shortMessage.getId());
-        deliverSMRequest.setPriority(shortMessage.getPriorityFlag());
-        deliverSMRequest.setServiceType(shortMessage.getServiceType());
-        deliverSMRequest.setVersion(null);
-
         this.ioSession.lock();
         try {
+            SmscDeliverSMRequestImpl deliverSMRequest = new SmscDeliverSMRequestImpl(this.ioSession.getNextSequnce());
+
+            deliverSMRequest.setSource(new Address(shortMessage.getSourceAddressTON(), shortMessage
+                    .getSourceAddressNPI(), shortMessage.getSourceAddress()));
+            deliverSMRequest.setDestination(new Address(shortMessage.getDestinationAddressTON(), shortMessage
+                    .getDestinationAddressNPI(), shortMessage.getDestinationAddress()));
+
+            deliverSMRequest.setEsmClass(shortMessage.getEsmClass());
+            deliverSMRequest.setMessageText(shortMessage.getShortMessage());
+            deliverSMRequest.setMessageId(shortMessage.getId());
+            deliverSMRequest.setPriority(shortMessage.getPriorityFlag());
+            deliverSMRequest.setServiceType(shortMessage.getServiceType());
+            deliverSMRequest.setVersion(null);
 
             this.ioSession.write(deliverSMRequest);
 
@@ -100,6 +99,11 @@ public class MessagePoller implements Runnable, Comparable<MessagePoller> {
      * 
      */
     public void run() {
+        if ((this.ioSession.getUser() == null) || this.ioSession.isClosing() || !this.ioSession.isConnected()) {
+            // user unbound
+            return;
+        }
+
         boolean success = true;
         try {
             Date now = new Date(System.currentTimeMillis());
@@ -113,7 +117,8 @@ public class MessagePoller implements Runnable, Comparable<MessagePoller> {
                 ShortMessage shortMessage = i.next();
 
                 // Check if message has expired
-                if (shortMessage.getValidityPeriod().compareTo(now) <= 0) {
+                if ((shortMessage.getValidityPeriod() != null)
+                        && (shortMessage.getValidityPeriod().compareTo(now) <= 0)) {
                     shortMessage.setStatus(ShortMessageStatus.EXPIRED);
 
                     messageManager.updateMesage(shortMessage);
@@ -124,6 +129,9 @@ public class MessagePoller implements Runnable, Comparable<MessagePoller> {
                 }
 
                 this.deliverShortMessage(shortMessage);
+
+                shortMessage.setStatus(ShortMessageStatus.DELIVERED);
+                messageManager.updateMesage(shortMessage);
             }
         } catch (Throwable t) {
             success = false;

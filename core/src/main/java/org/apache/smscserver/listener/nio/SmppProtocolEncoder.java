@@ -1,6 +1,6 @@
 package org.apache.smscserver.listener.nio;
 
-import ie.omk.smpp.message.SMPPResponse;
+import ie.omk.smpp.message.SMPPPacket;
 
 import java.io.OutputStream;
 
@@ -26,8 +26,7 @@ public class SmppProtocolEncoder extends ProtocolEncoderAdapter implements Proto
                 .setAutoExpand(true);
         OutputStream os = io.asOutputStream();
 
-        SMPPResponse response = (SMPPResponse) message;
-        response.writeTo(os, true);
+        ((SMPPPacket) message).writeTo(os, true);
 
         io.flip();
 

@@ -74,7 +74,6 @@ public class DefaultSmscIoSession implements SmscIoSession {
 
     private final IoSession wrappedSession;
     private final SmscServerContext serverContext;
-    private boolean consumed = false;
     private SmscRequest request;
     private final ReentrantLock lock;
 
@@ -843,15 +842,7 @@ public class DefaultSmscIoSession implements SmscIoSession {
             throw new SmscRuntimeException("Illegal write from unbound SmscIOSession " + this.wrappedSession.getId());
         }
 
-        if (this.consumed) {
-            throw new SmscRuntimeException("SmscIOSession " + this.wrappedSession.getId()
-                    + " already consumed the request " + this.request.getId());
-        }
-
-        WriteFuture future = this.wrappedSession.write(message);
-        this.consumed = true;
-
-        return future;
+        return this.wrappedSession.write(message);
     }
 
     /**
@@ -863,14 +854,6 @@ public class DefaultSmscIoSession implements SmscIoSession {
             throw new SmscRuntimeException("Illegal write from unbound SmscIOSession " + this.wrappedSession.getId());
         }
 
-        if (this.consumed) {
-            throw new SmscRuntimeException("SmscIOSession " + this.wrappedSession.getId()
-                    + " already consumed the request " + this.request.getId());
-        }
-
-        WriteFuture future = this.wrappedSession.write(message, destination);
-        this.consumed = true;
-
-        return future;
+        return this.wrappedSession.write(message, destination);
     }
 }
